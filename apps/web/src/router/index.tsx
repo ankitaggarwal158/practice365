@@ -1,0 +1,224 @@
+import { createBrowserRouter } from "react-router-dom";
+import {
+  LoginPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
+  VerifyEmailPage,
+} from "@/modules/auth";
+import {
+  DashboardLayout,
+  UserListPage,
+  UserDetailsPage,
+  UserProfilePage,
+  AcceptInvitationPage,
+} from "@/modules/users";
+import {
+  RoleListPage,
+  RoleDetailsPage,
+  CreateRolePage,
+  EditRolePage,
+  PermissionMatrixPage,
+} from "@/modules/roles";
+import {
+  FirmProfilePage,
+  FirmSettingsPage,
+  FirmBrandingPage,
+} from "@/modules/firm";
+import {
+  IntakeListPage,
+  CreateIntakePage,
+  IntakeDetailsPage,
+  EditIntakePage,
+} from "@/modules/intake";
+import {
+  LeadListPage,
+  CreateLeadPage,
+  LeadDetailsPage,
+  EditLeadPage,
+} from "@/modules/leads";
+import {
+  ConflictCheckPage,
+  ConflictDetailsPage,
+  ManualConflictSearchPage,
+} from "@/modules/conflict-check";
+import {
+  ClientListPage,
+  CreateClientPage,
+  ClientDetailsPage,
+  EditClientPage,
+} from "@/modules/clients";
+import { ProtectedRoute } from "./ProtectedRoute";
+import { GuestRoute } from "./GuestRoute";
+
+/**
+ * Placeholder dashboard shown after login.
+ * Will be replaced when the Dashboard module is implemented.
+ */
+function DashboardPlaceholder() {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 p-8">
+      <h1 className="text-2xl font-bold text-white">
+        Practice<span className="text-brand-400">365</span>
+      </h1>
+      <p className="text-surface-200/60 text-sm">
+        Dashboard coming soon. You are authenticated.
+      </p>
+    </div>
+  );
+}
+
+export const router = createBrowserRouter([
+  // ─── Guest Routes (redirect if authenticated) ──────
+  {
+    path: "/login",
+    element: (
+      <GuestRoute>
+        <LoginPage />
+      </GuestRoute>
+    ),
+  },
+  {
+    path: "/forgot-password",
+    element: (
+      <GuestRoute>
+        <ForgotPasswordPage />
+      </GuestRoute>
+    ),
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPasswordPage />,
+  },
+  {
+    path: "/verify-email",
+    element: <VerifyEmailPage />,
+  },
+  {
+    path: "/accept-invitation",
+    element: (
+      <GuestRoute>
+        <AcceptInvitationPage />
+      </GuestRoute>
+    ),
+  },
+
+  // ─── Protected Routes ──────────────────────────────
+  {
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: "",
+        element: <DashboardPlaceholder />,
+      },
+      {
+        path: "users",
+        element: <UserListPage />,
+      },
+      {
+        path: "users/:id",
+        element: <UserDetailsPage />,
+      },
+      {
+        path: "roles",
+        element: <RoleListPage />,
+      },
+      {
+        path: "roles/new",
+        element: <CreateRolePage />,
+      },
+      {
+        path: "roles/permissions",
+        element: <PermissionMatrixPage />,
+      },
+      {
+        path: "roles/:id",
+        element: <RoleDetailsPage />,
+      },
+      {
+        path: "roles/:id/edit",
+        element: <EditRolePage />,
+      },
+      {
+        path: "profile",
+        element: <UserProfilePage />,
+      },
+      {
+        path: "firm",
+        element: <FirmProfilePage />,
+      },
+      {
+        path: "firm/settings",
+        element: <FirmSettingsPage />,
+      },
+      {
+        path: "firm/branding",
+        element: <FirmBrandingPage />,
+      },
+      {
+        path: "intakes",
+        element: <IntakeListPage />,
+      },
+      {
+        path: "intakes/new",
+        element: <CreateIntakePage />,
+      },
+      {
+        path: "intakes/:id",
+        element: <IntakeDetailsPage />,
+      },
+      {
+        path: "intakes/:id/edit",
+        element: <EditIntakePage />,
+      },
+      {
+        path: "leads",
+        element: <LeadListPage />,
+      },
+      {
+        path: "leads/new",
+        element: <CreateLeadPage />,
+      },
+      {
+        path: "leads/:id",
+        element: <LeadDetailsPage />,
+      },
+      {
+        path: "leads/:id/edit",
+        element: <EditLeadPage />,
+      },
+      {
+        path: "clients",
+        element: <ClientListPage />,
+      },
+      {
+        path: "clients/new",
+        element: <CreateClientPage />,
+      },
+      {
+        path: "clients/:id",
+        element: <ClientDetailsPage />,
+      },
+      {
+        path: "clients/:id/edit",
+        element: <EditClientPage />,
+      },
+      {
+        path: "conflict-checks",
+        element: <ConflictCheckPage />,
+      },
+      {
+        path: "conflict-checks/manual",
+        element: <ManualConflictSearchPage />,
+      },
+      {
+        path: "conflict-checks/:id",
+        element: <ConflictDetailsPage />,
+      },
+    ],
+  },
+]);

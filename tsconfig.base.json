@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "paths": {
+      "@practice365/config": ["./packages/config/src/index.ts"],
+      "@practice365/types": ["./packages/types/src/index.ts"],
+      "@practice365/ui": ["./packages/ui/src/index.ts"],
+      "@practice365/utils": ["./packages/utils/src/index.ts"],
+      "@practice365/validation": ["./packages/validation/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build", "coverage"]
+}

@@ -1,0 +1,983 @@
+> **Implementation Note**
+>
+> This document defines both the functional requirements and the implementation contract for this module.
+>
+> The AI implementation must strictly follow this specification along with the documents under:
+>
+> * `docs/00-foundation`
+> * `docs/01-architecture`
+>
+> Where a conflict exists, the Foundation and Architecture documents take precedence over this module unless this module explicitly overrides a rule with justification.
+
+# 012 - Roles & Permissions
+
+**Module ID:** 012
+
+**Module Name:** Roles & Permissions
+
+**Status:** Draft
+
+---
+
+# References
+
+This module follows the standards defined in:
+
+* 001 Engineering Principles
+* 002 Coding Standards
+* 003 Database Conventions
+* 004 API Conventions
+* 005 Security Standards
+* 001 System Architecture
+* 002 Module Architecture
+
+These documents define the global engineering standards for Practice365 and are not repeated in this specification.
+
+---
+
+# PART A — Product Specification
+
+---
+
+# 1. Purpose
+
+The Roles & Permissions module defines what authenticated users are authorized to access and perform within Practice365.
+
+Authentication establishes **who** the user is.
+
+This module determines **what** the authenticated user is allowed to do.
+
+This module provides the authorization foundation for every business module within the platform.
+
+---
+
+# 2. Scope
+
+This module includes:
+
+* Role Management
+* Permission Management
+* Permission Assignment
+* Role Assignment
+* Permission Evaluation
+* Authorization Middleware
+* System Roles
+* Custom Roles
+* Permission Groups
+* Resource Permissions
+
+---
+
+# 3. Out of Scope
+
+This module does not include:
+
+* Authentication
+* User Management
+* Firm Management
+* Billing Permissions
+* Client Portal Authorization
+* API Access Tokens
+
+Authentication is implemented by **010 - Authentication**.
+
+User lifecycle is implemented by **011 - User Management**.
+
+---
+
+# 4. Dependencies
+
+Business Module Dependencies
+
+* 010 - Authentication
+* 011 - User Management
+
+Future Module Integrations
+
+* 013 - Firm Management
+* Every subsequent business module
+
+---
+
+# 5. Business Requirements
+
+## ROLE-001
+
+Every authenticated user must be assigned at least one role.
+
+A user without a role cannot access the platform.
+
+---
+
+## ROLE-002
+
+Permissions are granted through roles.
+
+Permissions are never assigned directly to users.
+
+---
+
+## ROLE-003
+
+A user may be assigned multiple roles.
+
+Effective permissions are the union of all assigned roles.
+
+---
+
+## ROLE-004
+
+System roles are protected.
+
+System roles cannot be deleted.
+
+---
+
+## ROLE-005
+
+The system shall provide default roles including:
+
+* Firm Owner
+* Firm Administrator
+* Attorney
+* Paralegal
+* Staff
+
+Additional roles may be created by authorized users.
+
+---
+
+## ROLE-006
+
+Every permission belongs to exactly one permission group.
+
+---
+
+## ROLE-007
+
+Permission evaluation must always occur on the backend.
+
+The frontend may hide functionality for usability purposes only.
+
+---
+
+## ROLE-008
+
+Authorization decisions must be evaluated for every protected API request.
+
+---
+
+## ROLE-009
+
+Role changes become effective immediately.
+
+New permissions apply without requiring user intervention other than re-evaluation of authorization.
+
+---
+
+## ROLE-010
+
+Permission changes must never modify historical business records.
+
+---
+
+## ROLE-011
+
+Every role assignment and permission change must be recorded by the Audit Log module.
+
+---
+
+## ROLE-012
+
+Modules must never implement their own authorization logic.
+
+Every module must use this centralized authorization system.
+
+---
+
+# 6. User Stories
+
+### Create Role
+
+As a Firm Administrator,
+
+I want to create custom roles,
+
+so I can control access for my staff.
+
+---
+
+### Edit Role
+
+As a Firm Administrator,
+
+I want to modify role permissions,
+
+so responsibilities can evolve over time.
+
+---
+
+### Assign Role
+
+As a Firm Administrator,
+
+I want to assign roles to users,
+
+so they receive the correct permissions.
+
+---
+
+### View Roles
+
+As a Firm Administrator,
+
+I want to view all available roles,
+
+so I can manage firm security.
+
+---
+
+### Evaluate Permission
+
+As the system,
+
+I want to evaluate user permissions,
+
+before allowing protected operations.
+
+---
+
+### Remove Role
+
+As a Firm Administrator,
+
+I want to remove unused custom roles,
+
+without affecting system roles.
+
+---
+
+# 7. User Workflows
+
+The detailed authorization workflow diagrams are documented in:
+
+* `06-diagrams/roles-permissions-flow.drawio`
+
+This module defines business behaviour only.
+
+Implementation must follow the approved workflow.
+
+---
+
+# PART B — Engineering Specification
+
+---
+
+# 8. Data Model
+
+This module follows the standards defined in:
+
+* 003 - Database Conventions
+
+This module owns the following collections.
+
+| Collection       | Purpose                                  |
+| ---------------- | ---------------------------------------- |
+| roles            | Defines user roles within a firm         |
+| permissions      | Defines all available system permissions |
+| role_permissions | Maps permissions to roles                |
+| user_roles       | Maps users to roles                      |
+
+---
+
+## 8.1 roles
+
+### Purpose
+
+Defines both system-defined and custom roles.
+
+---
+
+### Fields
+
+| Field        | Type     | Description                         |
+| ------------ | -------- | ----------------------------------- |
+| _id          | ObjectId | Primary Key                         |
+| firmId       | ObjectId | Owning Firm (null for system roles) |
+| name         | String   | Role Name                           |
+| description  | String   | Description                         |
+| isSystemRole | Boolean  | Protected Role                      |
+| isActive     | Boolean  | Active Status                       |
+| createdBy    | ObjectId | Creator                             |
+| createdAt    | Date     | Created Timestamp                   |
+| updatedAt    | Date     | Updated Timestamp                   |
+
+---
+
+### Relationships
+
+One Firm
+
+↓
+
+Many Roles
+
+---
+
+One Role
+
+↓
+
+Many Permissions
+
+---
+
+One Role
+
+↓
+
+Many Users
+
+---
+
+### Indexes
+
+Create indexes on:
+
+* firmId
+* name
+* isSystemRole
+
+---
+
+## 8.2 permissions
+
+### Purpose
+
+Defines every permission available within Practice365.
+
+Permissions are predefined by the system.
+
+---
+
+### Fields
+
+| Field       | Type     | Description            |
+| ----------- | -------- | ---------------------- |
+| _id         | ObjectId | Primary Key            |
+| code        | String   | Unique Permission Code |
+| name        | String   | Display Name           |
+| module      | String   | Business Module        |
+| description | String   | Description            |
+| createdAt   | Date     | Created Timestamp      |
+
+---
+
+### Example Permission Codes
+
+```text
+USERS_VIEW
+
+USERS_CREATE
+
+USERS_UPDATE
+
+USERS_DELETE
+
+CLIENTS_VIEW
+
+CLIENTS_CREATE
+
+CLIENTS_UPDATE
+
+MATTERS_VIEW
+
+MATTERS_CREATE
+
+MATTERS_UPDATE
+
+DOCUMENTS_UPLOAD
+
+TIME_ENTRIES_CREATE
+
+INVOICES_APPROVE
+```
+
+---
+
+## 8.3 role_permissions
+
+### Purpose
+
+Associates permissions with roles.
+
+---
+
+### Fields
+
+| Field        | Type     |
+| ------------ | -------- |
+| _id          | ObjectId |
+| roleId       | ObjectId |
+| permissionId | ObjectId |
+| createdAt    | Date     |
+
+---
+
+### Relationships
+
+One Role
+
+↓
+
+Many Permissions
+
+---
+
+## 8.4 user_roles
+
+### Purpose
+
+Associates users with roles.
+
+Supports multiple roles per user.
+
+---
+
+### Fields
+
+| Field      | Type     |
+| ---------- | -------- |
+| _id        | ObjectId |
+| userId     | ObjectId |
+| roleId     | ObjectId |
+| assignedBy | ObjectId |
+| assignedAt | Date     |
+| createdAt  | Date     |
+
+---
+
+### Relationships
+
+One User
+
+↓
+
+Many Roles
+
+---
+
+# 9. API Design
+
+This module follows:
+
+* 004 - API Conventions
+
+## Endpoints
+
+| Method | Endpoint               | Description        | Auth Required |
+| ------ | ---------------------- | ------------------ | ------------- |
+| GET    | /roles                 | List Roles         | Yes           |
+| GET    | /roles/:id             | Get Role           | Yes           |
+| POST   | /roles                 | Create Role        | Yes           |
+| PATCH  | /roles/:id             | Update Role        | Yes           |
+| DELETE | /roles/:id             | Delete Custom Role | Yes           |
+| GET    | /permissions           | List Permissions   | Yes           |
+| PATCH  | /roles/:id/permissions | Assign Permissions | Yes           |
+| PATCH  | /users/:id/roles       | Assign Roles       | Yes           |
+
+---
+
+## Request Models
+
+### Create Role
+
+```json
+{
+    "name": "Senior Attorney",
+    "description": "Senior legal counsel"
+}
+```
+
+---
+
+### Assign Permissions
+
+```json
+{
+    "permissionIds": [
+        "...",
+        "..."
+    ]
+}
+```
+
+---
+
+### Assign Roles
+
+```json
+{
+    "roleIds": [
+        "...",
+        "..."
+    ]
+}
+```
+
+---
+
+## Response Models
+
+### Role
+
+```json
+{
+    "success": true,
+    "data": {}
+}
+```
+
+---
+
+### Permission List
+
+```json
+{
+    "success": true,
+    "data": []
+}
+```
+
+---
+
+# 10. Backend Requirements
+
+This module follows:
+
+* 002 - Module Architecture
+
+Backend module location
+
+```text
+apps/api/src/modules/roles
+```
+
+The module must implement:
+
+* Role CRUD
+* Permission Management
+* Role Assignment
+* Permission Assignment
+* Authorization Middleware
+* Permission Evaluation
+* Permission Cache (if required)
+
+Business logic belongs inside Services.
+
+Permission evaluation must be centralized.
+
+No business module may implement its own authorization logic.
+
+---
+
+# 11. Frontend Requirements
+
+This module follows:
+
+* 002 - Module Architecture
+
+Frontend module location
+
+```text
+apps/web/src/modules/roles
+```
+
+Required pages
+
+* Role List
+* Role Details
+* Create Role
+* Edit Role
+* Permission Matrix
+
+Required components
+
+* Role Table
+* Role Form
+* Permission Tree
+* Permission Matrix
+* User Role Assignment
+* Role Badge
+
+Required hooks
+
+* useRoles
+* useRole
+* usePermissions
+* useCreateRole
+* useUpdateRole
+* useAssignPermissions
+* useAssignRoles
+
+Required API client
+
+* listRoles()
+* getRole()
+* createRole()
+* updateRole()
+* deleteRole()
+* listPermissions()
+* assignPermissions()
+* assignRoles()
+
+---
+
+# 12. Security Considerations
+
+This module follows:
+
+* 005 - Security Standards
+
+The following security requirements are specific to the Roles & Permissions module.
+
+---
+
+## Authorization
+
+Every protected backend request must evaluate authorization before executing business logic.
+
+Authorization must never be performed on the frontend.
+
+---
+
+## Permission Evaluation
+
+Permissions are evaluated using the authenticated user's assigned roles.
+
+Permissions are never evaluated using user-specific permission assignments.
+
+---
+
+## Least Privilege
+
+Users should receive only the permissions required to perform their responsibilities.
+
+Avoid granting excessive permissions.
+
+---
+
+## System Roles
+
+System roles:
+
+* Cannot be deleted.
+* Cannot be renamed.
+* Cannot be deactivated.
+* Cannot lose mandatory permissions.
+
+Only custom roles are editable.
+
+---
+
+## Permission Integrity
+
+Permission definitions are owned by the system.
+
+Firms cannot create new permission codes.
+
+Firms may only assign existing permissions to custom roles.
+
+---
+
+## Cross-Firm Isolation
+
+Users may only manage:
+
+* Roles
+* Role assignments
+* Permission assignments
+
+within their own firm.
+
+Cross-firm authorization is prohibited.
+
+---
+
+## Role Assignment
+
+Only authorized users may assign or remove roles.
+
+Every role assignment must be validated before persistence.
+
+---
+
+## Authorization Middleware
+
+Every protected API endpoint must use centralized authorization middleware.
+
+Business modules must never duplicate permission evaluation logic.
+
+---
+
+# 13. Acceptance Criteria
+
+The module is complete only if all of the following are true.
+
+---
+
+## Role Management
+
+* System roles exist.
+* Custom roles can be created.
+* Custom roles can be updated.
+* Custom roles can be deleted.
+* System roles cannot be deleted.
+
+---
+
+## Permission Management
+
+* All system permissions exist.
+* Permissions can be assigned to roles.
+* Duplicate assignments are prevented.
+
+---
+
+## User Role Assignment
+
+* Users may have multiple roles.
+* Roles may be assigned.
+* Roles may be removed.
+* Effective permissions update immediately.
+
+---
+
+## Authorization
+
+* Authorized requests succeed.
+* Unauthorized requests return HTTP 403.
+* Permission evaluation is consistent across every module.
+
+---
+
+## Testing
+
+* Unit tests pass.
+* Integration tests pass.
+* Authorization middleware is tested.
+* Permission evaluation is tested.
+
+---
+
+# 14. File Manifest
+
+The implementation must create the following files.
+
+---
+
+## Backend
+
+```text
+apps/api/src/modules/roles/
+
+index.ts
+
+role.controller.ts
+
+role.service.ts
+
+role.repository.ts
+
+role.routes.ts
+
+role.validation.ts
+
+role.constants.ts
+
+role.types.ts
+
+permission.service.ts
+
+authorization.middleware.ts
+
+permission.guard.ts
+
+schemas/
+
+tests/
+```
+
+---
+
+## Frontend
+
+```text
+apps/web/src/modules/roles/
+
+pages/
+
+RoleListPage.tsx
+
+RoleDetailsPage.tsx
+
+CreateRolePage.tsx
+
+EditRolePage.tsx
+
+PermissionMatrixPage.tsx
+
+components/
+
+hooks/
+
+api/
+
+schemas/
+
+types/
+
+utils/
+
+tests/
+
+index.ts
+```
+
+---
+
+## Shared Packages
+
+Update where required:
+
+```text
+packages/types
+
+packages/validation
+```
+
+Only create shared code if it is reused across multiple modules.
+
+---
+
+# 15. Implementation Deliverables
+
+## Backend
+
+Implement:
+
+* Role Management
+* Permission Management
+* Role Assignment
+* Permission Assignment
+* Authorization Middleware
+* Permission Evaluation
+* System Role Protection
+
+---
+
+## Frontend
+
+Implement:
+
+* Role Management UI
+* Permission Matrix
+* User Role Assignment UI
+* Role API Client
+* Role Hooks
+
+---
+
+## Database
+
+Create:
+
+* roles
+* permissions
+* role_permissions
+* user_roles
+
+Implement indexes defined in this specification.
+
+Seed default system roles and permissions during initial application setup.
+
+---
+
+## Testing
+
+Implement:
+
+* Unit Tests
+* Integration Tests
+* Authorization Tests
+* Permission Evaluation Tests
+
+Roles & Permissions is considered incomplete if automated authorization tests are absent.
+
+---
+
+## Documentation
+
+Update:
+
+* API Documentation
+* Database Documentation
+* Authorization Workflow Diagram (if changed)
+
+---
+
+# 16. Future Enhancements
+
+The following capabilities are intentionally excluded from this module and will be implemented in future specifications.
+
+* Attribute-Based Access Control (ABAC)
+* Field-Level Permissions
+* Record-Level Permissions
+* Temporary Permissions
+* Delegated Permissions
+* Approval-Based Permissions
+* Permission Templates
+* Permission Audit Dashboard
+* Permission Simulation
+* External Identity Provider Integration
+
+---
+
+# 17. Definition of Done
+
+This module is complete when:
+
+* Product requirements are implemented.
+* Business rules are implemented.
+* Database collections are implemented.
+* API endpoints are implemented.
+* Backend implementation is complete.
+* Frontend implementation is complete.
+* Authorization middleware is implemented.
+* Permission evaluation is centralized.
+* Automated tests pass.
+* Manual QA passes.
+* Documentation is updated.
+* Code review is complete.
+
+---
+
+# AI Implementation Strategy
+
+Refer to the standard AI Implementation Strategy defined for all modules.
+
+The AI agent must create and maintain:
+
+```text
+docs/07-implementation/012-roles-permissions-progress.md
+```
+
+The progress document must be updated after each implementation phase and must include:
+
+* Current Phase
+* Overall Progress
+* Completed Tasks
+* Pending Tasks
+* Known Issues
+* Technical Decisions
+* Deviations from this specification (if any)
