@@ -62,6 +62,15 @@ export function DashboardLayout() {
       ),
     },
     {
+      label: "Matter Management",
+      path: "/matters",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.884 2.223v6.12c0 1.242 1.008 2.25 2.25 2.25h15a2.25 2.25 0 002.25-2.25v-6.12a2.25 2.25 0 00-1.884-2.223m-16.5 0v-1.636a2.25 2.25 0 012.25-2.25h5.518c.28 0 .55.103.757.29l1.83 1.644a1.25 1.25 0 00.839.31h5.073c.28 0 .55-.103.757-.29l1.83-1.644a1.25 1.25 0 01.839-.31h1.161v1.636" />
+        </svg>
+      ),
+    },
+    {
       label: "Conflict Check",
       path: "/conflict-checks",
       icon: (

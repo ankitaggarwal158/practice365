@@ -47,6 +47,12 @@ import {
   ClientDetailsPage,
   EditClientPage,
 } from "@/modules/clients";
+import {
+  MatterListPage,
+  CreateMatterPage,
+  MatterDetailsPage,
+  EditMatterPage,
+} from "@/modules/matters";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 
@@ -206,6 +212,22 @@ export const router = createBrowserRouter([
       {
         path: "clients/:id/edit",
         element: <EditClientPage />,
+      },
+      {
+        path: "matters",
+        element: <MatterListPage />,
+      },
+      {
+        path: "matters/new",
+        element: <CreateMatterPage />,
+      },
+      {
+        path: "matters/:id",
+        element: <MatterDetailsPage />,
+      },
+      {
+        path: "matters/:id/edit",
+        element: <EditMatterPage />,
       },
       {
         path: "conflict-checks",

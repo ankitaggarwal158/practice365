@@ -13,6 +13,7 @@ import { intakeRouter } from "./modules/intake/index.js";
 import { leadRouter } from "./modules/leads/index.js";
 import { conflictCheckRouter } from "./modules/conflict-check/index.js";
 import { clientRouter } from "./modules/clients/index.js";
+import { matterRouter } from "./modules/matters/index.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -39,6 +40,7 @@ app.use("/api", intakeRouter);
 app.use("/api", leadRouter);
 app.use("/api", conflictCheckRouter);
 app.use("/api", clientRouter);
+app.use("/api", matterRouter);
 
 // ─── Global Error Handler (must be last) ─────────────────────
 app.use(globalErrorHandler);
