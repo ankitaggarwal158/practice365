@@ -35,33 +35,34 @@ export default function ConflictDetailsPage() {
   const getResultBadgeClass = (res: string) => {
     switch (res) {
       case "NO_CONFLICT":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-success/10 text-success border border-success/20";
       case "POSSIBLE_CONFLICT":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return "bg-warning/10 text-warning border border-warning/20";
       case "CONFIRMED_CONFLICT":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-danger/10 text-danger border border-danger/20";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-white/[0.04] text-surface-200/50 border border-white/[0.08]";
     }
   };
 
   const getDecisionBadgeClass = (dec: string) => {
     switch (dec) {
       case "CLEARED":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200";
+        return "bg-success/10 text-success border border-success/20";
       case "WAIVED":
-        return "bg-orange-50 text-orange-700 border-orange-200";
+        return "bg-orange-500/10 text-orange-400 border border-orange-500/20";
       case "REJECTED":
-        return "bg-red-50 text-red-700 border-red-200";
+        return "bg-danger/10 text-danger border border-danger/20";
       default:
-        return "bg-gray-50 text-gray-500 border-dashed border-gray-200";
+        return "bg-white/[0.02] text-surface-200/40 border border-dashed border-white/[0.08]";
     }
   };
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <span className="text-gray-500 text-sm">Loading conflict check report...</span>
+      <div className="text-center py-12">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-500"></div>
+        <p className="mt-2 text-sm text-surface-200/60">Loading conflict check report...</p>
       </div>
     );
   }
@@ -69,43 +70,48 @@ export default function ConflictDetailsPage() {
   if (error || !check) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-red-50 p-4 rounded-md">
-          <p className="text-sm text-red-700">{error || "Clearance report not found."}</p>
+        <div className="bg-danger/10 border border-danger/20 p-4 rounded-xl text-center">
+          <p className="text-sm text-danger">{error || "Clearance report not found."}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full animate-fade-in">
       {/* Header */}
-      <div className="flex justify-between items-start mb-6">
-        <div>
-          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            Execution ID: {check.id}
-          </span>
-          <h1 className="text-3xl font-bold text-gray-900 mt-1">Conflict Clearance Report</h1>
-          <p className="text-sm text-gray-500 mt-1">
+      <div className="md:flex md:items-center md:justify-between mb-8 border-b border-white/[0.06] pb-6">
+        <div className="flex-1 min-w-0">
+          <button
+            onClick={() => navigate("/conflict-checks")}
+            className="flex items-center gap-2 text-sm font-medium text-surface-200/50 hover:text-white mb-4 transition-colors"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Clearance History
+          </button>
+          <div className="flex items-center space-x-3">
+            <span className="text-xs font-semibold text-surface-200/40 uppercase tracking-wider">
+              Execution ID: {check.id}
+            </span>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-white mt-2">Conflict Clearance Report</h1>
+          <p className="text-sm text-surface-200/60 mt-2">
             Executed on {new Date(check.createdAt).toLocaleString()} by {check.requestedByName || "System"}
           </p>
         </div>
-        <button
-          onClick={() => navigate("/conflict-checks")}
-          className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-        >
-          Clearance History
-        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Matches and Engine Output */}
         <div className="lg:col-span-2 space-y-6">
           {/* Result Card Banner */}
-          <div className={`p-6 rounded-lg border shadow-sm ${getResultBadgeClass(check.overallResult)}`}>
+          <div className={`p-6 rounded-2xl border shadow-sm leading-relaxed ${getResultBadgeClass(check.overallResult)}`}>
             <h2 className="text-lg font-bold uppercase tracking-wider">
               {check.overallResult.replace("_", " ")}
             </h2>
-            <p className="text-sm mt-1">
+            <p className="text-sm mt-2">
               {check.overallResult === "NO_CONFLICT"
                 ? "The clearance search did not identify any matching contacts in Leads or simulated Clients/Matters."
                 : `The clearance search flagged ${check.matches.length} matching entity record(s) requiring attorney review.`}
@@ -113,36 +119,36 @@ export default function ConflictDetailsPage() {
           </div>
 
           {/* Matches List */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-150 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">Search Match Details</h3>
+          <div className="bg-surface-900/60 backdrop-blur-md border border-white/[0.06] rounded-2xl p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-white border-b border-white/[0.04] pb-3 mb-4">Search Match Details</h3>
 
             {check.matches.length === 0 ? (
-              <p className="text-sm text-gray-500 py-4 text-center">No matching entities found.</p>
+              <p className="text-sm text-surface-200/30 py-4 text-center">No matching entities found.</p>
             ) : (
               <div className="space-y-4">
                 {check.matches.map((match, idx) => (
-                  <div key={idx} className="p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors flex justify-between items-start">
+                  <div key={idx} className="p-4 rounded-xl border border-white/[0.06] bg-surface-950/40 hover:border-white/[0.1] transition-colors flex justify-between items-start">
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-indigo-50 text-indigo-700">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-brand-500/10 text-brand-300 border border-brand-500/20">
                           {match.entityType.replace("_", " ")}
                         </span>
-                        <h4 className="text-sm font-bold text-gray-900">{match.entityName}</h4>
+                        <h4 className="text-sm font-bold text-white">{match.entityName}</h4>
                       </div>
-                      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 mt-2 text-xs">
+                      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 mt-3 text-xs leading-relaxed">
                         <div>
-                          <dt className="text-gray-400 font-semibold">Matched Field:</dt>
-                          <dd className="text-gray-800">{match.matchedField}</dd>
+                          <dt className="text-surface-200/40 font-semibold uppercase">Matched Field</dt>
+                          <dd className="text-surface-200 mt-0.5">{match.matchedField}</dd>
                         </div>
                         <div>
-                          <dt className="text-gray-400 font-semibold">Matched Value:</dt>
-                          <dd className="text-gray-800">{match.matchedValue}</dd>
+                          <dt className="text-surface-200/40 font-semibold uppercase">Matched Value</dt>
+                          <dd className="text-surface-200 mt-0.5">{match.matchedValue}</dd>
                         </div>
                       </dl>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs text-gray-400 font-semibold block">Similarity</span>
-                      <span className={`text-sm font-bold ${match.similarityScore >= 0.95 ? "text-red-600" : "text-yellow-600"}`}>
+                      <span className="text-[10px] text-surface-200/40 uppercase tracking-wider block">Similarity</span>
+                      <span className={`text-sm font-bold mt-0.5 block ${match.similarityScore >= 0.95 ? "text-danger" : "text-warning"}`}>
                         {Math.round(match.similarityScore * 100)}%
                       </span>
                     </div>
@@ -155,39 +161,39 @@ export default function ConflictDetailsPage() {
 
         {/* Clearance Decision controls */}
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-150">
-            <h3 className="text-md font-semibold text-gray-900 pb-3 border-b mb-4">Attorney Determination</h3>
+          <div className="bg-surface-900/60 backdrop-blur-md border border-white/[0.06] p-6 rounded-2xl shadow-xl">
+            <h3 className="text-md font-semibold text-white pb-3 border-b border-white/[0.04] mb-4">Attorney Determination</h3>
 
             {isPending ? (
               canReview ? (
                 <form onSubmit={handleDecisionSubmit} className="space-y-4">
                   {saveError && (
-                    <div className="bg-red-50 p-3 rounded text-xs text-red-700 mb-2">{saveError}</div>
+                    <div className="bg-danger/10 border border-danger/20 p-4 rounded-xl text-xs text-danger mb-4">{saveError}</div>
                   )}
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase mb-2">
+                    <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
                       Record Decision
                     </label>
-                    <div className="space-y-2">
+                    <div className="space-y-2.5">
                       {(["CLEARED", "WAIVED", "REJECTED"] as const).map((dec) => (
-                        <label key={dec} className="flex items-center space-x-3 cursor-pointer">
+                        <label key={dec} className="flex items-center space-x-3 cursor-pointer text-white">
                           <input
                             type="radio"
                             name="decision"
                             value={dec}
                             checked={decision === dec}
                             onChange={() => setDecision(dec)}
-                            className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            className="h-4 w-4 border-white/[0.12] bg-surface-950 text-brand-500 focus:ring-brand-500/80 cursor-pointer"
                           />
-                          <span className="text-sm font-medium text-gray-700">{dec}</span>
+                          <span className="text-sm font-semibold">{dec}</span>
                         </label>
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="reviewNotes" className="block text-xs font-bold text-gray-400 uppercase mb-1">
+                    <label htmlFor="reviewNotes" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
                       Attorney Clearance Notes
                     </label>
                     <textarea
@@ -196,7 +202,7 @@ export default function ConflictDetailsPage() {
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
                       placeholder="Add justifications, conflict waivers, or reasons for rejection..."
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white placeholder-surface-200/30 transition-all duration-200"
                       required
                     />
                   </div>
@@ -204,37 +210,37 @@ export default function ConflictDetailsPage() {
                   <button
                     type="submit"
                     disabled={isSavingDecision}
-                    className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+                    className="w-full inline-flex justify-center items-center px-4 py-2.5 bg-brand-500 hover:bg-brand-600 active:scale-95 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-brand-500/20 disabled:opacity-50 cursor-pointer"
                   >
                     {isSavingDecision ? "Recording..." : "Record Final Decision"}
                   </button>
                 </form>
               ) : (
-                <div className="bg-yellow-50 text-yellow-800 p-4 rounded border border-yellow-200 text-xs font-medium">
+                <div className="bg-warning/10 border border-warning/20 text-warning p-4 rounded-xl text-xs font-medium leading-relaxed">
                   Determination Pending: Only users with attorney privileges may record clearance decisions.
                 </div>
               )
             ) : (
               <div className="space-y-4">
-                <div className={`p-4 rounded border ${getDecisionBadgeClass(check.finalDecision)}`}>
-                  <span className="block text-xs font-bold uppercase tracking-wider">Determination</span>
-                  <span className="text-lg font-bold">{check.finalDecision}</span>
+                <div className={`p-4 rounded-xl border leading-relaxed ${getDecisionBadgeClass(check.finalDecision)}`}>
+                  <span className="block text-[10px] uppercase font-bold tracking-wider opacity-60">Determination</span>
+                  <span className="text-lg font-bold mt-1.5 block">{check.finalDecision}</span>
                 </div>
                 <div>
-                  <span className="block text-xs font-bold text-gray-400 uppercase">Reviewing Attorney</span>
-                  <p className="text-sm font-medium text-gray-900 mt-1">{check.reviewedByName || "System"}</p>
+                  <span className="block text-[10px] font-semibold text-surface-200/40 uppercase tracking-wider">Reviewing Attorney</span>
+                  <p className="text-sm font-semibold text-white mt-1">{check.reviewedByName || "System"}</p>
                 </div>
                 <div>
-                  <span className="block text-xs font-bold text-gray-400 uppercase">Clearance Notes</span>
-                  <p className="text-sm text-gray-800 mt-1 whitespace-pre-wrap">{check.reviewNotes || "No notes recorded."}</p>
+                  <span className="block text-[10px] font-semibold text-surface-200/40 uppercase tracking-wider">Clearance Notes</span>
+                  <p className="text-sm text-surface-200/80 mt-1 whitespace-pre-wrap leading-relaxed bg-surface-950/20 p-3 rounded-lg border border-white/[0.04]">{check.reviewNotes || "No notes recorded."}</p>
                 </div>
                 {check.completedAt && (
                   <div>
-                    <span className="block text-xs font-bold text-gray-400 uppercase">Finalized Date</span>
-                    <p className="text-xs text-gray-500 mt-1">{new Date(check.completedAt).toLocaleString()}</p>
+                    <span className="block text-[10px] font-semibold text-surface-200/40 uppercase tracking-wider">Finalized Date</span>
+                    <p className="text-xs text-surface-200/60 mt-1">{new Date(check.completedAt).toLocaleString()}</p>
                   </div>
                 )}
-                <div className="bg-gray-50 p-3 rounded text-[11px] text-gray-400 border">
+                <div className="bg-surface-950/40 p-3.5 rounded-xl border border-white/[0.04] text-[10px] text-surface-200/40 leading-relaxed">
                   Locked Log: This conflict decision is permanently finalized for regulatory compliance.
                 </div>
               </div>
@@ -242,13 +248,13 @@ export default function ConflictDetailsPage() {
           </div>
 
           {check.leadId && (
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-150 space-y-4">
-              <h4 className="text-xs font-bold text-gray-400 uppercase pb-2 border-b">Associated Lead Profile</h4>
+            <div className="bg-surface-900/60 backdrop-blur-md border border-white/[0.06] p-6 rounded-2xl shadow-xl space-y-4">
+              <h4 className="text-xs font-semibold text-surface-200/40 uppercase tracking-wider pb-2 border-b border-white/[0.04]">Associated Lead Profile</h4>
               <div>
-                <span className="text-xs font-semibold text-gray-400 block">Lead Reference</span>
+                <span className="text-xs text-surface-200/40 block">Lead Reference</span>
                 <Link
                   to={`/leads/${(check as any).leadId?._id}`}
-                  className="text-sm font-semibold text-indigo-600 hover:underline block"
+                  className="text-sm font-semibold text-brand-400 hover:text-brand-300 transition-colors block mt-1"
                 >
                   {(check as any).leadId?.firstName} {(check as any).leadId?.lastName} ({(check as any).leadId?.leadNumber})
                 </Link>

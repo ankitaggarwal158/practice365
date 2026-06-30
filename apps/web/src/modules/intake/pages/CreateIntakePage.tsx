@@ -28,7 +28,7 @@ export default function CreateIntakePage() {
 
   if (!canCreate) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8 text-center text-red-600 font-medium">
+      <div className="max-w-4xl mx-auto px-4 py-8 text-center text-danger font-medium">
         Access Denied. You do not have permissions to create intakes.
       </div>
     );
@@ -63,126 +63,142 @@ export default function CreateIntakePage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <div className="md:flex md:items-center md:justify-between mb-6">
-        <div className="flex-1 min-w-0">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            New Intake Capture
-          </h2>
-        </div>
+    <div className="max-w-3xl mx-auto px-4 py-8 w-full animate-fade-in">
+      <div className="mb-8">
+        <button
+          onClick={() => navigate("/intakes")}
+          className="flex items-center gap-2 text-sm font-medium text-surface-200/50 hover:text-white mb-4 transition-colors"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Intakes
+        </button>
+        <h1 className="text-3xl font-bold tracking-tight text-white">New Intake Capture</h1>
+        <p className="mt-2 text-sm text-surface-200/60">
+          Capture prospective client inquiries and routing information.
+        </p>
       </div>
 
       {(validationError || saveError) && (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-md">
-          <p className="text-sm text-red-700">{validationError || saveError}</p>
+        <div className="bg-danger/10 border border-danger/20 p-4 rounded-xl mb-6">
+          <p className="text-sm text-danger">{validationError || saveError}</p>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow">
-        <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-          <div className="sm:col-span-3">
-            <label className="block text-sm font-medium text-gray-700">First Name *</label>
-            <input
-              type="text"
-              name="firstName"
-              required
-              value={formData.firstName}
-              onChange={handleChange}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-            />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-surface-900/60 backdrop-blur-md border border-white/[0.06] p-6 rounded-2xl space-y-6 shadow-xl">
+          <h2 className="text-lg font-semibold text-white border-b border-white/[0.04] pb-3">Primary Information</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">First Name *</label>
+              <input
+                type="text"
+                name="firstName"
+                required
+                value={formData.firstName}
+                onChange={handleChange}
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">Last Name *</label>
+              <input
+                type="text"
+                name="lastName"
+                required
+                value={formData.lastName}
+                onChange={handleChange}
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
+              />
+            </div>
           </div>
 
-          <div className="sm:col-span-3">
-            <label className="block text-sm font-medium text-gray-700">Last Name *</label>
-            <input
-              type="text"
-              name="lastName"
-              required
-              value={formData.lastName}
-              onChange={handleChange}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-            />
-          </div>
-
-          <div className="sm:col-span-6">
-            <label className="block text-sm font-medium text-gray-700">Company Name</label>
+          <div>
+            <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">Company Name</label>
             <input
               type="text"
               name="companyName"
               value={formData.companyName}
               onChange={handleChange}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
             />
           </div>
 
-          <div className="sm:col-span-3">
-            <label className="block text-sm font-medium text-gray-700">Email Address</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">Phone Number</label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
+              />
+            </div>
           </div>
 
-          <div className="sm:col-span-3">
-            <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">Preferred Contact Method</label>
+              <select
+                name="preferredContactMethod"
+                value={formData.preferredContactMethod}
+                onChange={handleChange}
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200 cursor-pointer"
+              >
+                <option value="EMAIL">Email</option>
+                <option value="PHONE">Phone Call</option>
+                <option value="SMS">SMS</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">Source *</label>
+              <select
+                name="source"
+                value={formData.source}
+                onChange={handleChange}
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200 cursor-pointer"
+              >
+                <option value="WEBSITE">Website</option>
+                <option value="PHONE">Phone Call</option>
+                <option value="EMAIL">Email</option>
+                <option value="WALK_IN">Walk-In</option>
+                <option value="REFERRAL">Referral</option>
+                <option value="ADVERTISEMENT">Advertisement</option>
+                <option value="MANUAL">Manual Entry</option>
+              </select>
+            </div>
           </div>
 
-          <div className="sm:col-span-3">
-            <label className="block text-sm font-medium text-gray-700">Preferred Contact Method</label>
-            <select
-              name="preferredContactMethod"
-              value={formData.preferredContactMethod}
-              onChange={handleChange}
-              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="EMAIL">Email</option>
-              <option value="PHONE">Phone Call</option>
-              <option value="SMS">SMS</option>
-            </select>
-          </div>
-
-          <div className="sm:col-span-3">
-            <label className="block text-sm font-medium text-gray-700">Source *</label>
-            <select
-              name="source"
-              value={formData.source}
-              onChange={handleChange}
-              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="WEBSITE">Website</option>
-              <option value="PHONE">Phone Call</option>
-              <option value="EMAIL">Email</option>
-              <option value="WALK_IN">Walk-In</option>
-              <option value="REFERRAL">Referral</option>
-              <option value="ADVERTISEMENT">Advertisement</option>
-              <option value="MANUAL">Manual Entry</option>
-            </select>
-          </div>
-
-          <div className="sm:col-span-6">
-            <label className="block text-sm font-medium text-gray-700">Practice Area</label>
+          <div>
+            <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">Practice Area</label>
             <input
               type="text"
               name="practiceArea"
               placeholder="e.g. Criminal Defense, Family Law"
               value={formData.practiceArea}
               onChange={handleChange}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
             />
           </div>
 
-          <div className="sm:col-span-6">
-            <label className="block text-sm font-medium text-gray-700">Subject / Inquiry Title *</label>
+          <div>
+            <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">Subject / Inquiry Title *</label>
             <input
               type="text"
               name="subject"
@@ -190,34 +206,35 @@ export default function CreateIntakePage() {
               placeholder="Brief summary of inquiry"
               value={formData.subject}
               onChange={handleChange}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white placeholder-surface-200/30 transition-all duration-200"
             />
           </div>
 
-          <div className="sm:col-span-6">
-            <label className="block text-sm font-medium text-gray-700">Inquiry Details / Description</label>
+          <div>
+            <label className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">Inquiry Details / Description</label>
             <textarea
               name="description"
               rows={4}
+              placeholder="Outline the inquiry details, background, and expected work..."
               value={formData.description}
               onChange={handleChange}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-300 rounded-md"
+              className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white placeholder-surface-200/30 transition-all duration-200"
             />
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <div className="flex justify-end space-x-3 pt-4 border-t border-white/[0.06]">
           <button
             type="button"
             onClick={() => navigate("/intakes")}
-            className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+            className="px-5 py-2.5 border border-white/[0.08] rounded-xl text-sm font-semibold text-surface-200/80 hover:bg-white/[0.02] active:scale-95 transition-all duration-200 cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSaving}
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none disabled:opacity-50"
+            className="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 active:scale-95 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-brand-500/20 disabled:opacity-50 cursor-pointer"
           >
             {isSaving ? "Saving..." : "Create Intake"}
           </button>

@@ -17,7 +17,7 @@ function buildQueryString(params?: Record<string, any>): string {
 
 export const conflictCheckApi = {
   listConflictChecks: (params?: { page?: number; limit?: number }) =>
-    httpClient.get<PaginatedConflictChecks>(`/conflict-checks${buildQueryString(params)}`),
+    httpClient.getPaginated<ConflictCheck>(`/conflict-checks${buildQueryString(params)}`),
 
   getConflictCheck: (id: string) =>
     httpClient.get<ConflictCheck>(`/conflict-checks/${id}`),

@@ -28,7 +28,7 @@ function buildQueryString(params?: Record<string, any>): string {
 
 export const clientApi = {
   listClients: (params: ListClientsParams) =>
-    httpClient.get<PaginatedClients>(`/clients${buildQueryString(params)}`),
+    httpClient.getPaginated<Client>(`/clients${buildQueryString(params)}`),
 
   getClient: (id: string) =>
     httpClient.get<Client>(`/clients/${id}`),

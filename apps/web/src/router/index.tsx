@@ -55,6 +55,7 @@ import {
 } from "@/modules/matters";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
+import { ErrorFallback } from "@/components/ErrorFallback";
 
 /**
  * Placeholder dashboard shown after login.
@@ -116,6 +117,7 @@ export const router = createBrowserRouter([
         <DashboardLayout />
       </ProtectedRoute>
     ),
+    errorElement: <ErrorFallback />,
     children: [
       {
         path: "",

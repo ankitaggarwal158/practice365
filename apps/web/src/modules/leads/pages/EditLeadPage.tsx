@@ -47,7 +47,7 @@ export default function EditLeadPage() {
 
   if (!canUpdate) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8 text-center text-red-600 font-semibold">
+      <div className="max-w-4xl mx-auto px-4 py-8 text-center text-danger font-semibold">
         Access Denied. You do not have permissions to modify lead records.
       </div>
     );
@@ -56,7 +56,8 @@ export default function EditLeadPage() {
   if (isLoadingLead) {
     return (
       <div className="flex justify-center items-center py-12">
-        <span className="text-gray-500 text-sm">Loading lead profile...</span>
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-500"></div>
+        <span className="ml-3 text-surface-200/60 text-sm">Loading lead profile...</span>
       </div>
     );
   }
@@ -64,8 +65,8 @@ export default function EditLeadPage() {
   if (loadError || !lead) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-red-50 p-4 rounded-md">
-          <p className="text-sm text-red-700">{loadError || "Lead record not found."}</p>
+        <div className="bg-danger/10 border border-danger/20 p-4 rounded-xl">
+          <p className="text-sm text-danger">{loadError || "Lead record not found."}</p>
         </div>
       </div>
     );
@@ -74,13 +75,13 @@ export default function EditLeadPage() {
   if (lead.status === "CONVERTED") {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200">
-          <p className="text-sm text-yellow-800 font-semibold">
+        <div className="bg-brand-500/10 p-4 rounded-xl border border-brand-500/20">
+          <p className="text-sm text-brand-300 font-semibold mb-3">
             Locked Record: This lead has been converted into a client and cannot be modified.
           </p>
           <button
             onClick={() => navigate(`/leads/${lead.id}`)}
-            className="mt-3 inline-flex items-center px-4 py-1.5 border border-gray-300 text-xs font-semibold rounded text-gray-700 bg-white hover:bg-gray-50"
+            className="px-4 py-2 border border-white/[0.08] rounded-xl text-xs font-semibold text-surface-200/80 hover:bg-white/[0.02] active:scale-95 transition-all duration-200 cursor-pointer"
           >
             Go back to profile
           </button>
@@ -118,25 +119,35 @@ export default function EditLeadPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Edit Lead details</h1>
-        <p className="mt-1 text-sm text-gray-500">Update contact or requirements for lead {lead.leadNumber}.</p>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full animate-fade-in">
+      <div className="mb-8">
+        <button
+          onClick={() => navigate(`/leads/${lead.id}`)}
+          className="flex items-center gap-2 text-sm font-medium text-surface-200/50 hover:text-white mb-4 transition-colors"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Cancel
+        </button>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Edit Lead Details</h1>
+        <p className="mt-2 text-sm text-surface-200/60">Update contact or requirements for lead {lead.leadNumber}.</p>
       </div>
 
-      <div className="bg-white shadow rounded-lg p-6 border border-gray-150">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {validationError && (
-            <div className="bg-red-50 p-3 rounded-md text-sm text-red-700">{validationError}</div>
-          )}
-          {saveError && (
-            <div className="bg-red-50 p-3 rounded-md text-sm text-red-700">{saveError}</div>
-          )}
+      {(validationError || saveError) && (
+        <div className="bg-danger/10 border border-danger/20 p-4 rounded-xl mb-6">
+          <p className="text-sm text-danger">{validationError || saveError}</p>
+        </div>
+      )}
 
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-surface-900/60 backdrop-blur-md border border-white/[0.06] p-6 rounded-2xl space-y-6 shadow-xl">
+          <h2 className="text-lg font-semibold text-white border-b border-white/[0.04] pb-3">Lead Information</h2>
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                First Name <span className="text-red-500">*</span>
+              <label htmlFor="firstName" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
+                First Name *
               </label>
               <input
                 type="text"
@@ -144,14 +155,14 @@ export default function EditLeadPage() {
                 id="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-305 border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                Last Name <span className="text-red-500">*</span>
+              <label htmlFor="lastName" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
+                Last Name *
               </label>
               <input
                 type="text"
@@ -159,13 +170,13 @@ export default function EditLeadPage() {
                 id="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-305 border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="companyName" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
                 Company Name
               </label>
               <input
@@ -174,12 +185,12 @@ export default function EditLeadPage() {
                 id="companyName"
                 value={formData.companyName}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-305 border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
               />
             </div>
 
             <div>
-              <label htmlFor="preferredContactMethod" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="preferredContactMethod" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
                 Preferred Contact Method
               </label>
               <select
@@ -187,7 +198,7 @@ export default function EditLeadPage() {
                 id="preferredContactMethod"
                 value={formData.preferredContactMethod}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-305 border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200 cursor-pointer"
               >
                 <option value="EMAIL">Email</option>
                 <option value="PHONE">Phone</option>
@@ -196,7 +207,7 @@ export default function EditLeadPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
                 Email Address
               </label>
               <input
@@ -205,12 +216,12 @@ export default function EditLeadPage() {
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-305 border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
               />
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="phone" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
                 Phone Number
               </label>
               <input
@@ -219,12 +230,12 @@ export default function EditLeadPage() {
                 id="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-305 border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label htmlFor="practiceArea" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="practiceArea" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
                 Practice Area
               </label>
               <input
@@ -234,14 +245,14 @@ export default function EditLeadPage() {
                 placeholder="Family Law, Corporate, Real Estate..."
                 value={formData.practiceArea}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-305 border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
-              Subject / Opportunity Summary <span className="text-red-500">*</span>
+            <label htmlFor="subject" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
+              Subject / Opportunity Summary *
             </label>
             <input
               type="text"
@@ -249,43 +260,44 @@ export default function EditLeadPage() {
               id="subject"
               value={formData.subject}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-350 border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+              className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="description" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
               Detailed Description
             </label>
             <textarea
               name="description"
               id="description"
               rows={4}
+              placeholder="Provide background information, timeline, and core query details..."
               value={formData.description}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-350 border shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+              className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white placeholder-surface-200/30 transition-all duration-200"
             />
           </div>
+        </div>
 
-          <div className="flex justify-end space-x-3 pt-4 border-t">
-            <button
-              type="button"
-              onClick={() => navigate(`/leads/${lead.id}`)}
-              className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none disabled:opacity-50"
-            >
-              {isSaving ? "Saving changes..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="flex justify-end space-x-3 pt-4 border-t border-white/[0.06]">
+          <button
+            type="button"
+            onClick={() => navigate(`/leads/${lead.id}`)}
+            className="px-5 py-2.5 border border-white/[0.08] rounded-xl text-sm font-semibold text-surface-200/80 hover:bg-white/[0.02] active:scale-95 transition-all duration-200 cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 active:scale-95 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-brand-500/20 disabled:opacity-50 cursor-pointer"
+          >
+            {isSaving ? "Saving changes..." : "Save Changes"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

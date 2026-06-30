@@ -28,7 +28,7 @@ function buildQueryString(params?: Record<string, any>): string {
 
 export const intakeApi = {
   listIntakes: (params: ListIntakesParams) =>
-    httpClient.get<PaginatedIntakes>(`/intakes${buildQueryString(params)}`),
+    httpClient.getPaginated<Intake>(`/intakes${buildQueryString(params)}`),
 
   getIntake: (id: string) =>
     httpClient.get<Intake>(`/intakes/${id}`),

@@ -29,7 +29,7 @@ function buildQueryString(params?: Record<string, any>): string {
 
 export const leadApi = {
   listLeads: (params: ListLeadsParams) =>
-    httpClient.get<PaginatedLeads>(`/leads${buildQueryString(params)}`),
+    httpClient.getPaginated<Lead>(`/leads${buildQueryString(params)}`),
 
   getLead: (id: string) =>
     httpClient.get<Lead>(`/leads/${id}`),

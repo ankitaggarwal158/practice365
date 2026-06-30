@@ -30,7 +30,7 @@ function buildQueryString(params?: Record<string, any>): string {
 
 export const matterApi = {
   listMatters: (params: ListMattersParams) =>
-    httpClient.get<PaginatedMatters>(`/matters${buildQueryString(params)}`),
+    httpClient.getPaginated<Matter>(`/matters${buildQueryString(params)}`),
 
   getMatter: (id: string) =>
     httpClient.get<Matter>(`/matters/${id}`),
