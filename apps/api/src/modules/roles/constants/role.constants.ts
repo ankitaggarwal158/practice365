@@ -35,6 +35,10 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   { code: "MATTERS_CREATE", name: "Create Matters", module: "Matters", description: "Create new legal matters." },
   { code: "MATTERS_UPDATE", name: "Update Matters", module: "Matters", description: "Edit matter details and statuses." },
 
+  // Practice Areas module permissions
+  { code: "PRACTICE_AREAS_VIEW", name: "View Practice Areas", module: "Practice Areas", description: "View firm practice areas." },
+  { code: "PRACTICE_AREAS_MANAGE", name: "Manage Practice Areas", module: "Practice Areas", description: "Create, update, and delete firm practice areas." },
+
   // Documents module permissions
   { code: "DOCUMENTS_UPLOAD", name: "Upload Documents", module: "Documents", description: "Upload files to legal matters." },
 
@@ -102,6 +106,7 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "MATTERS_VIEW",
       "MATTERS_CREATE",
       "MATTERS_UPDATE",
+      "PRACTICE_AREAS_VIEW",
       "DOCUMENTS_UPLOAD",
       "TIME_ENTRIES_CREATE",
       "FIRM_VIEW",
@@ -127,6 +132,7 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "USERS_VIEW",
       "CLIENTS_VIEW",
       "MATTERS_VIEW",
+      "PRACTICE_AREAS_VIEW",
       "DOCUMENTS_UPLOAD",
       "TIME_ENTRIES_CREATE",
       "FIRM_VIEW",
@@ -147,6 +153,7 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "USERS_VIEW",
       "CLIENTS_VIEW",
       "MATTERS_VIEW",
+      "PRACTICE_AREAS_VIEW",
       "DOCUMENTS_UPLOAD",
       "FIRM_VIEW",
       "INTAKES_VIEW",

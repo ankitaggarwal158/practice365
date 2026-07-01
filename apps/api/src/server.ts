@@ -14,6 +14,7 @@ import { leadRouter } from "./modules/leads/index.js";
 import { conflictCheckRouter } from "./modules/conflict-check/index.js";
 import { clientRouter } from "./modules/clients/index.js";
 import { matterRouter } from "./modules/matters/index.js";
+import { practiceAreaRouter } from "./modules/practice-areas/index.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -41,6 +42,7 @@ app.use("/api", leadRouter);
 app.use("/api", conflictCheckRouter);
 app.use("/api", clientRouter);
 app.use("/api", matterRouter);
+app.use("/api", practiceAreaRouter);
 
 // ─── Global Error Handler (must be last) ─────────────────────
 app.use(globalErrorHandler);

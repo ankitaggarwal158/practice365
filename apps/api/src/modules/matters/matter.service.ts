@@ -10,35 +10,7 @@ import { ConflictCheck } from "../conflict-check/schemas/conflict-check.schema.j
 import { Firm } from "../firm/schemas/firm.schema.js";
 import { User } from "../users/schemas/user.schema.js";
 import { MatterResponseData } from "./matter.types.js";
-
-const DEFAULT_PRACTICE_AREAS = [
-  "Civil Litigation",
-  "Criminal Law",
-  "Family Law",
-  "Corporate Law",
-  "Real Estate",
-  "Employment Law",
-  "Immigration",
-  "Estate Planning",
-];
-
-// ─── Practice Areas Lookup & Seed ─────────────────────────────
-
-export async function listPracticeAreas(firmId: string): Promise<any[]> {
-  let list = await matterRepository.findPracticeAreasForFirm(firmId);
-  if (list.length === 0) {
-    const promises = DEFAULT_PRACTICE_AREAS.map((name) =>
-      matterRepository.createPracticeArea(firmId, name)
-    );
-    await Promise.all(promises);
-    list = await matterRepository.findPracticeAreasForFirm(firmId);
-  }
-  return list.map((pa) => ({
-    id: pa._id.toString(),
-    firmId: pa.firmId.toString(),
-    name: pa.name,
-  }));
-}
+import { PracticeArea } from "../practice-areas/index.js";
 
 // ─── Number Generation ────────────────────────────────────────
 
@@ -153,11 +125,15 @@ export async function createMatter(
     throw AppError.badRequest(MATTER_ERROR_MESSAGES.CLIENT_NOT_FOUND);
   }
 
-  // Ensure practice areas seeded & validate Practice Area
-  await listPracticeAreas(firmId);
-  const practiceArea = await matterRepository.findPracticeAreaById(data.practiceAreaId, firmId);
+  // Validate Practice Area (must exist, same firm, active, not soft deleted)
+  const practiceArea = await PracticeArea.findOne({
+    _id: new Types.ObjectId(data.practiceAreaId),
+    firmId: new Types.ObjectId(firmId),
+    isActive: true,
+    deleted: false,
+  });
   if (!practiceArea) {
-    throw AppError.badRequest(MATTER_ERROR_MESSAGES.PRACTICE_AREA_NOT_FOUND);
+    throw AppError.badRequest("Invalid, inactive, or deleted practice area selected.");
   }
 
   // Validate Responsible Attorney
@@ -238,9 +214,14 @@ export async function updateMatter(
 
   // If changing practice area, validate it
   if (data.practiceAreaId) {
-    const pa = await matterRepository.findPracticeAreaById(data.practiceAreaId, firmId);
+    const pa = await PracticeArea.findOne({
+      _id: new Types.ObjectId(data.practiceAreaId),
+      firmId: new Types.ObjectId(firmId),
+      isActive: true,
+      deleted: false,
+    });
     if (!pa) {
-      throw AppError.badRequest(MATTER_ERROR_MESSAGES.PRACTICE_AREA_NOT_FOUND);
+      throw AppError.badRequest("Invalid, inactive, or deleted practice area selected.");
     }
   }
 

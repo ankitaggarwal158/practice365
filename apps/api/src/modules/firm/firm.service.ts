@@ -2,6 +2,7 @@ import { AppError } from "../../shared/app-error.js";
 import { FIRM_ERROR_MESSAGES } from "./firm.constants.js";
 import * as firmRepository from "./firm.repository.js";
 import { FirmDocument, FirmResponseData, UpdateFirmRequest, UpdateFirmBrandingRequest } from "./firm.types.js";
+import { practiceAreaSeeder } from "../practice-areas/index.js";
 
 export function formatFirm(firm: FirmDocument): FirmResponseData {
   return {
@@ -36,6 +37,10 @@ export function formatFirm(firm: FirmDocument): FirmResponseData {
 
 export async function getFirmProfile(id: string): Promise<FirmResponseData> {
   const firm = await firmRepository.findOrCreate(id);
+  
+  // Ensure practice areas are seeded for this firm
+  await practiceAreaSeeder.seedPracticeAreasForFirm(id);
+
   return formatFirm(firm);
 }
 

@@ -53,6 +53,11 @@ import {
   MatterDetailsPage,
   EditMatterPage,
 } from "@/modules/matters";
+import {
+  PracticeAreaListPage,
+  CreatePracticeAreaPage,
+  EditPracticeAreaPage,
+} from "@/modules/practice-areas";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 import { ErrorFallback } from "@/components/ErrorFallback";
@@ -161,6 +166,28 @@ export const router = createBrowserRouter([
       },
       {
         path: "firm/settings",
+        element: <FirmSettingsPage />,
+      },
+      {
+        path: "firm/branding",
+        element: <FirmBrandingPage />,
+      },
+      {
+        path: "practice-areas",
+        element: <PracticeAreaListPage />,
+      },
+      {
+        path: "practice-areas/new",
+        element: <CreatePracticeAreaPage />,
+      },
+      {
+        path: "practice-areas/:id/edit",
+        element: <EditPracticeAreaPage />,
+      },
+      
+      // Settings catch-all
+      {
+        path: "settings",
         element: <FirmSettingsPage />,
       },
       {

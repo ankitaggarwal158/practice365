@@ -4,7 +4,6 @@ import {
   MatterTeamMember,
   MatterNote,
   MatterAttachment,
-  PracticeArea,
   Document,
 } from "./schemas/matter.schema.js";
 import {
@@ -12,9 +11,10 @@ import {
   MatterTeamMemberDocument,
   MatterNoteDocument,
   MatterAttachmentDocument,
-  PracticeAreaDocument,
   DocumentDocument,
 } from "./matter.types.js";
+import { PracticeArea } from "../practice-areas/index.js";
+import { PracticeAreaDocument } from "../practice-areas/practice-area.types.js";
 
 // ─── Matter Operations ──────────────────────────────────────────
 
@@ -329,43 +329,4 @@ export async function deleteAttachment(
   return MatterAttachment.findByIdAndDelete(attachmentId);
 }
 
-// ─── Practice Area Operations ──────────────────────────────────
 
-export async function findPracticeAreasForFirm(
-  firmId: string
-): Promise<PracticeAreaDocument[]> {
-  if (!Types.ObjectId.isValid(firmId)) return [];
-  return PracticeArea.find({ firmId: new Types.ObjectId(firmId) }).sort({ name: 1 }).exec();
-}
-
-export async function findPracticeAreaById(
-  id: string,
-  firmId: string
-): Promise<PracticeAreaDocument | null> {
-  if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(firmId)) return null;
-  return PracticeArea.findOne({
-    _id: new Types.ObjectId(id),
-    firmId: new Types.ObjectId(firmId),
-  });
-}
-
-export async function findPracticeAreaByName(
-  name: string,
-  firmId: string
-): Promise<PracticeAreaDocument | null> {
-  if (!Types.ObjectId.isValid(firmId)) return null;
-  return PracticeArea.findOne({
-    name,
-    firmId: new Types.ObjectId(firmId),
-  });
-}
-
-export async function createPracticeArea(
-  firmId: string,
-  name: string
-): Promise<PracticeAreaDocument> {
-  return PracticeArea.create({
-    firmId: new Types.ObjectId(firmId),
-    name,
-  });
-}

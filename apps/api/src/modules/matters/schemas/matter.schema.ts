@@ -4,19 +4,10 @@ import {
   MatterTeamMemberDocument,
   MatterNoteDocument,
   MatterAttachmentDocument,
-  PracticeAreaDocument,
+  MatterAttachmentDocument,
   DocumentDocument,
 } from "../matter.types.js";
 
-// Practice Area Schema
-const practiceAreaSchema = new Schema<PracticeAreaDocument>(
-  {
-    firmId: { type: Schema.Types.ObjectId, required: true, ref: "Firm", index: true },
-    name: { type: String, required: true, trim: true },
-  },
-  { timestamps: true, collection: "practice_areas" }
-);
-practiceAreaSchema.index({ firmId: 1, name: 1 }, { unique: true });
 
 // Shared Document Metadata Schema
 const documentSchema = new Schema<DocumentDocument>(
@@ -122,7 +113,6 @@ const matterAttachmentSchema = new Schema<MatterAttachmentDocument>(
   }
 );
 
-export const PracticeArea = mongoose.model<PracticeAreaDocument>("PracticeArea", practiceAreaSchema);
 export const Document = mongoose.model<DocumentDocument>("Document", documentSchema);
 export const Matter = mongoose.model<MatterDocument>("Matter", matterSchema);
 export const MatterTeamMember = mongoose.model<MatterTeamMemberDocument>("MatterTeamMember", matterTeamMemberSchema);

@@ -66,13 +66,7 @@ export interface DocumentDocument extends Document {
   updatedAt: Date;
 }
 
-export interface PracticeAreaDocument extends Document {
-  _id: Types.ObjectId;
-  firmId: Types.ObjectId;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+
 
 export interface MatterResponseData {
   id: string;

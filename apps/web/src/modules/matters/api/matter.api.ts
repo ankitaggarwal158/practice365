@@ -75,5 +75,5 @@ export const matterApi = {
     httpClient.delete<Matter>(`/matters/${id}/attachments/${attachmentId}`),
 
   listPracticeAreas: () =>
-    httpClient.get<PracticeArea[]>("/matters/practice-areas"),
+    httpClient.get<PracticeArea[]>("/practice-areas/active"),
 };
