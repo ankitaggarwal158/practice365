@@ -76,6 +76,14 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   { code: "CONFLICT_VIEW", name: "View Conflict Checks", module: "Conflict Check", description: "View list and details of conflict checks." },
   { code: "CONFLICT_RUN", name: "Execute Conflict Checks", module: "Conflict Check", description: "Run conflict checks and ad-hoc searches." },
   { code: "CONFLICT_REVIEW", name: "Review Conflict Checks", module: "Conflict Check", description: "Record final attorney conflict review decisions." },
+
+  // Opposing Parties module permissions
+  { code: "OPPOSING_PARTIES_VIEW", name: "View Opposing Parties", module: "Opposing Parties", description: "View list and details of opposing parties." },
+  { code: "OPPOSING_PARTIES_MANAGE", name: "Manage Opposing Parties", module: "Opposing Parties", description: "Create, update, archive, and delete opposing parties." },
+
+  // Matter Contacts module permissions
+  { code: "MATTER_CONTACTS_VIEW", name: "View Matter Contacts", module: "Matter Contacts", description: "View list and details of matter contacts." },
+  { code: "MATTER_CONTACTS_MANAGE", name: "Manage Matter Contacts", module: "Matter Contacts", description: "Create, update, archive, and delete matter contacts." },
 ];
 
 export interface SystemRoleDef {
@@ -123,6 +131,10 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "CONFLICT_VIEW",
       "CONFLICT_RUN",
       "CONFLICT_REVIEW",
+      "OPPOSING_PARTIES_VIEW",
+      "OPPOSING_PARTIES_MANAGE",
+      "MATTER_CONTACTS_VIEW",
+      "MATTER_CONTACTS_MANAGE",
     ],
   },
   {
@@ -144,6 +156,10 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "LEADS_UPDATE",
       "CONFLICT_VIEW",
       "CONFLICT_RUN",
+      "OPPOSING_PARTIES_VIEW",
+      "OPPOSING_PARTIES_MANAGE",
+      "MATTER_CONTACTS_VIEW",
+      "MATTER_CONTACTS_MANAGE",
     ],
   },
   {
@@ -162,6 +178,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "LEADS_CREATE",
       "CONFLICT_VIEW",
       "CONFLICT_RUN",
+      "OPPOSING_PARTIES_VIEW",
+      "MATTER_CONTACTS_VIEW",
     ],
   },
 ];

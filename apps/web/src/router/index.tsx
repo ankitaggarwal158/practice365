@@ -58,6 +58,18 @@ import {
   CreatePracticeAreaPage,
   EditPracticeAreaPage,
 } from "@/modules/practice-areas";
+import {
+  OpposingPartyListPage,
+  OpposingPartyDetailsPage,
+  CreateOpposingPartyPage,
+  EditOpposingPartyPage,
+} from "@/modules/opposing-parties";
+import {
+  MatterContactListPage,
+  MatterContactDetailsPage,
+  CreateMatterContactPage,
+  EditMatterContactPage,
+} from "@/modules/matter-contacts";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 import { ErrorFallback } from "@/components/ErrorFallback";
@@ -183,6 +195,38 @@ export const router = createBrowserRouter([
       {
         path: "practice-areas/:id/edit",
         element: <EditPracticeAreaPage />,
+      },
+      {
+        path: "opposing-parties",
+        element: <OpposingPartyListPage />,
+      },
+      {
+        path: "opposing-parties/new",
+        element: <CreateOpposingPartyPage />,
+      },
+      {
+        path: "opposing-parties/:id",
+        element: <OpposingPartyDetailsPage />,
+      },
+      {
+        path: "opposing-parties/:id/edit",
+        element: <EditOpposingPartyPage />,
+      },
+      {
+        path: "matter-contacts",
+        element: <MatterContactListPage />,
+      },
+      {
+        path: "matter-contacts/new",
+        element: <CreateMatterContactPage />,
+      },
+      {
+        path: "matter-contacts/:id",
+        element: <MatterContactDetailsPage />,
+      },
+      {
+        path: "matter-contacts/:id/edit",
+        element: <EditMatterContactPage />,
       },
       
       // Settings catch-all

@@ -15,6 +15,8 @@ import { conflictCheckRouter } from "./modules/conflict-check/index.js";
 import { clientRouter } from "./modules/clients/index.js";
 import { matterRouter } from "./modules/matters/index.js";
 import { practiceAreaRouter } from "./modules/practice-areas/index.js";
+import { opposingPartyRouter } from "./modules/opposing-parties/index.js";
+import { matterContactRouter } from "./modules/matter-contacts/index.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -43,6 +45,8 @@ app.use("/api", conflictCheckRouter);
 app.use("/api", clientRouter);
 app.use("/api", matterRouter);
 app.use("/api", practiceAreaRouter);
+app.use("/api", opposingPartyRouter);
+app.use("/api", matterContactRouter);
 
 // ─── Global Error Handler (must be last) ─────────────────────
 app.use(globalErrorHandler);

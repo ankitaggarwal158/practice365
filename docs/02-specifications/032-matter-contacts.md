@@ -9,11 +9,11 @@
 >
 > Where a conflict exists, the Foundation and Architecture documents take precedence over this module unless this module explicitly overrides a rule with justification.
 
-# 031 - Opposing Parties
+# 032 - Matter Contacts
 
-**Module ID:** 031
+**Module ID:** 032
 
-**Module Name:** Opposing Parties
+**Module Name:** Matter Contacts
 
 **Module Category:** Core Supporting Module
 
@@ -43,13 +43,24 @@ These documents define the global engineering standards for Practice365 and are 
 
 # 1. Purpose
 
-The Opposing Parties module manages every person or organization representing the opposing side of a legal matter.
+The Matter Contacts module manages all contacts associated with a Matter that are not Clients or Opposing Parties.
 
-Opposing Parties are associated with Matters and are a primary input to the Conflict Check process.
+Matter Contacts provide a centralized directory of individuals and organizations involved in legal work, enabling reuse across multiple Matters.
 
-The same opposing party may appear across multiple Matters.
+Examples include:
 
-The module provides centralized management of opposing party information to avoid duplicate records and improve conflict detection.
+* Witnesses
+* Expert Witnesses
+* Judges
+* Mediators
+* Arbitrators
+* Court Clerks
+* Insurance Adjusters
+* Government Officials
+* Third-Party Contacts
+* Other External Contacts
+
+A Matter may have multiple Contacts, and a Contact may be associated with multiple Matters.
 
 ---
 
@@ -57,12 +68,12 @@ The module provides centralized management of opposing party information to avoi
 
 This module includes:
 
-* Opposing Party Management
-* Individual Opposing Parties
-* Organization Opposing Parties
+* Contact Management
+* Individual Contacts
+* Organization Contacts
 * Matter Association
-* Conflict Check Integration
-* Opposing Party Search
+* Contact Roles
+* Contact Search
 * Duplicate Detection
 * Archive
 
@@ -73,10 +84,10 @@ This module includes:
 This module does not include:
 
 * Client Management
-* Matter Management
-* Contact Management
-* Court Management
-* Conflict Resolution
+* Opposing Party Management
+* Internal Users
+* Email Communication
+* Calendar Invitations
 
 These capabilities are implemented by other modules.
 
@@ -90,30 +101,29 @@ Business Module Dependencies
 * 011 User Management
 * 012 Roles & Permissions
 * 013 Firm Management
-* 022 Conflict Check
-* 023 Client Management
 * 024 Matter Management
 
 Referenced By
 
-* Conflict Check
-* Matter Management
+* Calendar
+* Tasks
+* Documents
+* Email
 * Reporting
-* Search
 
 ---
 
 # 5. Business Requirements
 
-## OPPOSINGPARTY-001
+## CONTACT-001
 
-Every Opposing Party belongs to exactly one firm.
+Every Matter Contact belongs to exactly one firm.
 
 ---
 
-## OPPOSINGPARTY-002
+## CONTACT-002
 
-Each Opposing Party is either:
+Each Matter Contact is either:
 
 * Individual
 * Organization
@@ -122,105 +132,119 @@ The type cannot be changed after creation.
 
 ---
 
-## OPPOSINGPARTY-003
+## CONTACT-003
 
-An Opposing Party may be associated with multiple Matters.
+A Matter Contact may be linked to multiple Matters.
 
-A Matter may contain multiple Opposing Parties.
+A Matter may contain multiple Contacts.
 
 ---
 
-## OPPOSINGPARTY-004
+## CONTACT-004
 
-Duplicate Opposing Parties should be minimized.
+Each Matter association records the Contact's role.
+
+Examples include:
+
+* Witness
+* Expert Witness
+* Judge
+* Mediator
+* Arbitrator
+* Court Clerk
+* Insurance Adjuster
+* Government Official
+* Consultant
+* Other
+
+---
+
+## CONTACT-005
+
+Duplicate Matter Contacts should be minimized.
 
 The system should assist users by detecting potential duplicates.
 
 ---
 
-## OPPOSINGPARTY-005
+## CONTACT-006
 
-Opposing Parties may be archived.
+Matter Contacts may be archived.
 
-Historical Matter relationships must remain intact.
+Historical Matter associations remain intact.
 
 ---
 
-## OPPOSINGPARTY-006
+## CONTACT-007
 
-Opposing Parties are never permanently deleted.
+Matter Contacts are never permanently deleted.
 
 Soft deletion is mandatory.
 
 ---
 
-## OPPOSINGPARTY-007
+## CONTACT-008
 
-Conflict Check searches must include archived opposing parties where appropriate for historical conflict detection.
-
----
-
-## OPPOSINGPARTY-008
-
-Every significant Opposing Party event must generate an Audit Log entry.
+Every significant Matter Contact event must generate an Audit Log entry.
 
 Examples include:
 
-* Opposing Party Created
-* Opposing Party Updated
-* Opposing Party Archived
-* Opposing Party Restored
-* Opposing Party Linked to Matter
+* Contact Created
+* Contact Updated
+* Contact Archived
+* Contact Restored
+* Linked to Matter
+* Removed from Matter
 
 ---
 
 # 6. User Stories
 
-### Create Opposing Party
-
-As an attorney,
-
-I want to record an opposing party,
-
-so it can be associated with a Matter.
-
----
-
-### Link Opposing Party
+### Create Contact
 
 As a legal assistant,
 
-I want to associate an opposing party with one or more Matters,
+I want to create a Matter Contact,
 
-so the legal relationship is recorded.
+so I can associate them with legal work.
 
 ---
 
-### Search Opposing Party
+### Link Contact
 
 As a staff member,
 
-I want to search opposing parties,
+I want to link a Contact to multiple Matters,
 
-so I can reuse existing records instead of creating duplicates.
+so information is reused.
 
 ---
 
-### Archive Opposing Party
+### Search Contacts
+
+As a staff member,
+
+I want to search Contacts,
+
+so duplicate records are avoided.
+
+---
+
+### Archive Contact
 
 As a firm administrator,
 
-I want to archive an opposing party,
+I want to archive unused Contacts,
 
-while preserving historical legal records.
+while preserving historical relationships.
 
 ---
 
 # 7. User Workflows
 
-The detailed opposing party workflow diagrams are documented in:
+The detailed Matter Contact workflow diagrams are documented in:
 
-* `06-diagrams/opposing-parties-flow.drawio`
+* `06-diagrams/matter-contacts-flow.drawio`
 
 This module defines business behaviour only.
 
@@ -240,20 +264,20 @@ This module follows the standards defined in:
 
 This module owns the following collections.
 
-| Collection              | Purpose                                             |
-| ----------------------- | --------------------------------------------------- |
-| opposing_parties        | Master opposing party records                       |
-| matter_opposing_parties | Junction table between Matters and Opposing Parties |
+| Collection           | Purpose                                     |
+| -------------------- | ------------------------------------------- |
+| matter_contacts      | Master contact records                      |
+| matter_contact_links | Junction table between Matters and Contacts |
 
 ---
 
-## 8.1 opposing_parties
+## 8.1 matter_contacts
 
 ### Purpose
 
-Stores every opposing person or organization encountered by the firm.
+Stores all reusable contacts that may participate in one or more legal matters.
 
-A single opposing party may be associated with multiple Matters.
+These contacts are not Clients, Opposing Parties, or internal Users.
 
 ---
 
@@ -263,9 +287,9 @@ A single opposing party may be associated with multiple Matters.
 | ---------------- | -------- | ------------------------- |
 | _id              | ObjectId | Primary Key               |
 | firmId           | ObjectId | Firm Reference            |
-| partyType        | Enum     | INDIVIDUAL / ORGANIZATION |
-| firstName        | String   | Individual First Name     |
-| lastName         | String   | Individual Last Name      |
+| contactType      | Enum     | INDIVIDUAL / ORGANIZATION |
+| firstName        | String   | First Name                |
+| lastName         | String   | Last Name                 |
 | organizationName | String   | Organization Name         |
 | email            | String   | Primary Email             |
 | phone            | String   | Primary Phone             |
@@ -288,7 +312,7 @@ A single opposing party may be associated with multiple Matters.
 
 ---
 
-### Party Type Enum
+### Contact Type Enum
 
 ```text
 INDIVIDUAL
@@ -304,11 +328,11 @@ One Firm
 
 ↓
 
-Many Opposing Parties
+Many Matter Contacts
 
 ---
 
-One Opposing Party
+One Matter Contact
 
 ↓
 
@@ -334,11 +358,11 @@ Composite indexes:
 
 ---
 
-## 8.2 matter_opposing_parties
+## 8.2 matter_contact_links
 
 ### Purpose
 
-Associates Opposing Parties with Matters.
+Associates reusable contacts with Matters.
 
 Supports many-to-many relationships.
 
@@ -346,28 +370,54 @@ Supports many-to-many relationships.
 
 ### Fields
 
-| Field           | Type     |
-| --------------- | -------- |
-| _id             | ObjectId |
-| matterId        | ObjectId |
-| opposingPartyId | ObjectId |
-| role            | String   |
-| createdBy       | ObjectId |
-| createdAt       | Date     |
+| Field     | Type     |
+| --------- | -------- |
+| _id       | ObjectId |
+| matterId  | ObjectId |
+| contactId | ObjectId |
+| role      | Enum     |
+| createdBy | ObjectId |
+| createdAt | Date     |
 
 ---
 
-### Relationship Rules
+### Contact Role Enum
+
+```text
+WITNESS
+
+EXPERT_WITNESS
+
+JUDGE
+
+MEDIATOR
+
+ARBITRATOR
+
+COURT_CLERK
+
+INSURANCE_ADJUSTER
+
+GOVERNMENT_OFFICIAL
+
+CONSULTANT
+
+OTHER
+```
+
+---
+
+### Relationships
 
 One Matter
 
 ↓
 
-Many Opposing Parties
+Many Contacts
 
 ---
 
-One Opposing Party
+One Contact
 
 ↓
 
@@ -383,25 +433,25 @@ This module follows:
 
 ## Endpoints
 
-| Method | Endpoint                      | Description                | Auth Required |
-| ------ | ----------------------------- | -------------------------- | ------------- |
-| GET    | /opposing-parties             | List Opposing Parties      | Yes           |
-| GET    | /opposing-parties/:id         | Get Opposing Party         | Yes           |
-| POST   | /opposing-parties             | Create Opposing Party      | Yes           |
-| PATCH  | /opposing-parties/:id         | Update Opposing Party      | Yes           |
-| DELETE | /opposing-parties/:id         | Soft Delete Opposing Party | Yes           |
-| PATCH  | /opposing-parties/:id/archive | Archive Opposing Party     | Yes           |
-| PATCH  | /matters/:id/opposing-parties | Update Matter Associations | Yes           |
+| Method | Endpoint                     | Description            | Auth Required |
+| ------ | ---------------------------- | ---------------------- | ------------- |
+| GET    | /matter-contacts             | List Contacts          | Yes           |
+| GET    | /matter-contacts/:id         | Get Contact            | Yes           |
+| POST   | /matter-contacts             | Create Contact         | Yes           |
+| PATCH  | /matter-contacts/:id         | Update Contact         | Yes           |
+| DELETE | /matter-contacts/:id         | Soft Delete Contact    | Yes           |
+| PATCH  | /matter-contacts/:id/archive | Archive Contact        | Yes           |
+| PATCH  | /matters/:id/contacts        | Update Matter Contacts | Yes           |
 
 ---
 
 ## Request Models
 
-### Create Opposing Party
+### Create Contact
 
 ```json
 {
-    "partyType": "INDIVIDUAL",
+    "contactType": "INDIVIDUAL",
     "firstName": "John",
     "lastName": "Doe",
     "email": "john@example.com"
@@ -410,13 +460,15 @@ This module follows:
 
 ---
 
-### Link Matter
+### Link Contacts
 
 ```json
 {
-    "opposingPartyIds": [
-        "...",
-        "..."
+    "contacts": [
+        {
+            "contactId": "...",
+            "role": "WITNESS"
+        }
     ]
 }
 ```
@@ -425,7 +477,7 @@ This module follows:
 
 ## Response Models
 
-### Opposing Party
+### Contact Response
 
 ```json
 {
@@ -436,7 +488,7 @@ This module follows:
 
 ---
 
-### Opposing Party List
+### Contact List Response
 
 ```json
 {
@@ -457,18 +509,17 @@ This module follows:
 Backend module location
 
 ```text
-apps/api/src/modules/opposing-parties
+apps/api/src/modules/matter-contacts
 ```
 
 The module must implement:
 
-* CRUD
+* Contact CRUD
 * Search
 * Duplicate Detection
 * Matter Association
 * Archive
 * Soft Delete
-* Conflict Check Integration
 
 Business logic belongs in the Service layer.
 
@@ -487,40 +538,40 @@ This module follows:
 Frontend module location
 
 ```text
-apps/web/src/modules/opposing-parties
+apps/web/src/modules/matter-contacts
 ```
 
 Required pages
 
-* Opposing Party List
-* Create Opposing Party
-* Edit Opposing Party
-* Opposing Party Details
+* Matter Contact List
+* Matter Contact Details
+* Create Matter Contact
+* Edit Matter Contact
 
 Required components
 
-* Opposing Party Table
-* Opposing Party Form
+* Contact Table
+* Contact Form
 * Matter Association Panel
 * Archive Dialog
 
 Required hooks
 
-* useOpposingParties
-* useOpposingParty
-* useCreateOpposingParty
-* useUpdateOpposingParty
-* useArchiveOpposingParty
-* useMatterOpposingParties
+* useMatterContacts
+* useMatterContact
+* useCreateMatterContact
+* useUpdateMatterContact
+* useArchiveMatterContact
+* useMatterContactLinks
 
 Required API client
 
-* listOpposingParties()
-* getOpposingParty()
-* createOpposingParty()
-* updateOpposingParty()
-* archiveOpposingParty()
-* updateMatterAssociations()
+* listMatterContacts()
+* getMatterContact()
+* createMatterContact()
+* updateMatterContact()
+* archiveMatterContact()
+* updateMatterContactLinks()
 
 ---
 
@@ -530,15 +581,15 @@ This module follows:
 
 * 005 - Security Standards
 
-The following security requirements are specific to the Opposing Parties module.
+The following security requirements are specific to the Matter Contacts module.
 
 ---
 
 ## Firm Isolation
 
-Every Opposing Party belongs to exactly one firm.
+Every Matter Contact belongs to exactly one firm.
 
-Users may only access Opposing Parties belonging to their own firm.
+Users may only access Matter Contacts belonging to their own firm.
 
 Cross-firm access is strictly prohibited.
 
@@ -546,7 +597,7 @@ Cross-firm access is strictly prohibited.
 
 ## Matter Association
 
-An Opposing Party may only be associated with Matters belonging to the same firm.
+A Matter Contact may only be associated with Matters belonging to the same firm.
 
 Cross-firm associations are prohibited.
 
@@ -554,22 +605,22 @@ Duplicate Matter associations are prohibited.
 
 ---
 
-## Immutable Party Type
+## Immutable Contact Type
 
-Once created, the party type cannot be changed.
+Once created, the contact type cannot be changed.
 
 Examples:
 
 * Individual → Organization ❌
 * Organization → Individual ❌
 
-A new Opposing Party must be created instead.
+A new Matter Contact must be created instead.
 
 ---
 
 ## Soft Delete
 
-Opposing Parties are never permanently deleted.
+Matter Contacts are never permanently deleted.
 
 Deletion consists of:
 
@@ -583,11 +634,11 @@ Historical Matter associations must remain intact.
 
 ## Archive
 
-Archived Opposing Parties:
+Archived Matter Contacts:
 
 * Cannot be linked to new Matters.
 * Remain visible in historical Matters.
-* Continue to participate in Conflict Checks.
+* Remain available for reporting.
 
 ---
 
@@ -608,14 +659,14 @@ The final decision belongs to the user.
 
 ## Auditability
 
-Every significant Opposing Party action must generate an Audit Log entry.
+Every significant Matter Contact action must generate an Audit Log entry.
 
 Examples include:
 
-* Opposing Party Created
-* Opposing Party Updated
-* Opposing Party Archived
-* Opposing Party Restored
+* Contact Created
+* Contact Updated
+* Contact Archived
+* Contact Restored
 * Linked to Matter
 * Removed from Matter
 
@@ -631,8 +682,8 @@ The module is complete only if all of the following are true.
 
 Users can create:
 
-* Individual Opposing Parties
-* Organization Opposing Parties
+* Individual Contacts
+* Organization Contacts
 
 ---
 
@@ -640,7 +691,7 @@ Users can create:
 
 Users can:
 
-* Search Opposing Parties.
+* Search Contacts.
 * Filter by Name.
 * Filter by Organization.
 * Filter by Active Status.
@@ -651,7 +702,7 @@ Users can:
 
 Users can:
 
-* Link Opposing Parties to Matters.
+* Link Contacts to Matters.
 * Remove links from Matters.
 * View all linked Matters.
 
@@ -661,21 +712,20 @@ Duplicate associations are prevented.
 
 ## Archive
 
-Users can archive Opposing Parties.
+Users can archive Matter Contacts.
 
-Archived records remain available for:
+Archived contacts remain available for:
 
 * Historical Matters
-* Conflict Checks
 * Reporting
 
 ---
 
 ## Soft Delete
 
-Unused Opposing Parties may be soft deleted.
+Unused Matter Contacts may be soft deleted.
 
-Referenced Opposing Parties remain protected from deletion.
+Referenced contacts remain protected from deletion.
 
 ---
 
@@ -697,25 +747,25 @@ The implementation must create the following files.
 ## Backend
 
 ```text
-apps/api/src/modules/opposing-parties/
+apps/api/src/modules/matter-contacts/
 
 index.ts
 
-opposing-party.controller.ts
+matter-contact.controller.ts
 
-opposing-party.service.ts
+matter-contact.service.ts
 
-opposing-party.repository.ts
+matter-contact.repository.ts
 
-opposing-party.routes.ts
+matter-contact.routes.ts
 
-opposing-party.validation.ts
+matter-contact.validation.ts
 
-opposing-party.constants.ts
+matter-contact.constants.ts
 
-opposing-party.types.ts
+matter-contact.types.ts
 
-matter-opposing-party.service.ts
+matter-contact-link.service.ts
 
 duplicate-detection.service.ts
 
@@ -729,17 +779,17 @@ tests/
 ## Frontend
 
 ```text
-apps/web/src/modules/opposing-parties/
+apps/web/src/modules/matter-contacts/
 
 pages/
 
-OpposingPartyListPage.tsx
+MatterContactListPage.tsx
 
-OpposingPartyDetailsPage.tsx
+MatterContactDetailsPage.tsx
 
-CreateOpposingPartyPage.tsx
+CreateMatterContactPage.tsx
 
-EditOpposingPartyPage.tsx
+EditMatterContactPage.tsx
 
 components/
 
@@ -780,13 +830,12 @@ Only create shared code if reused across multiple modules.
 
 Implement:
 
-* Opposing Party CRUD
+* Matter Contact CRUD
 * Search
 * Duplicate Detection
 * Matter Association
 * Archive
 * Soft Delete
-* Conflict Check Integration
 
 ---
 
@@ -794,13 +843,13 @@ Implement:
 
 Implement:
 
-* Opposing Party List
-* Opposing Party Details
-* Opposing Party Form
+* Matter Contact List
+* Matter Contact Details
+* Matter Contact Form
 * Matter Association UI
 * Archive UI
-* Opposing Party API Client
-* Opposing Party Hooks
+* Matter Contact API Client
+* Matter Contact Hooks
 
 ---
 
@@ -808,8 +857,8 @@ Implement:
 
 Create:
 
-* opposing_parties
-* matter_opposing_parties
+* matter_contacts
+* matter_contact_links
 
 Implement indexes defined in this specification.
 
@@ -824,7 +873,7 @@ Implement:
 * Duplicate Detection Tests
 * Matter Association Tests
 
-The Opposing Parties module is considered incomplete if automated tests are absent.
+The Matter Contacts module is considered incomplete if automated tests are absent.
 
 ---
 
@@ -834,7 +883,7 @@ Update:
 
 * API Documentation
 * Database Documentation
-* Opposing Parties Workflow Diagram (if changed)
+* Matter Contacts Workflow Diagram (if changed)
 
 ---
 
@@ -842,16 +891,16 @@ Update:
 
 The following capabilities are intentionally excluded from this module and will be implemented in future specifications.
 
-* Opposing Counsel Management
-* Law Firm Directory
-* Related Opposing Parties
+* Contact Groups
+* Contact Organizations
+* Contact Relationships
+* Contact Communication History
+* Contact Tags
 * AI Duplicate Resolution
-* Conflict Risk Scoring
-* External Party Import
-* Court Record Integration
-* Party Relationship Mapping
+* External Contact Import
 * Bulk Import / Export
-* Party Timeline
+* Contact Timeline
+* Outlook / Google Contacts Synchronization
 
 ---
 
@@ -880,7 +929,7 @@ Refer to the standard AI Implementation Strategy defined for all modules.
 The AI agent must create and maintain:
 
 ```text
-docs/07-implementation/031-opposing-parties-progress.md
+docs/07-implementation/032-matter-contacts-progress.md
 ```
 
 The progress document must be updated after each implementation phase and must include:

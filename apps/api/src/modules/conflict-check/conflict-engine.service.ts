@@ -2,6 +2,7 @@ import { Lead } from "../leads/schemas/lead.schema.js";
 import { computeSimilarity, cleanToken } from "./name-matching.service.js";
 import { MatchRecord, ConflictEngineResult } from "./conflict-check.types.js";
 import { Types } from "mongoose";
+import { OpposingParty } from "../opposing-parties/schemas/opposing-party.schema.js";
 
 function cleanPhone(num?: string): string {
   if (!num) return "";
@@ -160,53 +161,72 @@ export async function searchConflict(
     }
   }
 
-  // 3. Scan Simulated Opposing Parties
-  for (const op of SIMULATED_OPPOSING_PARTIES) {
-    if (searchName) {
-      const score = computeSimilarity(searchName, op.name);
-      if (score >= 0.6) {
+  // 3. Scan Database Opposing Parties
+  if (Types.ObjectId.isValid(firmId)) {
+    const opposingParties = await OpposingParty.find({
+      firmId: new Types.ObjectId(firmId),
+      deleted: false,
+    });
+
+    for (const op of opposingParties) {
+      const opName = op.partyType === "INDIVIDUAL" ? `${op.firstName} ${op.lastName}` : (op.organizationName || "");
+      const opOrg = op.partyType === "ORGANIZATION" ? (op.organizationName || "") : "";
+      const opEmail = op.email?.trim().toLowerCase() || "";
+      const opPhone = cleanPhone(op.phone);
+
+      // Name Matching
+      if (searchName && opName) {
+        const score = computeSimilarity(searchName, opName);
+        if (score >= 0.6) {
+          matches.push({
+            entityType: "OPPOSING_PARTY",
+            entityId: op._id.toString(),
+            entityName: opName,
+            matchedField: op.partyType === "ORGANIZATION" ? "Organization Name" : "Name",
+            matchedValue: op.partyType === "ORGANIZATION" ? opOrg : opName,
+            similarityScore: score,
+          });
+        }
+      }
+
+      // Org Matching
+      if (searchOrg && opOrg) {
+        const score = computeSimilarity(searchOrg, opOrg);
+        if (score >= 0.6) {
+          matches.push({
+            entityType: "OPPOSING_PARTY",
+            entityId: op._id.toString(),
+            entityName: opName,
+            matchedField: "Organization Name",
+            matchedValue: opOrg,
+            similarityScore: score,
+          });
+        }
+      }
+
+      // Email Matching
+      if (searchEmail && opEmail && searchEmail === opEmail) {
         matches.push({
           entityType: "OPPOSING_PARTY",
-          entityId: op.id,
-          entityName: op.name,
-          matchedField: "Name",
-          matchedValue: op.name,
-          similarityScore: score,
+          entityId: op._id.toString(),
+          entityName: opName,
+          matchedField: "Email Address",
+          matchedValue: op.email || "",
+          similarityScore: 1.0,
         });
       }
-    }
-    if (searchOrg && op.company) {
-      const score = computeSimilarity(searchOrg, op.company);
-      if (score >= 0.6) {
+
+      // Phone Matching
+      if (searchPhone && opPhone && searchPhone === opPhone) {
         matches.push({
           entityType: "OPPOSING_PARTY",
-          entityId: op.id,
-          entityName: op.name,
-          matchedField: "Company Name",
-          matchedValue: op.company,
-          similarityScore: score,
+          entityId: op._id.toString(),
+          entityName: opName,
+          matchedField: "Phone Number",
+          matchedValue: op.phone || "",
+          similarityScore: 1.0,
         });
       }
-    }
-    if (searchEmail && op.email && searchEmail === op.email.toLowerCase()) {
-      matches.push({
-        entityType: "OPPOSING_PARTY",
-        entityId: op.id,
-        entityName: op.name,
-        matchedField: "Email Address",
-        matchedValue: op.email,
-        similarityScore: 1.0,
-      });
-    }
-    if (searchPhone && cleanPhone(op.phone) && searchPhone === cleanPhone(op.phone)) {
-      matches.push({
-        entityType: "OPPOSING_PARTY",
-        entityId: op.id,
-        entityName: op.name,
-        matchedField: "Phone Number",
-        matchedValue: op.phone,
-        similarityScore: 1.0,
-      });
     }
   }
 
