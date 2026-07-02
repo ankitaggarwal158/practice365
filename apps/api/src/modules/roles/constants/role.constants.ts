@@ -84,6 +84,10 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   // Matter Contacts module permissions
   { code: "MATTER_CONTACTS_VIEW", name: "View Matter Contacts", module: "Matter Contacts", description: "View list and details of matter contacts." },
   { code: "MATTER_CONTACTS_MANAGE", name: "Manage Matter Contacts", module: "Matter Contacts", description: "Create, update, archive, and delete matter contacts." },
+
+  // Notes module permissions
+  { code: "NOTES_VIEW", name: "View Notes", module: "Notes", description: "View internal notes for matters and other entities." },
+  { code: "NOTES_MANAGE", name: "Manage Notes", module: "Notes", description: "Create, update, and delete internal notes." },
 ];
 
 export interface SystemRoleDef {
@@ -135,6 +139,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "OPPOSING_PARTIES_MANAGE",
       "MATTER_CONTACTS_VIEW",
       "MATTER_CONTACTS_MANAGE",
+      "NOTES_VIEW",
+      "NOTES_MANAGE",
     ],
   },
   {
@@ -160,6 +166,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "OPPOSING_PARTIES_MANAGE",
       "MATTER_CONTACTS_VIEW",
       "MATTER_CONTACTS_MANAGE",
+      "NOTES_VIEW",
+      "NOTES_MANAGE",
     ],
   },
   {
@@ -180,6 +188,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "CONFLICT_RUN",
       "OPPOSING_PARTIES_VIEW",
       "MATTER_CONTACTS_VIEW",
+      "NOTES_VIEW",
+      "NOTES_MANAGE",
     ],
   },
 ];

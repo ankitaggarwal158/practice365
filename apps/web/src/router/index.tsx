@@ -70,6 +70,12 @@ import {
   CreateMatterContactPage,
   EditMatterContactPage,
 } from "@/modules/matter-contacts";
+import {
+  NotesListPage,
+  NoteDetailsPage,
+  CreateNotePage,
+  EditNotePage,
+} from "@/modules/notes";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 import { ErrorFallback } from "@/components/ErrorFallback";
@@ -227,6 +233,22 @@ export const router = createBrowserRouter([
       {
         path: "matter-contacts/:id/edit",
         element: <EditMatterContactPage />,
+      },
+      {
+        path: "notes",
+        element: <NotesListPage />,
+      },
+      {
+        path: "notes/new",
+        element: <CreateNotePage />,
+      },
+      {
+        path: "notes/:id",
+        element: <NoteDetailsPage />,
+      },
+      {
+        path: "notes/:id/edit",
+        element: <EditNotePage />,
       },
       
       // Settings catch-all
