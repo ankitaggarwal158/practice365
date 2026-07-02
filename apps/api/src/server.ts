@@ -18,6 +18,7 @@ import { practiceAreaRouter } from "./modules/practice-areas/index.js";
 import { opposingPartyRouter } from "./modules/opposing-parties/index.js";
 import { matterContactRouter } from "./modules/matter-contacts/index.js";
 import { noteRouter } from "./modules/notes/index.js";
+import { calendarRouter } from "./modules/calendar/index.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -49,6 +50,7 @@ app.use("/api", practiceAreaRouter);
 app.use("/api", opposingPartyRouter);
 app.use("/api", matterContactRouter);
 app.use("/api", noteRouter);
+app.use("/api", calendarRouter);
 
 // ─── Global Error Handler (must be last) ─────────────────────
 app.use(globalErrorHandler);

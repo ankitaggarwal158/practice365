@@ -88,6 +88,10 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   // Notes module permissions
   { code: "NOTES_VIEW", name: "View Notes", module: "Notes", description: "View internal notes for matters and other entities." },
   { code: "NOTES_MANAGE", name: "Manage Notes", module: "Notes", description: "Create, update, and delete internal notes." },
+
+  // Calendar module permissions
+  { code: "CALENDAR_VIEW", name: "View Calendar", module: "Calendar", description: "View firm calendar events and deadlines." },
+  { code: "CALENDAR_MANAGE", name: "Manage Calendar", module: "Calendar", description: "Create, update, and delete firm calendar events and deadlines." },
 ];
 
 export interface SystemRoleDef {
@@ -141,6 +145,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "MATTER_CONTACTS_MANAGE",
       "NOTES_VIEW",
       "NOTES_MANAGE",
+      "CALENDAR_VIEW",
+      "CALENDAR_MANAGE",
     ],
   },
   {
@@ -168,6 +174,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "MATTER_CONTACTS_MANAGE",
       "NOTES_VIEW",
       "NOTES_MANAGE",
+      "CALENDAR_VIEW",
+      "CALENDAR_MANAGE",
     ],
   },
   {
@@ -190,6 +198,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "MATTER_CONTACTS_VIEW",
       "NOTES_VIEW",
       "NOTES_MANAGE",
+      "CALENDAR_VIEW",
+      "CALENDAR_MANAGE",
     ],
   },
 ];

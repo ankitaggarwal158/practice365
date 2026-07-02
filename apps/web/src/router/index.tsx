@@ -76,6 +76,12 @@ import {
   CreateNotePage,
   EditNotePage,
 } from "@/modules/notes";
+import {
+  CalendarPage,
+  CreateEventPage,
+  EditEventPage,
+  EventDetailsPage,
+} from "@/modules/calendar";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 import { ErrorFallback } from "@/components/ErrorFallback";
@@ -249,6 +255,22 @@ export const router = createBrowserRouter([
       {
         path: "notes/:id/edit",
         element: <EditNotePage />,
+      },
+      {
+        path: "calendar",
+        element: <CalendarPage />,
+      },
+      {
+        path: "calendar/new",
+        element: <CreateEventPage />,
+      },
+      {
+        path: "calendar/:id",
+        element: <EventDetailsPage />,
+      },
+      {
+        path: "calendar/:id/edit",
+        element: <EditEventPage />,
       },
       
       // Settings catch-all
