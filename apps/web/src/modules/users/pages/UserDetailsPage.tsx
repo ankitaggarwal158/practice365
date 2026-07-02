@@ -160,6 +160,7 @@ export function UserDetailsPage() {
                 lastName: user.lastName,
                 phone: user.phone,
                 jobTitle: user.jobTitle,
+                defaultHourlyRate: user.defaultHourlyRate,
               }}
               onSave={handleProfileSave}
               isOwnProfile={false}

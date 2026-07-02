@@ -27,6 +27,9 @@ export default function CreateMatterPage() {
     courtFileNumber: "",
     statuteOfLimitations: "",
     estimatedValue: "",
+    billingMethod: "HOURLY",
+    customHourlyRate: "",
+    flatFeeAmount: "",
   });
 
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -76,7 +79,10 @@ export default function CreateMatterPage() {
     try {
       const payload: any = {
         ...formData,
-        estimatedValue: formData.estimatedValue ? parseFloat(formData.estimatedValue) : undefined,
+        estimatedValue: formData.estimatedValue ? parseFloat(formData.estimatedValue as string) : undefined,
+        billingMethod: formData.billingMethod as "HOURLY" | "FLAT_FEE" | "CONTINGENCY",
+        customHourlyRate: formData.customHourlyRate ? parseFloat(formData.customHourlyRate as string) : undefined,
+        flatFeeAmount: formData.flatFeeAmount ? parseFloat(formData.flatFeeAmount as string) : undefined,
         statuteOfLimitations: formData.statuteOfLimitations || undefined,
       };
 
@@ -319,6 +325,74 @@ export default function CreateMatterPage() {
                 className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white placeholder-surface-200/30 transition-all duration-200"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Billing Details */}
+        <div className="bg-surface-900/60 backdrop-blur-md border border-white/[0.06] rounded-2xl p-6 md:p-8">
+          <div className="mb-6 flex items-center gap-2">
+            <svg className="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h2 className="text-xl font-bold text-white tracking-tight">Billing & Rates</h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label htmlFor="billingMethod" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
+                Billing Method <span className="text-brand-400">*</span>
+              </label>
+              <select
+                id="billingMethod"
+                name="billingMethod"
+                value={formData.billingMethod}
+                onChange={handleChange}
+                required
+                className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
+              >
+                <option value="HOURLY">Hourly</option>
+                <option value="FLAT_FEE">Flat Fee</option>
+                <option value="CONTINGENCY">Contingency</option>
+              </select>
+            </div>
+
+            {formData.billingMethod === "HOURLY" && (
+              <div>
+                <label htmlFor="customHourlyRate" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
+                  Matter-Level Hourly Rate Override ($)
+                </label>
+                <input
+                  type="number"
+                  id="customHourlyRate"
+                  name="customHourlyRate"
+                  value={formData.customHourlyRate}
+                  onChange={handleChange}
+                  placeholder="Leave blank to use default rates"
+                  min="0"
+                  step="0.01"
+                  className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
+                />
+              </div>
+            )}
+
+            {formData.billingMethod === "FLAT_FEE" && (
+              <div>
+                <label htmlFor="flatFeeAmount" className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-2">
+                  Flat Fee Amount ($)
+                </label>
+                <input
+                  type="number"
+                  id="flatFeeAmount"
+                  name="flatFeeAmount"
+                  value={formData.flatFeeAmount}
+                  onChange={handleChange}
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
+                />
+              </div>
+            )}
           </div>
         </div>
 

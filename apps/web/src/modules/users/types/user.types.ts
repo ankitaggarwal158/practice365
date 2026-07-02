@@ -34,6 +34,7 @@ export interface UserResponseData {
   avatarUrl?: string;
   jobTitle?: string;
   status: UserStatus;
+  defaultHourlyRate?: number;
   timezone: string;
   language: string;
   dateFormat: string;
@@ -71,6 +72,7 @@ export interface UpdateUserRequest {
   lastName?: string;
   phone?: string;
   jobTitle?: string;
+  defaultHourlyRate?: number;
 }
 
 export interface ChangeStatusRequest {

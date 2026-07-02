@@ -9,6 +9,7 @@ export interface PracticeAreaDocument extends Document {
   displayOrder: number;
   color: string;
   icon: string;
+  defaultHourlyRate: number;
   isSystem: boolean;
   isActive: boolean;
   deleted: boolean;
@@ -25,6 +26,7 @@ export interface CreatePracticeAreaRequest {
   description?: string;
   color?: string;
   icon?: string;
+  defaultHourlyRate?: number;
 }
 
 export interface UpdatePracticeAreaRequest {
@@ -33,6 +35,7 @@ export interface UpdatePracticeAreaRequest {
   displayOrder?: number;
   color?: string;
   icon?: string;
+  defaultHourlyRate?: number;
 }
 
 export interface PracticeAreaReorderItem {
@@ -53,6 +56,7 @@ export interface PracticeAreaResponseData {
   displayOrder: number;
   color: string;
   icon: string;
+  defaultHourlyRate: number;
   isSystem: boolean;
   isActive: boolean;
   createdAt: string;

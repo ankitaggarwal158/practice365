@@ -61,6 +61,14 @@ const matterSchema = new Schema<MatterDocument>(
     courtFileNumber: { type: String, trim: true, default: "" },
     statuteOfLimitations: { type: Date },
     estimatedValue: { type: Schema.Types.Decimal128 },
+    billingMethod: {
+      type: String,
+      enum: ["HOURLY", "FLAT_FEE", "CONTINGENCY"],
+      required: true,
+      default: "HOURLY",
+    },
+    customHourlyRate: { type: Number, min: 0 },
+    flatFeeAmount: { type: Number, min: 0 },
     createdBy: { type: Schema.Types.ObjectId, required: true, ref: "User" },
   },
   {

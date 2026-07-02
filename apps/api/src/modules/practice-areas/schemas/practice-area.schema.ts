@@ -10,6 +10,7 @@ const practiceAreaSchema = new Schema<PracticeAreaDocument>(
     displayOrder: { type: Number, required: true, default: 0 },
     color: { type: String, trim: true, default: "" },
     icon: { type: String, trim: true, default: "" },
+    defaultHourlyRate: { type: Number, min: 0, default: 0 },
     isSystem: { type: Boolean, required: true, default: false },
     isActive: { type: Boolean, required: true, default: true },
     deleted: { type: Boolean, required: true, default: false },

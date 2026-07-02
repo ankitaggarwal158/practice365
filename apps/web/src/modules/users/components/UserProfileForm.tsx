@@ -12,6 +12,7 @@ interface UserProfileFormProps {
     phone?: string;
     avatarUrl?: string;
     jobTitle?: string;
+    defaultHourlyRate?: number;
   };
   onSave: (data: any) => Promise<unknown>;
   isOwnProfile?: boolean;
@@ -24,6 +25,7 @@ export function UserProfileForm({ initialData, onSave, isOwnProfile = true }: Us
   const [phone, setPhone] = useState(initialData.phone || "");
   const [avatarUrl, setAvatarUrl] = useState(initialData.avatarUrl || "");
   const [jobTitle, setJobTitle] = useState(initialData.jobTitle || "");
+  const [defaultHourlyRate, setDefaultHourlyRate] = useState(initialData.defaultHourlyRate || 0);
   
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +40,7 @@ export function UserProfileForm({ initialData, onSave, isOwnProfile = true }: Us
 
     const payload = isOwnProfile
       ? { firstName, lastName, displayName, phone, avatarUrl, jobTitle }
-      : { firstName, lastName, phone, jobTitle };
+      : { firstName, lastName, phone, jobTitle, defaultHourlyRate: Number(defaultHourlyRate) };
 
     const validation = updateOwnProfileSchema.safeParse(payload);
     if (!validation.success) {
@@ -108,6 +110,21 @@ export function UserProfileForm({ initialData, onSave, isOwnProfile = true }: Us
           placeholder="+1 (555) 019-2834"
         />
       </div>
+
+      {!isOwnProfile && (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <FormField
+            label="Default Hourly Rate ($)"
+            type="number"
+            value={defaultHourlyRate}
+            onChange={(e) => setDefaultHourlyRate(Number(e.target.value))}
+            error={fieldErrors["defaultHourlyRate"]}
+            placeholder="0.00"
+            min="0"
+            step="0.01"
+          />
+        </div>
+      )}
 
       {isOwnProfile && (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

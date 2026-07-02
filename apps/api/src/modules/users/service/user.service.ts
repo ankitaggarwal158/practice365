@@ -14,6 +14,7 @@ export function formatUser(user: UserDocument): UserResponseData {
     phone: user.phone,
     avatarUrl: user.avatarUrl,
     jobTitle: user.jobTitle,
+    defaultHourlyRate: user.defaultHourlyRate || 0,
     status: user.status,
     timezone: user.timezone,
     language: user.language,

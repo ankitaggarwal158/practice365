@@ -82,6 +82,11 @@ import {
   EditEventPage,
   EventDetailsPage,
 } from "@/modules/calendar";
+import {
+  DocumentListPage,
+  DocumentDetailsPage,
+} from "@/modules/documents";
+import { TimeTrackingPage } from "@/modules/time-tracking";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 import { ErrorFallback } from "@/components/ErrorFallback";
@@ -271,6 +276,18 @@ export const router = createBrowserRouter([
       {
         path: "calendar/:id/edit",
         element: <EditEventPage />,
+      },
+      {
+        path: "documents",
+        element: <DocumentListPage />,
+      },
+      {
+        path: "documents/:id",
+        element: <DocumentDetailsPage />,
+      },
+      {
+        path: "time-tracking",
+        element: <TimeTrackingPage />,
       },
       
       // Settings catch-all

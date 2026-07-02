@@ -8,6 +8,7 @@ export const createPracticeAreaSchema = z.object({
   description: z.string().max(500, "Description is too long").optional(),
   color: z.string().max(30).optional(),
   icon: z.string().max(50).optional(),
+  defaultHourlyRate: z.number().min(0, "Hourly rate cannot be negative").optional(),
 });
 
 export const updatePracticeAreaSchema = z.object({
@@ -16,11 +17,11 @@ export const updatePracticeAreaSchema = z.object({
   displayOrder: z.number().int().min(0).optional(),
   color: z.string().max(30).optional(),
   icon: z.string().max(50).optional(),
+  defaultHourlyRate: z.number().min(0, "Hourly rate cannot be negative").optional(),
 });
 
 export const updateStatusSchema = z.object({
   isActive: z.boolean({
-    required_error: "isActive is required",
     invalid_type_error: "isActive must be a boolean",
   }),
 });

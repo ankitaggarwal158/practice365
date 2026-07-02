@@ -9,6 +9,7 @@ export interface PracticeArea {
   icon: string;
   isSystem: boolean;
   isActive: boolean;
+  defaultHourlyRate?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,6 +20,7 @@ export interface CreatePracticeAreaRequest {
   description?: string;
   color?: string;
   icon?: string;
+  defaultHourlyRate?: number;
 }
 
 export interface UpdatePracticeAreaRequest {
@@ -27,6 +29,7 @@ export interface UpdatePracticeAreaRequest {
   displayOrder?: number;
   color?: string;
   icon?: string;
+  defaultHourlyRate?: number;
 }
 
 export interface PracticeAreaReorderItem {

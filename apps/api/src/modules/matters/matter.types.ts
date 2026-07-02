@@ -22,6 +22,9 @@ export interface MatterDocument extends Document {
   courtFileNumber?: string;
   statuteOfLimitations?: Date;
   estimatedValue?: Types.Decimal128;
+  billingMethod: "HOURLY" | "FLAT_FEE" | "CONTINGENCY";
+  customHourlyRate?: number;
+  flatFeeAmount?: number;
   createdBy: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -93,6 +96,9 @@ export interface MatterResponseData {
   courtFileNumber?: string;
   statuteOfLimitations?: string;
   estimatedValue?: number;
+  billingMethod: string;
+  customHourlyRate?: number;
+  flatFeeAmount?: number;
   createdBy: string;
   createdAt: string;
   updatedAt: string;

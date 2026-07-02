@@ -35,6 +35,7 @@ export interface UserDocument extends Document {
   phone?: string;
   avatarUrl?: string;
   jobTitle?: string;
+  defaultHourlyRate: number;
   status: UserStatus;
   
   // Preferences
@@ -87,6 +88,7 @@ export interface UpdateUserRequest {
   lastName?: string;
   phone?: string;
   jobTitle?: string;
+  defaultHourlyRate?: number;
 }
 
 export interface ChangeStatusRequest {
@@ -127,6 +129,7 @@ export interface UserResponseData {
   phone?: string;
   avatarUrl?: string;
   jobTitle?: string;
+  defaultHourlyRate: number;
   status: UserStatus;
   timezone: string;
   language: string;

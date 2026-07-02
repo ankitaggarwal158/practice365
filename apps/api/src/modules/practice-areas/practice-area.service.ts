@@ -21,6 +21,7 @@ export function formatPracticeArea(pa: PracticeAreaDocument): PracticeAreaRespon
     displayOrder: pa.displayOrder,
     color: pa.color || "",
     icon: pa.icon || "",
+    defaultHourlyRate: pa.defaultHourlyRate || 0,
     isSystem: pa.isSystem,
     isActive: pa.isActive,
     createdAt: pa.createdAt.toISOString(),

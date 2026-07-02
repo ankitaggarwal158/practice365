@@ -25,6 +25,9 @@ export const createMatterSchema = z.object({
   estimatedValue: z.number().nonnegative("Estimated value cannot be negative.").optional(),
   conflictCheckId: objectIdSchema.optional(),
   leadId: objectIdSchema.optional(),
+  billingMethod: z.enum(["HOURLY", "FLAT_FEE", "CONTINGENCY"]).optional().default("HOURLY"),
+  customHourlyRate: z.number().min(0, "Rate cannot be negative").optional(),
+  flatFeeAmount: z.number().min(0, "Amount cannot be negative").optional(),
 });
 
 export const updateMatterSchema = z.object({
@@ -39,6 +42,9 @@ export const updateMatterSchema = z.object({
     message: "Invalid date format.",
   }),
   estimatedValue: z.number().nonnegative("Estimated value cannot be negative.").optional(),
+  billingMethod: z.enum(["HOURLY", "FLAT_FEE", "CONTINGENCY"]).optional(),
+  customHourlyRate: z.number().min(0, "Rate cannot be negative").optional(),
+  flatFeeAmount: z.number().min(0, "Amount cannot be negative").optional(),
 });
 
 export const updateStatusSchema = z.object({

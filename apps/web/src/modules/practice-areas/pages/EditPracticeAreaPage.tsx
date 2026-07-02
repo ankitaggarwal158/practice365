@@ -17,6 +17,7 @@ export default function EditPracticeAreaPage() {
     name: "",
     description: "",
     color: "#5520F0",
+    defaultHourlyRate: 0,
   });
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function EditPracticeAreaPage() {
         name: practiceArea.name,
         description: practiceArea.description || "",
         color: practiceArea.color || "#5520F0",
+        defaultHourlyRate: practiceArea.defaultHourlyRate || 0,
       });
     }
   }, [practiceArea]);
@@ -104,6 +106,21 @@ export default function EditPracticeAreaPage() {
               rows={3}
               className="w-full bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200 resize-none"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-white mb-2">Default Hourly Rate ($)</label>
+            <input
+              type="number"
+              name="defaultHourlyRate"
+              value={formData.defaultHourlyRate}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              className="w-full sm:w-1/2 bg-surface-950 border border-white/[0.08] hover:border-white/[0.12] focus:border-brand-500/80 focus:ring-1 focus:ring-brand-500/80 rounded-xl px-4 py-2.5 text-sm text-white transition-all duration-200"
+            />
+            <p className="mt-1 text-xs text-surface-200/50">Used to override firm-wide default rates when creating time entries.</p>
           </div>
 
           <div>

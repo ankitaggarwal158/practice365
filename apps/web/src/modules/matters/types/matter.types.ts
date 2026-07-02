@@ -69,6 +69,9 @@ export interface Matter {
   teamMembers?: MatterTeamMember[];
   notes?: MatterNote[];
   attachments?: MatterAttachment[];
+  billingMethod?: "HOURLY" | "FLAT_FEE" | "CONTINGENCY";
+  customHourlyRate?: number;
+  flatFeeAmount?: number;
 }
 
 export interface PaginatedMatters {
@@ -95,6 +98,9 @@ export interface CreateMatterRequest {
   estimatedValue?: number;
   conflictCheckId?: string;
   leadId?: string;
+  billingMethod?: "HOURLY" | "FLAT_FEE" | "CONTINGENCY";
+  customHourlyRate?: number;
+  flatFeeAmount?: number;
 }
 
 export interface UpdateMatterRequest {
@@ -107,4 +113,7 @@ export interface UpdateMatterRequest {
   courtFileNumber?: string;
   statuteOfLimitations?: string;
   estimatedValue?: number;
+  billingMethod?: "HOURLY" | "FLAT_FEE" | "CONTINGENCY";
+  customHourlyRate?: number;
+  flatFeeAmount?: number;
 }

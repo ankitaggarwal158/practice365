@@ -19,6 +19,8 @@ import { opposingPartyRouter } from "./modules/opposing-parties/index.js";
 import { matterContactRouter } from "./modules/matter-contacts/index.js";
 import { noteRouter } from "./modules/notes/index.js";
 import { calendarRouter } from "./modules/calendar/index.js";
+import { documentRouter } from "./modules/documents/index.js";
+import { timeEntryRouter } from "./modules/time-tracking/index.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -51,6 +53,8 @@ app.use("/api", opposingPartyRouter);
 app.use("/api", matterContactRouter);
 app.use("/api", noteRouter);
 app.use("/api", calendarRouter);
+app.use("/api/documents", documentRouter);
+app.use("/api/time-entries", timeEntryRouter);
 
 // ─── Global Error Handler (must be last) ─────────────────────
 app.use(globalErrorHandler);

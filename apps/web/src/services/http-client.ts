@@ -41,10 +41,14 @@ async function performFetch(url: string, options: RequestOptions, token?: string
     }
   }
 
+  if (options.body instanceof FormData) {
+    delete headers["Content-Type"];
+  }
+
   const response = await fetch(url, {
     method: options.method,
     headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    body: options.body instanceof FormData ? options.body : (options.body ? JSON.stringify(options.body) : undefined),
   });
 
   const json = await response.json();

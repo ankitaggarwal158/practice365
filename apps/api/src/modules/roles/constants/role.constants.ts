@@ -40,7 +40,8 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   { code: "PRACTICE_AREAS_MANAGE", name: "Manage Practice Areas", module: "Practice Areas", description: "Create, update, and delete firm practice areas." },
 
   // Documents module permissions
-  { code: "DOCUMENTS_UPLOAD", name: "Upload Documents", module: "Documents", description: "Upload files to legal matters." },
+  { code: "DOCUMENTS_VIEW", name: "View Documents", module: "Documents", description: "View firm documents and folders." },
+  { code: "DOCUMENTS_MANAGE", name: "Manage Documents", module: "Documents", description: "Upload, edit, version, and manage firm documents." },
 
   // Billing module permissions
   { code: "TIME_ENTRIES_CREATE", name: "Create Time Entries", module: "Billing", description: "Record billable time entries." },
@@ -123,7 +124,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "MATTERS_CREATE",
       "MATTERS_UPDATE",
       "PRACTICE_AREAS_VIEW",
-      "DOCUMENTS_UPLOAD",
+      "DOCUMENTS_VIEW",
+      "DOCUMENTS_MANAGE",
       "TIME_ENTRIES_CREATE",
       "FIRM_VIEW",
       "INTAKES_VIEW",
@@ -157,7 +159,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "CLIENTS_VIEW",
       "MATTERS_VIEW",
       "PRACTICE_AREAS_VIEW",
-      "DOCUMENTS_UPLOAD",
+      "DOCUMENTS_VIEW",
+      "DOCUMENTS_MANAGE",
       "TIME_ENTRIES_CREATE",
       "FIRM_VIEW",
       "INTAKES_VIEW",
@@ -186,7 +189,7 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "CLIENTS_VIEW",
       "MATTERS_VIEW",
       "PRACTICE_AREAS_VIEW",
-      "DOCUMENTS_UPLOAD",
+      "DOCUMENTS_VIEW",
       "FIRM_VIEW",
       "INTAKES_VIEW",
       "INTAKES_CREATE",

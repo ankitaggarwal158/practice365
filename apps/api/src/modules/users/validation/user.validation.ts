@@ -23,6 +23,7 @@ export const updateUserSchema = z.object({
   lastName: z.string().min(1, "Last name cannot be empty.").optional(),
   phone: z.string().optional(),
   jobTitle: z.string().optional(),
+  defaultHourlyRate: z.number().min(0, "Hourly rate cannot be negative").optional(),
 });
 
 export const changeStatusSchema = z.object({

@@ -212,6 +212,37 @@ export default function MatterDashboardPage({ matter, refetch }: MatterDashboard
                   : "N/A"}
               </span>
             </div>
+
+            <div>
+              <span className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-1">
+                Billing Method
+              </span>
+              <span className="text-sm font-semibold text-white">
+                {matter.billingMethod === "HOURLY" ? "Hourly" : matter.billingMethod === "FLAT_FEE" ? "Flat Fee" : matter.billingMethod === "CONTINGENCY" ? "Contingency" : "Hourly"}
+              </span>
+            </div>
+
+            {matter.billingMethod === "HOURLY" && matter.customHourlyRate !== undefined && (
+              <div>
+                <span className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-1">
+                  Custom Hourly Rate
+                </span>
+                <span className="text-sm font-semibold text-white">
+                  ${matter.customHourlyRate.toFixed(2)}/hr
+                </span>
+              </div>
+            )}
+
+            {matter.billingMethod === "FLAT_FEE" && matter.flatFeeAmount !== undefined && (
+              <div>
+                <span className="block text-xs font-semibold text-surface-200/40 uppercase tracking-wider mb-1">
+                  Flat Fee Amount
+                </span>
+                <span className="text-sm font-semibold text-white">
+                  ${matter.flatFeeAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
