@@ -7,7 +7,7 @@ export class DocumentSearchService {
   async getDocument(firmId: string, documentId: string): Promise<IDocumentMeta> {
     const doc = await documentRepository.findById(documentId, firmId);
     if (!doc) {
-      throw new AppError(404, DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
+      throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
     }
     return doc;
   }
@@ -31,7 +31,7 @@ export class DocumentSearchService {
   async updateMetadata(firmId: string, documentId: string, data: Partial<IDocumentMeta>): Promise<IDocumentMeta> {
     const updated = await documentRepository.update(documentId, firmId, data);
     if (!updated) {
-      throw new AppError(404, DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
+      throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
     }
     return updated;
   }
@@ -39,7 +39,7 @@ export class DocumentSearchService {
   async softDelete(firmId: string, documentId: string, userId: string): Promise<void> {
     const deleted = await documentRepository.softDelete(documentId, firmId, userId);
     if (!deleted) {
-      throw new AppError(404, DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
+      throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
     }
   }
 }

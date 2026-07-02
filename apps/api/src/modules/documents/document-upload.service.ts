@@ -14,7 +14,7 @@ export class DocumentUploadService {
     metadata: { matterId?: string; clientId?: string; folderId?: string; category?: string; description?: string; tags?: string[] }
   ): Promise<IDocumentMeta> {
     if (!file) {
-      throw new AppError(400, "No file provided");
+      throw AppError.badRequest("No file provided");
     }
 
     const session = await mongoose.startSession();

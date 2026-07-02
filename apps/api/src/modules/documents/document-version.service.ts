@@ -16,15 +16,15 @@ export class DocumentVersionService {
     notes: string = ""
   ): Promise<IDocumentMeta> {
     if (!file) {
-      throw new AppError(400, "No file provided");
+      throw AppError.badRequest("No file provided");
     }
 
     const doc = await documentRepository.findById(documentId, firmId);
     if (!doc) {
-      throw new AppError(404, DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
+      throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
     }
     if (doc.isLocked) {
-      throw new AppError(400, "Document is locked and cannot be updated.");
+      throw AppError.badRequest("Document is locked and cannot be updated.");
     }
 
     const session = await mongoose.startSession();
@@ -75,7 +75,7 @@ export class DocumentVersionService {
   async getVersions(firmId: string, documentId: string): Promise<IDocumentVersion[]> {
     const doc = await documentRepository.findById(documentId, firmId);
     if (!doc) {
-      throw new AppError(404, DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
+      throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
     }
     return documentVersionRepository.findByDocumentId(documentId);
   }

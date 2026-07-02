@@ -6,14 +6,24 @@ import { documentDownloadService } from "./document-download.service.js";
 import { documentFolderService } from "./document-folder.service.js";
 import { documentFolderSchema, documentMetaUpdateSchema } from "./document.validation.js";
 import { AppError } from "../../shared/app-error.js";
-import { SuccessResponse } from "../../shared/api-response.js";
+import { sendSuccess, sendPaginatedSuccess } from "../../shared/api-response.js";
+import * as userService from "../users/service/user.service.js";
+
+async function getRequestingUserFirmId(req: Request): Promise<string> {
+  if (!req.user) {
+    throw AppError.unauthorized();
+  }
+  const user = await userService.getCurrentUser(req.user.userId);
+  return user.firmId;
+}
 
 export class DocumentController {
   // Folders
   async listFolders(req: Request, res: Response, next: NextFunction) {
     try {
-      const folders = await documentFolderService.getFoldersByFirm(req.user!.firmId);
-      res.json(SuccessResponse(folders));
+      const firmId = await getRequestingUserFirmId(req);
+      const folders = await documentFolderService.getFoldersByFirm(firmId);
+      sendSuccess(res, folders);
     } catch (err) {
       next(err);
     }
@@ -21,9 +31,10 @@ export class DocumentController {
 
   async createFolder(req: Request, res: Response, next: NextFunction) {
     try {
+      const firmId = await getRequestingUserFirmId(req);
       const data = documentFolderSchema.parse(req.body);
-      const folder = await documentFolderService.createFolder(req.user!.firmId, req.user!.id, data);
-      res.status(201).json(SuccessResponse(folder));
+      const folder = await documentFolderService.createFolder(firmId, req.user!.userId, data);
+      sendSuccess(res, folder, 201);
     } catch (err) {
       next(err);
     }
@@ -31,9 +42,10 @@ export class DocumentController {
 
   async updateFolder(req: Request, res: Response, next: NextFunction) {
     try {
+      const firmId = await getRequestingUserFirmId(req);
       const data = documentFolderSchema.parse(req.body);
-      const folder = await documentFolderService.updateFolder(req.user!.firmId, req.params.id, data);
-      res.json(SuccessResponse(folder));
+      const folder = await documentFolderService.updateFolder(firmId, req.params.id as string, data);
+      sendSuccess(res, folder);
     } catch (err) {
       next(err);
     }
@@ -41,8 +53,9 @@ export class DocumentController {
 
   async deleteFolder(req: Request, res: Response, next: NextFunction) {
     try {
-      await documentFolderService.deleteFolder(req.user!.firmId, req.params.id);
-      res.json(SuccessResponse({ success: true }));
+      const firmId = await getRequestingUserFirmId(req);
+      await documentFolderService.deleteFolder(firmId, req.params.id as string);
+      sendSuccess(res, { success: true });
     } catch (err) {
       next(err);
     }
@@ -51,11 +64,12 @@ export class DocumentController {
   // Documents
   async searchDocuments(req: Request, res: Response, next: NextFunction) {
     try {
+      const firmId = await getRequestingUserFirmId(req);
       const { matterId, clientId, folderId, category, search, page = 1, limit = 50 } = req.query;
       const parsedFolderId = folderId === "null" ? null : (folderId as string);
 
       const result = await documentSearchService.searchDocuments(
-        req.user!.firmId,
+        firmId,
         {
           matterId: matterId as string,
           clientId: clientId as string,
@@ -66,11 +80,12 @@ export class DocumentController {
         Number(page),
         Number(limit)
       );
-      res.json(SuccessResponse(result.data, {
+      sendPaginatedSuccess(res, result.data, {
         total: result.total,
         page: result.page,
         limit: result.limit,
-      }));
+        pages: Math.ceil(result.total / Number(limit)),
+      });
     } catch (err) {
       next(err);
     }
@@ -78,8 +93,9 @@ export class DocumentController {
 
   async getDocument(req: Request, res: Response, next: NextFunction) {
     try {
-      const doc = await documentSearchService.getDocument(req.user!.firmId, req.params.id);
-      res.json(SuccessResponse(doc));
+      const firmId = await getRequestingUserFirmId(req);
+      const doc = await documentSearchService.getDocument(firmId, req.params.id as string);
+      sendSuccess(res, doc);
     } catch (err) {
       next(err);
     }
@@ -87,7 +103,8 @@ export class DocumentController {
 
   async uploadDocument(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.file) throw new AppError(400, "File is required");
+      if (!req.file) throw AppError.badRequest("File is required");
+      const firmId = await getRequestingUserFirmId(req);
       const metadata = {
         matterId: req.body.matterId,
         clientId: req.body.clientId,
@@ -97,8 +114,8 @@ export class DocumentController {
         tags: req.body.tags ? JSON.parse(req.body.tags) : [],
       };
 
-      const doc = await documentUploadService.uploadDocument(req.user!.firmId, req.user!.id, req.file, metadata);
-      res.status(201).json(SuccessResponse(doc));
+      const doc = await documentUploadService.uploadDocument(firmId, req.user!.userId, req.file, metadata);
+      sendSuccess(res, doc, 201);
     } catch (err) {
       next(err);
     }
@@ -106,9 +123,10 @@ export class DocumentController {
 
   async updateMetadata(req: Request, res: Response, next: NextFunction) {
     try {
+      const firmId = await getRequestingUserFirmId(req);
       const data = documentMetaUpdateSchema.parse(req.body);
-      const doc = await documentSearchService.updateMetadata(req.user!.firmId, req.params.id, data);
-      res.json(SuccessResponse(doc));
+      const doc = await documentSearchService.updateMetadata(firmId, req.params.id as string, data as any);
+      sendSuccess(res, doc);
     } catch (err) {
       next(err);
     }
@@ -116,8 +134,9 @@ export class DocumentController {
 
   async softDelete(req: Request, res: Response, next: NextFunction) {
     try {
-      await documentSearchService.softDelete(req.user!.firmId, req.params.id, req.user!.id);
-      res.json(SuccessResponse({ success: true }));
+      const firmId = await getRequestingUserFirmId(req);
+      await documentSearchService.softDelete(firmId, req.params.id as string, req.user!.userId);
+      sendSuccess(res, { success: true });
     } catch (err) {
       next(err);
     }
@@ -126,8 +145,9 @@ export class DocumentController {
   // Versions
   async getVersions(req: Request, res: Response, next: NextFunction) {
     try {
-      const versions = await documentVersionService.getVersions(req.user!.firmId, req.params.id);
-      res.json(SuccessResponse(versions));
+      const firmId = await getRequestingUserFirmId(req);
+      const versions = await documentVersionService.getVersions(firmId, req.params.id as string);
+      sendSuccess(res, versions);
     } catch (err) {
       next(err);
     }
@@ -135,10 +155,11 @@ export class DocumentController {
 
   async uploadVersion(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.file) throw new AppError(400, "File is required");
+      if (!req.file) throw AppError.badRequest("File is required");
+      const firmId = await getRequestingUserFirmId(req);
       const notes = req.body.notes || "";
-      const doc = await documentVersionService.uploadNewVersion(req.user!.firmId, req.user!.id, req.params.id, req.file, notes);
-      res.status(201).json(SuccessResponse(doc));
+      const doc = await documentVersionService.uploadNewVersion(firmId, req.user!.userId, req.params.id as string, req.file, notes);
+      sendSuccess(res, doc, 201);
     } catch (err) {
       next(err);
     }
@@ -147,7 +168,8 @@ export class DocumentController {
   // Download
   async downloadDocument(req: Request, res: Response, next: NextFunction) {
     try {
-      const download = await documentDownloadService.getDownloadStream(req.user!.firmId, req.params.id);
+      const firmId = await getRequestingUserFirmId(req);
+      const download = await documentDownloadService.getDownloadStream(firmId, req.params.id as string);
       res.setHeader("Content-Type", download.mimeType);
       res.setHeader("Content-Disposition", `attachment; filename="${download.fileName}"`);
       res.setHeader("Content-Length", download.fileSize);

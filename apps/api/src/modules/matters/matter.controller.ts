@@ -4,6 +4,7 @@ import { AppError } from "../../shared/app-error.js";
 import * as userService from "../users/service/user.service.js";
 import * as matterService from "./matter.service.js";
 import * as teamService from "./matter-team.service.js";
+import * as practiceAreaService from "../practice-areas/practice-area.service.js";
 
 async function getRequestingUserFirmId(req: Request): Promise<string> {
   if (!req.user) {
@@ -159,6 +160,6 @@ export async function deleteAttachment(req: Request, res: Response): Promise<voi
 
 export async function listPracticeAreas(req: Request, res: Response): Promise<void> {
   const firmId = await getRequestingUserFirmId(req);
-  const result = await matterService.listPracticeAreas(firmId);
+  const result = await practiceAreaService.listPracticeAreas(firmId);
   sendSuccess(res, result);
 }

@@ -8,13 +8,13 @@ export class DocumentDownloadService {
   async getDownloadStream(firmId: string, documentId: string): Promise<{ stream: Readable; mimeType: string; fileName: string; fileSize: number }> {
     const doc = await documentRepository.findById(documentId, firmId);
     if (!doc) {
-      throw new AppError(404, DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
+      throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
     }
     
     // The current version holds the storage key
     const version = doc.currentVersionId as any;
     if (!version || !version.storageKey) {
-      throw new AppError(404, "Document physical file not found.");
+      throw AppError.notFound("Document physical file not found.");
     }
 
     const stream = storageService.getFileStream(version.storageKey);

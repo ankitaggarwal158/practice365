@@ -4,7 +4,6 @@ import {
   MatterTeamMemberDocument,
   MatterNoteDocument,
   MatterAttachmentDocument,
-  MatterAttachmentDocument,
   DocumentDocument,
 } from "../matter.types.js";
 

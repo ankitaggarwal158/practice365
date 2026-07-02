@@ -2,9 +2,27 @@ import { Router } from "express";
 import { asyncHandler } from "../../shared/async-handler.js";
 import { authenticate } from "../auth/middleware/auth.middleware.js";
 import { requirePermission } from "../roles/index.js";
-import {
-  validate,
-} from "../../shared/validate.js";
+import { Request, Response, NextFunction } from "express";
+import { z } from "zod";
+import { AppError } from "../../shared/app-error.js";
+
+function validate(schema: z.ZodSchema) {
+  return (req: Request, _res: Response, next: NextFunction): void => {
+    const result = schema.safeParse(req.body);
+
+    if (!result.success) {
+      const errors = result.error.issues.map((issue) => ({
+        field: issue.path.join("."),
+        message: issue.message,
+      }));
+
+      throw AppError.validation("Validation failed.", errors);
+    }
+
+    req.body = result.data;
+    next();
+  };
+}
 import {
   createPracticeAreaSchema,
   updatePracticeAreaSchema,

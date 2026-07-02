@@ -6,9 +6,9 @@ import {
   MatterTeamMember,
   MatterNote,
   MatterAttachment,
-  PracticeArea,
   Document as DocumentModel,
 } from "../schemas/matter.schema.js";
+import { PracticeArea } from "../../practice-areas/schemas/practice-area.schema.js";
 import { Client } from "../../clients/schemas/client.schema.js";
 import { User } from "../../users/schemas/user.schema.js";
 import { Firm } from "../../firm/schemas/firm.schema.js";

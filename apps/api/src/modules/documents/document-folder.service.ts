@@ -14,7 +14,7 @@ export class DocumentFolderService {
     if (folderData.parentFolderId) {
       const parent = await documentFolderRepository.findById(folderData.parentFolderId, firmId);
       if (!parent) {
-        throw new AppError(404, "Parent folder not found");
+        throw AppError.notFound("Parent folder not found");
       }
     }
 
@@ -28,7 +28,7 @@ export class DocumentFolderService {
   async updateFolder(firmId: string, folderId: string, folderData: any): Promise<IDocumentFolder> {
     const updated = await documentFolderRepository.update(folderId, firmId, folderData);
     if (!updated) {
-      throw new AppError(404, DOCUMENT_ERROR_MESSAGES.FOLDER_NOT_FOUND);
+      throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.FOLDER_NOT_FOUND);
     }
     return updated;
   }
@@ -37,18 +37,18 @@ export class DocumentFolderService {
     // Check for children folders
     const childCount = await documentFolderRepository.countChildren(folderId, firmId);
     if (childCount > 0) {
-      throw new AppError(400, "Cannot delete folder containing subfolders.");
+      throw AppError.badRequest("Cannot delete folder containing subfolders.");
     }
 
     // Check for documents in folder
     const docCount = await documentRepository.countInFolder(folderId, firmId);
     if (docCount > 0) {
-      throw new AppError(400, "Cannot delete folder containing documents. Move or delete them first.");
+      throw AppError.badRequest("Cannot delete folder containing documents. Move or delete them first.");
     }
 
     const deleted = await documentFolderRepository.delete(folderId, firmId);
     if (!deleted) {
-      throw new AppError(404, DOCUMENT_ERROR_MESSAGES.FOLDER_NOT_FOUND);
+      throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.FOLDER_NOT_FOUND);
     }
   }
 }

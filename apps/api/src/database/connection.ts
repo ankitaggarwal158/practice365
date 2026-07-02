@@ -21,3 +21,7 @@ export async function connectDatabase(): Promise<void> {
     process.exit(1);
   }
 }
+
+export async function disconnectDatabase(): Promise<void> {
+  await mongoose.disconnect();
+}

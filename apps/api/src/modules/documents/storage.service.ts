@@ -39,14 +39,14 @@ export class StorageService {
       await unlink(storageKey);
     } catch (error: any) {
       if (error.code !== "ENOENT") {
-        throw new AppError(500, "Failed to delete file from storage");
+        throw AppError.internal("Failed to delete file from storage");
       }
     }
   }
 
   getFileStream(storageKey: string): Readable {
     if (!fs.existsSync(storageKey)) {
-      throw new AppError(404, "File not found in storage");
+      throw AppError.notFound("File not found in storage");
     }
     return fs.createReadStream(storageKey);
   }

@@ -1,8 +1,8 @@
-export * from "./document.types.js";
+export type * from "./document.types.js";
 export * from "./document.constants.js";
-export * from "./schemas/document.schema.js";
-export * from "./schemas/document-folder.schema.js";
-export * from "./schemas/document-version.schema.js";
+export { DocumentMeta } from "./schemas/document.schema.js";
+export { DocumentFolder } from "./schemas/document-folder.schema.js";
+export { DocumentVersion } from "./schemas/document-version.schema.js";
 export * from "./document.repository.js";
 export * from "./document-folder.repository.js";
 export * from "./document-version.repository.js";

@@ -22,7 +22,7 @@ export const updatePracticeAreaSchema = z.object({
 
 export const updateStatusSchema = z.object({
   isActive: z.boolean({
-    invalid_type_error: "isActive must be a boolean",
+    message: "isActive must be a boolean",
   }),
 });
 
