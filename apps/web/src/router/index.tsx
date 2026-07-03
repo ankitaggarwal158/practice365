@@ -102,6 +102,19 @@ import {
   DraftInvoicePage,
   PaymentHistoryPage,
 } from "@/modules/billing";
+import {
+  LoginPage as PortalLoginPage,
+  ForgotPasswordPage as PortalForgotPasswordPage,
+  ResetPasswordPage as PortalResetPasswordPage,
+  DashboardPage as PortalDashboardPage,
+  ProfilePage as PortalProfilePage,
+  MatterListPage as PortalMatterListPage,
+  MatterDetailsPage as PortalMatterDetailsPage,
+  DocumentListPage as PortalDocumentListPage,
+  InvoiceListPage as PortalInvoiceListPage,
+  PortalLayout,
+  PortalProtectedRoute,
+} from "@/modules/client-portal";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 import { ErrorFallback } from "@/components/ErrorFallback";
@@ -433,6 +446,52 @@ export const router = createBrowserRouter([
       {
         path: "conflict-checks/:id",
         element: <ConflictDetailsPage />,
+      },
+    ],
+  },
+  {
+    path: "/portal/login",
+    element: <PortalLoginPage />,
+  },
+  {
+    path: "/portal/forgot-password",
+    element: <PortalForgotPasswordPage />,
+  },
+  {
+    path: "/portal/reset-password",
+    element: <PortalResetPasswordPage />,
+  },
+  {
+    path: "/portal",
+    element: (
+      <PortalProtectedRoute>
+        <PortalLayout />
+      </PortalProtectedRoute>
+    ),
+    children: [
+      {
+        path: "",
+        element: <PortalDashboardPage />,
+      },
+      {
+        path: "matters",
+        element: <PortalMatterListPage />,
+      },
+      {
+        path: "matters/:id",
+        element: <PortalMatterDetailsPage />,
+      },
+      {
+        path: "documents",
+        element: <PortalDocumentListPage />,
+      },
+      {
+        path: "invoices",
+        element: <PortalInvoiceListPage />,
+      },
+      {
+        path: "profile",
+        element: <PortalProfilePage />,
       },
     ],
   },
