@@ -118,6 +118,13 @@ import {
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 import { ErrorFallback } from "@/components/ErrorFallback";
+import {
+  SignatureRequestListPage,
+  SignatureRequestDetailsPage,
+  CreateSignatureRequestPage,
+  SigningPage,
+  CompletionPage,
+} from "@/modules/e-signatures";
 
 /**
  * Placeholder dashboard shown after login.
@@ -310,6 +317,18 @@ export const router = createBrowserRouter([
         element: <DocumentListPage />,
       },
       {
+        path: "signature-requests",
+        element: <SignatureRequestListPage />,
+      },
+      {
+        path: "signature-requests/new",
+        element: <CreateSignatureRequestPage />,
+      },
+      {
+        path: "signature-requests/:id",
+        element: <SignatureRequestDetailsPage />,
+      },
+      {
         path: "documents/upload",
         element: <UploadDocumentPage />,
       },
@@ -448,6 +467,14 @@ export const router = createBrowserRouter([
         element: <ConflictDetailsPage />,
       },
     ],
+  },
+  {
+    path: "/sign/:token",
+    element: <SigningPage />,
+  },
+  {
+    path: "/sign/completed",
+    element: <CompletionPage />,
   },
   {
     path: "/portal/login",

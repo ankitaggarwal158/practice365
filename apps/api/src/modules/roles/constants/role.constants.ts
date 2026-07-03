@@ -97,6 +97,10 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   // Calendar module permissions
   { code: "CALENDAR_VIEW", name: "View Calendar", module: "Calendar", description: "View firm calendar events and deadlines." },
   { code: "CALENDAR_MANAGE", name: "Manage Calendar", module: "Calendar", description: "Create, update, and delete firm calendar events and deadlines." },
+
+  // Electronic Signatures permissions
+  { code: "SIGNATURE_VIEW", name: "View Signature Requests", module: "Electronic Signatures", description: "View signature requests and signing statuses." },
+  { code: "SIGNATURE_MANAGE", name: "Manage Signature Requests", module: "Electronic Signatures", description: "Create, send, cancel, and remind signature requests." },
 ];
 
 export interface SystemRoleDef {
@@ -158,6 +162,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "NOTES_MANAGE",
       "CALENDAR_VIEW",
       "CALENDAR_MANAGE",
+      "SIGNATURE_VIEW",
+      "SIGNATURE_MANAGE",
     ],
   },
   {
@@ -188,6 +194,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "NOTES_MANAGE",
       "CALENDAR_VIEW",
       "CALENDAR_MANAGE",
+      "SIGNATURE_VIEW",
+      "SIGNATURE_MANAGE",
     ],
   },
   {
@@ -212,6 +220,7 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "NOTES_MANAGE",
       "CALENDAR_VIEW",
       "CALENDAR_MANAGE",
+      "SIGNATURE_VIEW",
     ],
   },
 ];
