@@ -50,6 +50,7 @@ export class TimeEntryRepository {
     endDate?: string;
     billingType?: string;
     status?: string;
+    isBilled?: string | boolean;
     page?: number;
     limit?: number;
   }): Promise<{ data: TimeEntry[]; total: number }> {
@@ -62,6 +63,9 @@ export class TimeEntryRepository {
     if (filters.clientId) query.clientId = new Types.ObjectId(filters.clientId);
     if (filters.userId) query.userId = new Types.ObjectId(filters.userId);
     if (filters.billingType) query.billingType = filters.billingType;
+    if (filters.isBilled !== undefined) {
+      query.isBilled = filters.isBilled === "true" || filters.isBilled === true;
+    }
     if (filters.status) {
       if (filters.status === "ACTIVE") {
         query.timerStatus = { $in: ["RUNNING", "PAUSED"] };

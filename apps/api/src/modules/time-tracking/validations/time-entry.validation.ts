@@ -52,6 +52,7 @@ export const SearchTimeEntriesSchema = z.object({
     endDate: z.string().optional(),
     billingType: z.nativeEnum(BillingType).optional(),
     status: z.string().optional(),
+    isBilled: z.string().or(z.boolean()).optional(),
     page: z.string().regex(/^\d+$/).transform(Number).optional(),
     limit: z.string().regex(/^\d+$/).transform(Number).optional(),
   }),

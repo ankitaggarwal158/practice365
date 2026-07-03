@@ -46,6 +46,10 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   // Billing module permissions
   { code: "TIME_ENTRIES_CREATE", name: "Create Time Entries", module: "Billing", description: "Record billable time entries." },
   { code: "INVOICES_APPROVE", name: "Approve Invoices", module: "Billing", description: "Review and approve customer invoices." },
+  { code: "INVOICES_VIEW", name: "View Invoices", module: "Billing", description: "View list and details of invoices." },
+  { code: "INVOICES_CREATE", name: "Create Invoices", module: "Billing", description: "Create draft invoices." },
+  { code: "INVOICES_MANAGE", name: "Manage Invoices", module: "Billing", description: "Edit, cancel or delete draft invoices." },
+  { code: "INVOICES_PAY", name: "Record Payments", module: "Billing", description: "Record payments against invoices." },
 
   // Roles & Permissions module permissions
   { code: "ROLES_VIEW", name: "View Roles", module: "Roles", description: "View system and custom roles/permissions." },
@@ -127,6 +131,11 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
       "DOCUMENTS_VIEW",
       "DOCUMENTS_MANAGE",
       "TIME_ENTRIES_CREATE",
+      "INVOICES_VIEW",
+      "INVOICES_CREATE",
+      "INVOICES_MANAGE",
+      "INVOICES_PAY",
+      "INVOICES_APPROVE",
       "FIRM_VIEW",
       "INTAKES_VIEW",
       "INTAKES_CREATE",

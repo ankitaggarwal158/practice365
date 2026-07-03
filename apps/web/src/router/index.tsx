@@ -95,6 +95,13 @@ import {
   EditTimeEntryPage,
   TimeEntryDetailsPage,
 } from "@/modules/time-tracking";
+import {
+  InvoiceListPage,
+  InvoiceDetailsPage,
+  CreateInvoicePage,
+  DraftInvoicePage,
+  PaymentHistoryPage,
+} from "@/modules/billing";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 import { ErrorFallback } from "@/components/ErrorFallback";
@@ -320,6 +327,26 @@ export const router = createBrowserRouter([
       {
         path: "time-tracking/:id/edit",
         element: <EditTimeEntryPage />,
+      },
+      {
+        path: "billing",
+        element: <InvoiceListPage />,
+      },
+      {
+        path: "billing/create",
+        element: <CreateInvoicePage />,
+      },
+      {
+        path: "billing/:id",
+        element: <InvoiceDetailsPage />,
+      },
+      {
+        path: "billing/:id/edit",
+        element: <DraftInvoicePage />,
+      },
+      {
+        path: "billing/:id/payments",
+        element: <PaymentHistoryPage />,
       },
       
       // Settings catch-all

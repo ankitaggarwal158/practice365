@@ -21,6 +21,7 @@ import { noteRouter } from "./modules/notes/index.js";
 import { calendarRouter } from "./modules/calendar/index.js";
 import { documentRouter } from "./modules/documents/index.js";
 import { timeEntryRouter } from "./modules/time-tracking/index.js";
+import { invoiceRouter } from "./modules/billing/index.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -55,6 +56,7 @@ app.use("/api", noteRouter);
 app.use("/api", calendarRouter);
 app.use("/api/documents", documentRouter);
 app.use("/api/time-entries", timeEntryRouter);
+app.use("/api/invoices", invoiceRouter);
 
 // ─── Global Error Handler (must be last) ─────────────────────
 app.use(globalErrorHandler);
