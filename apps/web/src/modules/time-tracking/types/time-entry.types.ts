@@ -46,6 +46,8 @@ export interface TimeEntry {
   lastResumedAt?: string;
   accumulatedSeconds?: number;
   
+  isBilled: boolean;
+  
   createdAt: string;
   updatedAt: string;
 }

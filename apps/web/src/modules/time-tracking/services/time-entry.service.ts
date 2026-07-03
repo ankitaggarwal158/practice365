@@ -29,6 +29,11 @@ export const timeEntryService = {
     return response.data;
   },
 
+  getEntryById: async (id: string): Promise<TimeEntry> => {
+    const response = await httpClient.get<{ data: TimeEntry }>(`/api/time-entries/${id}`);
+    return response.data;
+  },
+
   updateEntry: async (id: string, data: Partial<TimeEntryFormData>): Promise<TimeEntry> => {
     const response = await httpClient.patch<{ data: TimeEntry }>(`/api/time-entries/${id}`, data);
     return response.data;

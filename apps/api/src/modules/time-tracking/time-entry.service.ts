@@ -10,7 +10,7 @@ export class TimeEntryService {
     const { hourlyRate, billingType } = await resolveHourlyRate(userId, data.matterId, data.billingType);
     const billableAmount = billingType === BillingType.NON_BILLABLE ? 0 : (data.durationMinutes / 60) * hourlyRate;
 
-    return timeEntryRepository.create({
+    const entry = await timeEntryRepository.create({
       firmId: new Types.ObjectId(firmId),
       userId: new Types.ObjectId(userId),
       matterId: data.matterId ? new Types.ObjectId(data.matterId) : undefined,
@@ -23,6 +23,8 @@ export class TimeEntryService {
       billingType,
       timerStatus: TimerStatus.MANUAL,
     });
+    console.log(`[AUDIT] Time entry created manually: entryId=${entry._id}, userId=${userId}, firmId=${firmId}, durationMinutes=${entry.durationMinutes}`);
+    return entry;
   }
 
   async getEntryById(id: string, firmId: string) {
@@ -33,6 +35,19 @@ export class TimeEntryService {
 
   async updateEntry(id: string, firmId: string, data: UpdateTimeEntryDTO) {
     const entry = await this.getEntryById(id, firmId);
+
+    if (entry.isBilled) {
+      if (
+        (data.durationMinutes !== undefined && data.durationMinutes !== entry.durationMinutes) ||
+        (data.billingType !== undefined && data.billingType !== entry.billingType) ||
+        (data.hourlyRate !== undefined && data.hourlyRate !== entry.hourlyRate) ||
+        (data.matterId !== undefined && data.matterId !== entry.matterId?.toString()) ||
+        (data.clientId !== undefined && data.clientId !== entry.clientId?.toString()) ||
+        (data.date !== undefined && new Date(data.date).getTime() !== new Date(entry.date).getTime())
+      ) {
+        throw AppError.badRequest("Cannot modify duration, billing type, rates, dates or associations on a billed time entry.");
+      }
+    }
     
     // Recalculate billable amount if duration, matter, or rate changed
     const matterId = data.matterId || entry.matterId?.toString();
@@ -52,12 +67,15 @@ export class TimeEntryService {
     if (data.clientId) updateData.clientId = new Types.ObjectId(data.clientId);
     if (data.date) updateData.date = new Date(data.date);
 
-    return timeEntryRepository.update(id, firmId, updateData);
+    const updated = await timeEntryRepository.update(id, firmId, updateData);
+    console.log(`[AUDIT] Time entry updated: entryId=${id}, userId=${entry.userId}, firmId=${firmId}`);
+    return updated;
   }
 
   async deleteEntry(id: string, firmId: string) {
     const success = await timeEntryRepository.softDelete(id, firmId);
     if (!success) throw AppError.notFound("Time entry not found");
+    console.log(`[AUDIT] Time entry soft-deleted: entryId=${id}, firmId=${firmId}`);
     return true;
   }
 

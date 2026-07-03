@@ -21,6 +21,16 @@ export const timeEntryController = {
     }
   },
 
+  async getEntryById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const firmId = await getFirmId(req);
+      const result = await timeEntryService.getEntryById(req.params.id as string, firmId);
+      res.json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async updateEntry(req: Request, res: Response, next: NextFunction) {
     try {
       const firmId = await getFirmId(req);

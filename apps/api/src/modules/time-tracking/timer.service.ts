@@ -16,7 +16,7 @@ export class TimerService {
     const now = new Date();
     const { hourlyRate, billingType } = await resolveHourlyRate(userId, data.matterId, data.billingType);
     
-    return timeEntryRepository.create({
+    const timer = await timeEntryRepository.create({
       firmId: new Types.ObjectId(firmId),
       userId: new Types.ObjectId(userId),
       matterId: data.matterId ? new Types.ObjectId(data.matterId) : undefined,
@@ -32,6 +32,8 @@ export class TimerService {
       hourlyRate,
       billableAmount: 0,
     });
+    console.log(`[AUDIT] Timer started: entryId=${timer._id}, userId=${userId}, firmId=${firmId}`);
+    return timer;
   }
 
   async pauseTimer(firmId: string, userId: string) {
@@ -52,12 +54,14 @@ export class TimerService {
     const durationMinutes = Math.floor(newAccumulated / 60);
     const billableAmount = activeTimer.billingType === BillingType.NON_BILLABLE ? 0 : (durationMinutes / 60) * activeTimer.hourlyRate;
 
-    return timeEntryRepository.update(activeTimer._id, firmId, {
+    const paused = await timeEntryRepository.update(activeTimer._id, firmId, {
       timerStatus: TimerStatus.PAUSED,
       accumulatedSeconds: newAccumulated,
       durationMinutes,
       billableAmount
     });
+    console.log(`[AUDIT] Timer paused: entryId=${activeTimer._id}, userId=${userId}, firmId=${firmId}, durationMinutes=${durationMinutes}`);
+    return paused;
   }
 
   async resumeTimer(firmId: string, userId: string) {
@@ -69,10 +73,12 @@ export class TimerService {
       throw AppError.badRequest("Timer is not paused.");
     }
 
-    return timeEntryRepository.update(activeTimer._id, firmId, {
+    const resumed = await timeEntryRepository.update(activeTimer._id, firmId, {
       timerStatus: TimerStatus.RUNNING,
       lastResumedAt: new Date(),
     });
+    console.log(`[AUDIT] Timer resumed: entryId=${activeTimer._id}, userId=${userId}, firmId=${firmId}`);
+    return resumed;
   }
 
   async stopTimer(firmId: string, userId: string) {
@@ -93,13 +99,15 @@ export class TimerService {
     const durationMinutes = Math.floor(newAccumulated / 60);
     const billableAmount = activeTimer.billingType === BillingType.NON_BILLABLE ? 0 : (durationMinutes / 60) * activeTimer.hourlyRate;
 
-    return timeEntryRepository.update(activeTimer._id, firmId, {
+    const stopped = await timeEntryRepository.update(activeTimer._id, firmId, {
       timerStatus: TimerStatus.STOPPED,
       timerStoppedAt: now,
       accumulatedSeconds: newAccumulated,
       durationMinutes,
       billableAmount
     });
+    console.log(`[AUDIT] Timer stopped: entryId=${activeTimer._id}, userId=${userId}, firmId=${firmId}, durationMinutes=${durationMinutes}`);
+    return stopped;
   }
 
   async getActiveTimer(firmId: string, userId: string) {

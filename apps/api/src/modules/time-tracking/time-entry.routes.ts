@@ -30,6 +30,12 @@ router.get(
   timeEntryController.search
 );
 
+router.get(
+  "/:id",
+  requirePermission("TIME_ENTRIES_VIEW"),
+  timeEntryController.getEntryById
+);
+
 router.patch(
   "/:id",
   requirePermission("TIME_ENTRIES_MANAGE"), // Simplified permission check

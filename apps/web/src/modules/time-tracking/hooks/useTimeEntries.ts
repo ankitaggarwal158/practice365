@@ -17,6 +17,14 @@ export function useTimeEntries(filters: TimeEntryFilters) {
   });
 }
 
+export function useTimeEntry(id: string) {
+  return useQuery({
+    queryKey: [...timeEntryKeys.all, "detail", id],
+    queryFn: () => timeEntryService.getEntryById(id),
+    enabled: !!id,
+  });
+}
+
 export function useCreateTimeEntry() {
   const queryClient = useQueryClient();
   

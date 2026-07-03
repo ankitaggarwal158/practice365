@@ -9,7 +9,11 @@ export class TimeEntryRepository {
   }
 
   async findById(id: string | Types.ObjectId, firmId: string | Types.ObjectId): Promise<TimeEntry | null> {
-    return TimeEntryModel.findOne({ _id: id, firmId, deletedAt: { $exists: false } }).exec();
+    return TimeEntryModel.findOne({ _id: id, firmId, deletedAt: { $exists: false } })
+      .populate("userId", "firstName lastName email")
+      .populate("matterId", "title")
+      .populate("clientId", "firstName lastName name")
+      .exec();
   }
 
   async update(id: string | Types.ObjectId, firmId: string | Types.ObjectId, data: Partial<TimeEntry>): Promise<TimeEntry | null> {

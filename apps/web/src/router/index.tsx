@@ -89,7 +89,12 @@ import {
   EditDocumentPage,
   FolderManagementPage,
 } from "@/modules/documents";
-import { TimeTrackingPage } from "@/modules/time-tracking";
+import {
+  TimeTrackingPage,
+  CreateTimeEntryPage,
+  EditTimeEntryPage,
+  TimeEntryDetailsPage,
+} from "@/modules/time-tracking";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
 import { ErrorFallback } from "@/components/ErrorFallback";
@@ -303,6 +308,18 @@ export const router = createBrowserRouter([
       {
         path: "time-tracking",
         element: <TimeTrackingPage />,
+      },
+      {
+        path: "time-tracking/create",
+        element: <CreateTimeEntryPage />,
+      },
+      {
+        path: "time-tracking/:id",
+        element: <TimeEntryDetailsPage />,
+      },
+      {
+        path: "time-tracking/:id/edit",
+        element: <EditTimeEntryPage />,
       },
       
       // Settings catch-all
