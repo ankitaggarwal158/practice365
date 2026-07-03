@@ -170,8 +170,10 @@ export class DocumentController {
     try {
       const firmId = await getRequestingUserFirmId(req);
       const download = await documentDownloadService.getDownloadStream(firmId, req.params.id as string);
+      const disposition = req.query.preview === "true" ? "inline" : "attachment";
+      
       res.setHeader("Content-Type", download.mimeType);
-      res.setHeader("Content-Disposition", `attachment; filename="${download.fileName}"`);
+      res.setHeader("Content-Disposition", `${disposition}; filename="${download.fileName}"`);
       res.setHeader("Content-Length", download.fileSize);
       download.stream.pipe(res);
     } catch (err) {

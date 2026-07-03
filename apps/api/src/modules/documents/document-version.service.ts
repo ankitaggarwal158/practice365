@@ -60,6 +60,7 @@ export class DocumentVersionService {
       });
 
       await session.commitTransaction();
+      console.log(`[AUDIT] Document Version Uploaded: DocumentID=${documentId}, Version=${nextVersionNumber}, StorageKey=${storageResult.storageKey}, FirmID=${firmId}, UploadedBy=${userId}`);
       return updatedDoc!;
     } catch (error) {
       await session.abortTransaction();

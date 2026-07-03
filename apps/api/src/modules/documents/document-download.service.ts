@@ -18,6 +18,7 @@ export class DocumentDownloadService {
     }
 
     const stream = storageService.getFileStream(version.storageKey);
+    console.log(`[AUDIT] Document Downloaded: ID=${documentId}, VersionID=${version._id}, FirmID=${firmId}`);
 
     return {
       stream,

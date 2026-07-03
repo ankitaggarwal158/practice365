@@ -33,6 +33,7 @@ export class DocumentSearchService {
     if (!updated) {
       throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
     }
+    console.log(`[AUDIT] Document Metadata Updated: ID=${documentId}, FirmID=${firmId}`);
     return updated;
   }
 
@@ -41,6 +42,7 @@ export class DocumentSearchService {
     if (!deleted) {
       throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
     }
+    console.log(`[AUDIT] Document Deleted: ID=${documentId}, FirmID=${firmId}, DeletedBy=${userId}`);
   }
 }
 

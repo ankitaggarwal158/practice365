@@ -64,6 +64,7 @@ export class DocumentUploadService {
       });
 
       await session.commitTransaction();
+      console.log(`[AUDIT] Document Uploaded: ID=${docId}, Name=${file.originalname}, FirmID=${firmId}, UploadedBy=${userId}`);
       return docMeta;
     } catch (error) {
       await session.abortTransaction();

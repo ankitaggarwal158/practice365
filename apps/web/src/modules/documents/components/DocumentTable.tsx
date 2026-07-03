@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { DocumentMeta } from "../types/document.types.js";
+import { API_BASE_URL } from "../../../services/http-client.js";
+import { FileText, FileImage, FileCode, File } from "lucide-react";
 
 interface DocumentTableProps {
   documents: DocumentMeta[];
@@ -15,6 +17,14 @@ export const DocumentTable: React.FC<DocumentTableProps> = ({ documents, isLoadi
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const renderIcon = (mime: string) => {
+    const className = "h-5 w-5";
+    if (mime.includes("pdf")) return <FileText className={`${className} text-red-500`} />;
+    if (mime.includes("image")) return <FileImage className={`${className} text-green-500`} />;
+    if (mime.includes("text") || mime.includes("plain")) return <FileCode className={`${className} text-amber-500`} />;
+    return <File className={`${className} text-gray-500`} />;
   };
 
   if (isLoading) {
@@ -50,8 +60,8 @@ export const DocumentTable: React.FC<DocumentTableProps> = ({ documents, isLoadi
                   <tr key={doc._id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-lg">
-                          📄
+                        <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-gray-50 border border-gray-100 rounded-lg">
+                          {renderIcon(doc.mimeType)}
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
@@ -73,7 +83,7 @@ export const DocumentTable: React.FC<DocumentTableProps> = ({ documents, isLoadi
                       {new Date(doc.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
-                      <a href={`http://localhost:5000/api/documents/${doc._id}/download`} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-900">
+                      <a href={`${API_BASE_URL}/documents/${doc._id}/download`} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-900">
                         Download
                       </a>
                       <button onClick={() => onDelete(doc._id)} className="text-red-600 hover:text-red-900">

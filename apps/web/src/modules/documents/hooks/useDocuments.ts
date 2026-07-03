@@ -85,3 +85,24 @@ export const useUploadVersion = () => {
     },
   });
 };
+
+export const useUpdateFolder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { folderName: string } }) =>
+      documentApi.updateFolder(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["documents", "folders"] });
+    },
+  });
+};
+
+export const useDeleteFolder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: documentApi.deleteFolder,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["documents", "folders"] });
+    },
+  });
+};

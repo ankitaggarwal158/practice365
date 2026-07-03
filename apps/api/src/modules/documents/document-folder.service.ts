@@ -18,11 +18,13 @@ export class DocumentFolderService {
       }
     }
 
-    return documentFolderRepository.create({
+    const folder = await documentFolderRepository.create({
       ...folderData,
       firmId: new Types.ObjectId(firmId),
       createdBy: new Types.ObjectId(userId),
     });
+    console.log(`[AUDIT] Document Folder Created: ID=${folder._id}, Name=${folder.folderName}, FirmID=${firmId}`);
+    return folder;
   }
 
   async updateFolder(firmId: string, folderId: string, folderData: any): Promise<IDocumentFolder> {
@@ -30,6 +32,7 @@ export class DocumentFolderService {
     if (!updated) {
       throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.FOLDER_NOT_FOUND);
     }
+    console.log(`[AUDIT] Document Folder Updated: ID=${folderId}, Name=${folderData.folderName}, FirmID=${firmId}`);
     return updated;
   }
 
@@ -50,6 +53,7 @@ export class DocumentFolderService {
     if (!deleted) {
       throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.FOLDER_NOT_FOUND);
     }
+    console.log(`[AUDIT] Document Folder Deleted: ID=${folderId}, FirmID=${firmId}`);
   }
 }
 

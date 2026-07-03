@@ -85,6 +85,9 @@ import {
 import {
   DocumentListPage,
   DocumentDetailsPage,
+  UploadDocumentPage,
+  EditDocumentPage,
+  FolderManagementPage,
 } from "@/modules/documents";
 import { TimeTrackingPage } from "@/modules/time-tracking";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -282,8 +285,20 @@ export const router = createBrowserRouter([
         element: <DocumentListPage />,
       },
       {
+        path: "documents/upload",
+        element: <UploadDocumentPage />,
+      },
+      {
+        path: "documents/folders",
+        element: <FolderManagementPage />,
+      },
+      {
         path: "documents/:id",
         element: <DocumentDetailsPage />,
+      },
+      {
+        path: "documents/:id/edit",
+        element: <EditDocumentPage />,
       },
       {
         path: "time-tracking",

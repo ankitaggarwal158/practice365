@@ -31,13 +31,15 @@ export const documentApi = {
   getDocument: (id: string) => 
     httpClient.get<DocumentMeta>(`/documents/${id}`),
   
-  uploadDocument: (data: { file: File; matterId?: string; folderId?: string | null; category?: string; description?: string }) => {
+  uploadDocument: (data: { file: File; matterId?: string; clientId?: string; folderId?: string | null; category?: string; description?: string; tags?: string[] }) => {
     const formData = new FormData();
     formData.append("file", data.file);
     if (data.matterId) formData.append("matterId", data.matterId);
+    if (data.clientId) formData.append("clientId", data.clientId);
     if (data.folderId) formData.append("folderId", data.folderId);
     if (data.category) formData.append("category", data.category);
     if (data.description) formData.append("description", data.description);
+    if (data.tags) formData.append("tags", JSON.stringify(data.tags));
 
     return httpClient.post<DocumentMeta>("/documents", formData);
   },
