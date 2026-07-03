@@ -125,23 +125,7 @@ import {
   SigningPage,
   CompletionPage,
 } from "@/modules/e-signatures";
-
-/**
- * Placeholder dashboard shown after login.
- * Will be replaced when the Dashboard module is implemented.
- */
-function DashboardPlaceholder() {
-  return (
-    <div className="flex-1 flex flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-2xl font-bold text-white">
-        Practice<span className="text-brand-400">365</span>
-      </h1>
-      <p className="text-surface-200/60 text-sm">
-        Dashboard coming soon. You are authenticated.
-      </p>
-    </div>
-  );
-}
+import { DashboardPage } from "@/modules/dashboard";
 
 export const router = createBrowserRouter([
   // ─── Guest Routes (redirect if authenticated) ──────
@@ -190,7 +174,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <DashboardPlaceholder />,
+        element: <DashboardPage />,
       },
       {
         path: "users",
