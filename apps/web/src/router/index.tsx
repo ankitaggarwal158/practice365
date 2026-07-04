@@ -126,6 +126,10 @@ import {
   CompletionPage,
 } from "@/modules/e-signatures";
 import { DashboardPage } from "@/modules/dashboard";
+import {
+  NotificationCenterPage,
+  NotificationPreferencesPage,
+} from "@/modules/notifications";
 
 export const router = createBrowserRouter([
   // ─── Guest Routes (redirect if authenticated) ──────
@@ -207,6 +211,14 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <UserProfilePage />,
+      },
+      {
+        path: "notifications",
+        element: <NotificationCenterPage />,
+      },
+      {
+        path: "settings/notifications",
+        element: <NotificationPreferencesPage />,
       },
       {
         path: "firm",

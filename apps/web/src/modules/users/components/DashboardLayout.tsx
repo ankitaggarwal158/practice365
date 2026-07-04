@@ -2,6 +2,7 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { UserAvatar } from "./UserAvatar";
 import { ActiveTimer } from "@/modules/time-tracking";
+import { NotificationBell } from "@/modules/notifications";
 
 export function DashboardLayout() {
   const { user, logout } = useAuth();
@@ -236,7 +237,8 @@ export function DashboardLayout() {
 
       {/* Main Workspace */}
       <main className="flex-1 flex flex-col overflow-y-auto relative">
-        <div className="absolute top-4 right-8 z-50">
+        <div className="absolute top-4 right-8 z-50 flex items-center gap-3">
+          <NotificationBell />
           <ActiveTimer />
         </div>
         <Outlet />

@@ -25,6 +25,7 @@ import { invoiceRouter } from "./modules/billing/index.js";
 import { portalRouter } from "./modules/client-portal/index.js";
 import { signatureRequestRouter } from "./modules/e-signatures/index.js";
 import { dashboardRouter } from "./modules/dashboard/index.js";
+import { notificationRouter } from "./modules/notifications/index.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -63,6 +64,7 @@ app.use("/api/invoices", invoiceRouter);
 app.use("/api", portalRouter);
 app.use("/api", signatureRequestRouter);
 app.use("/api", dashboardRouter);
+app.use("/api", notificationRouter);
 
 // ─── Global Error Handler (must be last) ─────────────────────
 app.use(globalErrorHandler);
