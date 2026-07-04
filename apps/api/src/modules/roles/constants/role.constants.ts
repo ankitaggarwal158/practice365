@@ -101,6 +101,10 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   // Electronic Signatures permissions
   { code: "SIGNATURE_VIEW", name: "View Signature Requests", module: "Electronic Signatures", description: "View signature requests and signing statuses." },
   { code: "SIGNATURE_MANAGE", name: "Manage Signature Requests", module: "Electronic Signatures", description: "Create, send, cancel, and remind signature requests." },
+
+  // Audit Log & Activity Trail permissions
+  { code: "AUDIT_VIEW", name: "View Audit Logs", module: "Audit Log", description: "View system audit logs and timelines." },
+  { code: "AUDIT_EXPORT", name: "Export Audit Logs", module: "Audit Log", description: "Export audit logs to CSV." },
 ];
 
 export interface SystemRoleDef {

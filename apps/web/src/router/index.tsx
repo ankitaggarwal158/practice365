@@ -77,6 +77,12 @@ import {
   EditNotePage,
 } from "@/modules/notes";
 import {
+  AuditLogPage,
+  EntityTimelinePage,
+  UserActivityPage,
+} from "@/modules/audit-log";
+
+import {
   CalendarPage,
   CreateEventPage,
   EditEventPage,
@@ -292,6 +298,19 @@ export const router = createBrowserRouter([
         path: "notes/:id/edit",
         element: <EditNotePage />,
       },
+      {
+        path: "audit-logs",
+        element: <AuditLogPage />,
+      },
+      {
+        path: "audit-logs/entity/:id",
+        element: <EntityTimelinePage />,
+      },
+      {
+        path: "audit-logs/user/:id",
+        element: <UserActivityPage />,
+      },
+
       {
         path: "calendar",
         element: <CalendarPage />,

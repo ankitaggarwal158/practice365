@@ -26,6 +26,8 @@ import { portalRouter } from "./modules/client-portal/index.js";
 import { signatureRequestRouter } from "./modules/e-signatures/index.js";
 import { dashboardRouter } from "./modules/dashboard/index.js";
 import { notificationRouter } from "./modules/notifications/index.js";
+import { auditLogRouter } from "./modules/audit-log/index.js";
+
 
 // Validate required configuration before starting
 validateConfig();
@@ -65,6 +67,8 @@ app.use("/api", portalRouter);
 app.use("/api", signatureRequestRouter);
 app.use("/api", dashboardRouter);
 app.use("/api", notificationRouter);
+app.use("/api", auditLogRouter);
+
 
 // ─── Global Error Handler (must be last) ─────────────────────
 app.use(globalErrorHandler);
