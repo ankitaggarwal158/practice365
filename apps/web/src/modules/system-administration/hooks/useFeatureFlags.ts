@@ -22,7 +22,8 @@ export function useFeatureFlags() {
     flags,
     isLoading,
     error,
-    toggleFlag: toggleMutation.mutateAsync,
+    toggleFlag: (id: string, enabled: boolean) =>
+      toggleMutation.mutateAsync({ id, enabled }),
     isToggling: toggleMutation.isPending,
   };
 }
