@@ -31,6 +31,7 @@ import { auditLogRouter } from "./modules/audit-log/index.js";
 import { firmSettingsRouter } from "./modules/firm-settings/index.js";
 import { reportsRouter } from "./modules/reports/index.js";
 import { systemSettingsRouter, checkMaintenanceMode } from "./modules/system-administration/index.js";
+import { messageThreadRouter } from "./modules/client-messaging/index.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -76,6 +77,7 @@ app.use("/api", notificationRouter);
 app.use("/api", auditLogRouter);
 app.use("/api", firmSettingsRouter);
 app.use("/api", reportsRouter);
+app.use("/api", messageThreadRouter);
 
 
 // ─── Global Error Handler (must be last) ─────────────────────

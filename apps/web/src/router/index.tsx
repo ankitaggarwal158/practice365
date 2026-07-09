@@ -138,6 +138,7 @@ import {
 } from "@/modules/client-portal";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { GuestRoute } from "./GuestRoute";
+import { PortalMessagesPage } from "@/modules/client-messaging";
 import { ErrorFallback } from "@/components/ErrorFallback";
 import {
   SignatureRequestListPage,
@@ -585,6 +586,10 @@ export const router = createBrowserRouter([
       {
         path: "matters/:id",
         element: <PortalMatterDetailsPage />,
+      },
+      {
+        path: "matters/:id/messages",
+        element: <PortalMessagesPage />,
       },
       {
         path: "documents",

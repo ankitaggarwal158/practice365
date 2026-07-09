@@ -154,12 +154,21 @@ export const MatterDetailsPage: React.FC = () => {
             {matter.responsibleAttorneyName && (
               <div className="border-t border-white/[0.06] pt-4 mt-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-surface-400 block mb-2">Assigned Lead Attorney</span>
-                <div className="flex items-center gap-2 text-sm text-white font-medium">
+                <div className="flex items-center gap-2 text-sm text-white font-medium mb-3">
                   <div className="h-7 w-7 rounded-lg bg-brand-500/10 border border-brand-500/15 flex items-center justify-center text-[10px] font-bold text-brand-400 uppercase">
                     {matter.responsibleAttorneyName.substring(0, 2)}
                   </div>
                   <span>{matter.responsibleAttorneyName}</span>
                 </div>
+                <Link
+                  to={`/portal/matters/${matter.id}/messages`}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-brand-500 hover:bg-brand-400 active:scale-95 text-white text-xs font-bold rounded-xl transition-all shadow-md cursor-pointer"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  Secure Messages
+                </Link>
               </div>
             )}
           </div>

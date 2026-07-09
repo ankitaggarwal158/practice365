@@ -7,8 +7,9 @@ import { useUsers } from "@/modules/users/hooks/useUsers";
 import { useAuth } from "@/modules/auth";
 import { matterApi } from "../api/matter.api";
 import MatterDashboardPage from "./MatterDashboardPage";
+import { MatterMessagesPage } from "../../client-messaging";
 
-type Tab = "overview" | "team" | "notes" | "attachments";
+type Tab = "overview" | "team" | "notes" | "attachments" | "messages";
 
 export default function MatterDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -211,7 +212,7 @@ export default function MatterDetailsPage() {
 
       {/* Tabs */}
       <div className="flex border-b border-white/[0.06] gap-1 overflow-x-auto pb-px">
-        {(["overview", "team", "notes", "attachments"] as Tab[]).map((tab) => (
+        {(["overview", "team", "notes", "attachments", "messages"] as Tab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -221,7 +222,7 @@ export default function MatterDetailsPage() {
                 : "border-transparent text-surface-200/50 hover:text-surface-100 hover:bg-white/[0.01]"
             }`}
           >
-            {tab === "overview" ? "Dashboard Overview" : tab === "team" ? "Matter Team" : tab}
+            {tab === "overview" ? "Dashboard Overview" : tab === "team" ? "Matter Team" : tab === "messages" ? "Client Portal Messages" : tab}
           </button>
         ))}
       </div>
@@ -512,6 +513,10 @@ export default function MatterDetailsPage() {
               </div>
             )}
           </div>
+        )}
+
+        {activeTab === "messages" && (
+          <MatterMessagesPage matterId={matter.id} />
         )}
       </div>
     </div>

@@ -8,6 +8,7 @@ import {
   PortalResetPasswordSchema,
   PortalProfileUpdateSchema,
 } from "./portal.validation.js";
+import { portalMessageThreadRouter } from "../client-messaging/index.js";
 
 const router = Router();
 
@@ -20,6 +21,7 @@ router.post("/portal/reset-password", validateRequest(PortalResetPasswordSchema)
 
 // Guarded Client Portal Endpoints
 router.use("/portal", portalAuthenticate);
+router.use("/portal", portalMessageThreadRouter);
 
 router.get("/profile", portalAuthController.getProfile);
 router.patch("/profile", validateRequest(PortalProfileUpdateSchema), portalAuthController.updateProfile);
