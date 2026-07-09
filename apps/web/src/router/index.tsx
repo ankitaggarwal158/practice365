@@ -81,6 +81,14 @@ import {
   EntityTimelinePage,
   UserActivityPage,
 } from "@/modules/audit-log";
+import {
+  ReportsLayout,
+  MatterReportPage,
+  ClientReportPage,
+  TimeReportPage,
+  BillingReportPage,
+  UserActivityReportPage,
+} from "@/modules/reports";
 
 import {
   CalendarPage,
@@ -309,6 +317,32 @@ export const router = createBrowserRouter([
       {
         path: "audit-logs/user/:id",
         element: <UserActivityPage />,
+      },
+      {
+        path: "reports",
+        element: <ReportsLayout />,
+        children: [
+          {
+            path: "matters",
+            element: <MatterReportPage />,
+          },
+          {
+            path: "clients",
+            element: <ClientReportPage />,
+          },
+          {
+            path: "time",
+            element: <TimeReportPage />,
+          },
+          {
+            path: "billing",
+            element: <BillingReportPage />,
+          },
+          {
+            path: "user-activity",
+            element: <UserActivityReportPage />,
+          },
+        ],
       },
 
       {

@@ -11,6 +11,11 @@ export function DashboardLayout() {
   const location = useLocation();
   const { permissions = [] } = useCurrentUserPermissions();
   const hasAuditView = permissions.includes("AUDIT_VIEW");
+  const hasMattersView = permissions.includes("MATTERS_VIEW");
+  const hasClientsView = permissions.includes("CLIENTS_VIEW");
+  const hasTimeEntriesView = permissions.includes("TIME_ENTRIES_VIEW");
+  const hasInvoicesView = permissions.includes("INVOICES_VIEW");
+  const canViewReports = hasMattersView || hasClientsView || hasTimeEntriesView || hasInvoicesView || hasAuditView;
 
 
   const navItems = [
@@ -185,6 +190,19 @@ export function DashboardLayout() {
       icon: (
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+    });
+  }
+
+  if (canViewReports) {
+    navItems.push({
+      label: "Reports",
+      path: "/reports",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
         </svg>
       ),
     });

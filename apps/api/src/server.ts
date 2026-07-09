@@ -29,6 +29,7 @@ import { dashboardRouter } from "./modules/dashboard/index.js";
 import { notificationRouter } from "./modules/notifications/index.js";
 import { auditLogRouter } from "./modules/audit-log/index.js";
 import { firmSettingsRouter } from "./modules/firm-settings/index.js";
+import { reportsRouter } from "./modules/reports/index.js";
 
 
 // Validate required configuration before starting
@@ -72,6 +73,7 @@ app.use("/api", dashboardRouter);
 app.use("/api", notificationRouter);
 app.use("/api", auditLogRouter);
 app.use("/api", firmSettingsRouter);
+app.use("/api", reportsRouter);
 
 
 // ─── Global Error Handler (must be last) ─────────────────────
