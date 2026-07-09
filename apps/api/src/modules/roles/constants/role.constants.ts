@@ -62,6 +62,8 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   // Firm Management module permissions
   { code: "FIRM_VIEW", name: "View Firm Settings", module: "Firm", description: "View firm details and configuration." },
   { code: "FIRM_UPDATE", name: "Update Firm Settings", module: "Firm", description: "Modify firm details, branding, settings, and billing defaults." },
+  { code: "FIRM_SETTINGS_VIEW", name: "View Firm Configuration", module: "Firm Settings", description: "View firm-wide regional settings and numbering preferences." },
+  { code: "FIRM_SETTINGS_MANAGE", name: "Manage Firm Configuration", module: "Firm Settings", description: "Create or modify firm-wide settings, numbering prefixes, and branding colors." },
 
   // Intake module permissions
   { code: "INTAKES_VIEW", name: "View Intakes", module: "Intake", description: "View list and details of intakes." },

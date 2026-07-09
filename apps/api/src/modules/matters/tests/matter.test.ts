@@ -12,6 +12,7 @@ import { PracticeArea } from "../../practice-areas/schemas/practice-area.schema.
 import { Client } from "../../clients/schemas/client.schema.js";
 import { User } from "../../users/schemas/user.schema.js";
 import { Firm } from "../../firm/schemas/firm.schema.js";
+import { FirmSettings } from "../../firm-settings/schemas/firm-settings.schema.js";
 import { formatMatter, generateMatterNumber, createMatter, updateMatter, updateMatterStatus, changeResponsibleAttorney } from "../matter.service.js";
 import { createMatterSchema, updateMatterSchema, updateStatusSchema } from "../matter.validation.js";
 
@@ -30,14 +31,18 @@ describe("Matter Management Module (024) Tests", () => {
       Matter.findOne = originalMatterFindOne;
     });
 
-    test("generateMatterNumber should format number based on firmPrefix", async () => {
-      const mockFirmId = new Types.ObjectId();
-      Firm.findById = () => Promise.resolve({ matterPrefix: "TEST-" }) as any;
-      Matter.findOne = () => Promise.resolve(null) as any;
+    test("generateMatterNumber should format number based on sequence", async () => {
+      const originalFindOne = FirmSettings.findOne;
+      const originalFindOneAndUpdate = FirmSettings.findOneAndUpdate;
+      
+      FirmSettings.findOne = () => ({ exec: () => Promise.resolve({ matterNumberPrefix: "TEST-", matterNextNumber: 1001 }) }) as any;
+      FirmSettings.findOneAndUpdate = () => ({ exec: () => Promise.resolve({ matterNumberPrefix: "TEST-", matterNextNumber: 1002 }) }) as any;
 
-      const matterNum = await generateMatterNumber(mockFirmId.toString());
-      assert.ok(matterNum.startsWith("TEST-"));
-      assert.strictEqual(matterNum.length, 16); // TEST-YYYYMM-XXXX (16 chars)
+      const matterNum = await generateMatterNumber(new Types.ObjectId().toString());
+      assert.strictEqual(matterNum, "TEST-1001");
+
+      FirmSettings.findOne = originalFindOne;
+      FirmSettings.findOneAndUpdate = originalFindOneAndUpdate;
     });
 
     test("formatMatter should serialize Mongoose documents properly", () => {
@@ -132,6 +137,8 @@ describe("Matter Management Module (024) Tests", () => {
     let originalTeamMemberUpdate: any;
     let originalNoteFind: any;
     let originalAttachmentFind: any;
+    let originalFirmSettingsFindOne: any;
+    let originalFirmSettingsFindOneAndUpdate: any;
 
     before(() => {
       originalClientFindOne = Client.findOne;
@@ -148,6 +155,11 @@ describe("Matter Management Module (024) Tests", () => {
       originalTeamMemberUpdate = MatterTeamMember.findOneAndUpdate;
       originalNoteFind = MatterNote.find;
       originalAttachmentFind = MatterAttachment.find;
+      originalFirmSettingsFindOne = FirmSettings.findOne;
+      originalFirmSettingsFindOneAndUpdate = FirmSettings.findOneAndUpdate;
+
+      FirmSettings.findOne = () => ({ exec: () => Promise.resolve({ matterNumberPrefix: "MAT-", matterNextNumber: 1001 }) }) as any;
+      FirmSettings.findOneAndUpdate = () => ({ exec: () => Promise.resolve({ matterNumberPrefix: "MAT-", matterNextNumber: 1002 }) }) as any;
     });
 
     after(() => {
@@ -165,6 +177,8 @@ describe("Matter Management Module (024) Tests", () => {
       MatterTeamMember.findOneAndUpdate = originalTeamMemberUpdate;
       MatterNote.find = originalNoteFind;
       MatterAttachment.find = originalAttachmentFind;
+      FirmSettings.findOne = originalFirmSettingsFindOne;
+      FirmSettings.findOneAndUpdate = originalFirmSettingsFindOneAndUpdate;
     });
 
     test("createMatter should check firm boundaries and seed practice areas if needed", async () => {

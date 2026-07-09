@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -27,6 +28,7 @@ import { signatureRequestRouter } from "./modules/e-signatures/index.js";
 import { dashboardRouter } from "./modules/dashboard/index.js";
 import { notificationRouter } from "./modules/notifications/index.js";
 import { auditLogRouter } from "./modules/audit-log/index.js";
+import { firmSettingsRouter } from "./modules/firm-settings/index.js";
 
 
 // Validate required configuration before starting
@@ -39,6 +41,7 @@ app.use(cors({ origin: config.corsOrigin }));
 app.use(helmet());
 app.use(morgan(config.logLevel));
 app.use(express.json());
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // ─── Health Check ────────────────────────────────────────────
 app.get("/health", (_req, res) => {
@@ -68,6 +71,7 @@ app.use("/api", signatureRequestRouter);
 app.use("/api", dashboardRouter);
 app.use("/api", notificationRouter);
 app.use("/api", auditLogRouter);
+app.use("/api", firmSettingsRouter);
 
 
 // ─── Global Error Handler (must be last) ─────────────────────

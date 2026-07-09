@@ -12,6 +12,7 @@ import { TimeEntryModel } from "../../time-tracking/schemas/time-entry.schema.js
 import { InvoiceModel } from "../schemas/invoice.schema.js";
 import { InvoiceItemModel } from "../schemas/invoice-item.schema.js";
 import { InvoicePaymentModel } from "../schemas/invoice-payment.schema.js";
+import { FirmSettings } from "../../firm-settings/schemas/firm-settings.schema.js";
 
 describe("Billing & Invoicing Service Tests", () => {
   describe("Validation Schemas", () => {
@@ -78,6 +79,8 @@ describe("Billing & Invoicing Service Tests", () => {
     let originalInvoiceItemInsertMany: any;
     let originalInvoiceFindOne: any;
     let originalInvoiceFindOneAndUpdate: any;
+    let originalFirmSettingsFindOne: any;
+    let originalFirmSettingsFindOneAndUpdate: any;
 
     before(() => {
       originalClientExists = Client.exists;
@@ -88,6 +91,11 @@ describe("Billing & Invoicing Service Tests", () => {
       originalInvoiceItemInsertMany = InvoiceItemModel.insertMany;
       originalInvoiceFindOne = InvoiceModel.findOne;
       originalInvoiceFindOneAndUpdate = InvoiceModel.findOneAndUpdate;
+      originalFirmSettingsFindOne = FirmSettings.findOne;
+      originalFirmSettingsFindOneAndUpdate = FirmSettings.findOneAndUpdate;
+
+      FirmSettings.findOne = () => ({ exec: () => Promise.resolve({ invoiceNumberPrefix: "INV-", invoiceNextNumber: 1 }) }) as any;
+      FirmSettings.findOneAndUpdate = () => ({ exec: () => Promise.resolve({ invoiceNumberPrefix: "INV-", invoiceNextNumber: 2 }) }) as any;
     });
 
     after(() => {
@@ -99,6 +107,8 @@ describe("Billing & Invoicing Service Tests", () => {
       InvoiceItemModel.insertMany = originalInvoiceItemInsertMany;
       InvoiceModel.findOne = originalInvoiceFindOne;
       InvoiceModel.findOneAndUpdate = originalInvoiceFindOneAndUpdate;
+      FirmSettings.findOne = originalFirmSettingsFindOne;
+      FirmSettings.findOneAndUpdate = originalFirmSettingsFindOneAndUpdate;
     });
 
     test("createDraftInvoice handles database saving, locking, and numbering", async () => {
@@ -150,7 +160,7 @@ describe("Billing & Invoicing Service Tests", () => {
       });
 
       assert.strictEqual(result.status, InvoiceStatus.DRAFT);
-      assert.strictEqual(result.invoiceNumber, "INV-2026-000001");
+      assert.strictEqual(result.invoiceNumber, "INV-000001");
       assert.strictEqual(result.subtotal, 500.00); // 400 (time entry) + 100 (manual)
       assert.strictEqual(result.totalAmount, 500.00);
       assert.strictEqual(result.items.length, 2);

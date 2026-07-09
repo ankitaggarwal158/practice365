@@ -21,9 +21,9 @@ import {
 } from "@/modules/roles";
 import {
   FirmProfilePage,
-  FirmSettingsPage,
   FirmBrandingPage,
 } from "@/modules/firm";
+import { FirmSettingsPage } from "@/modules/firm-settings";
 import {
   IntakeListPage,
   CreateIntakePage,

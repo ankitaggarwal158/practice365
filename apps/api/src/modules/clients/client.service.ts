@@ -6,10 +6,10 @@ import * as conflictRepository from "../conflict-check/conflict-check.repository
 import { ClientResponseData } from "./client.types.js";
 import { Types } from "mongoose";
 
-export function generateClientNumber(): string {
-  const dateStr = new Date().toISOString().slice(0, 7).replace("-", ""); // YYYYMM
-  const randomStr = Math.floor(1000 + Math.random() * 9000).toString(); // 4 digits
-  return `CLI-${dateStr}-${randomStr}`;
+import { numberSequenceService } from "../firm-settings/index.js";
+
+export async function generateClientNumber(firmId: string): Promise<string> {
+  return numberSequenceService.generateClientNumber(firmId);
 }
 
 export function formatClient(
@@ -67,7 +67,7 @@ export async function createClient(
   userId: string,
   data: any
 ): Promise<ClientResponseData> {
-  const clientNumber = generateClientNumber();
+  const clientNumber = await generateClientNumber(firmId);
 
   const created = await clientRepository.create({
     ...data,
@@ -110,7 +110,7 @@ export async function createClientFromLead(
     throw AppError.badRequest("A cleared conflict check is required before conversion.");
   }
 
-  const clientNumber = generateClientNumber();
+  const clientNumber = await generateClientNumber(firmId);
   const clientType = lead.companyName ? "ORGANIZATION" : "INDIVIDUAL";
 
   const client = await clientRepository.create({

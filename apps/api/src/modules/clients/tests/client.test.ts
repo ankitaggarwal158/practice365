@@ -8,6 +8,7 @@ import { mergeClients } from "../client.merge.service.js";
 import { findDuplicates } from "../client.duplicate.service.js";
 import { Lead } from "../../leads/schemas/lead.schema.js";
 import { ConflictCheck } from "../../conflict-check/schemas/conflict-check.schema.js";
+import { FirmSettings } from "../../firm-settings/schemas/firm-settings.schema.js";
 import {
   createClientSchema,
   updateClientSchema,
@@ -16,10 +17,18 @@ import {
 
 describe("Client Management Module (023) Tests", () => {
   describe("Formatting & Auto Numbering", () => {
-    test("generateClientNumber should return YYYYMM format with CLI prefix", () => {
-      const num = generateClientNumber();
-      assert.ok(num.startsWith("CLI-"));
-      assert.strictEqual(num.length, 15); // CLI-YYYYMM-XXXX (15 chars)
+    test("generateClientNumber should return client prefix and sequence", async () => {
+      const originalFindOne = FirmSettings.findOne;
+      const originalFindOneAndUpdate = FirmSettings.findOneAndUpdate;
+      
+      FirmSettings.findOne = () => ({ exec: () => Promise.resolve({ clientNumberPrefix: "CLI-", clientNextNumber: 10 }) }) as any;
+      FirmSettings.findOneAndUpdate = () => ({ exec: () => Promise.resolve({ clientNumberPrefix: "CLI-", clientNextNumber: 11 }) }) as any;
+
+      const num = await generateClientNumber(new Types.ObjectId().toString());
+      assert.strictEqual(num, "CLI-10");
+
+      FirmSettings.findOne = originalFindOne;
+      FirmSettings.findOneAndUpdate = originalFindOneAndUpdate;
     });
 
     test("formatClient should map model parameters correctly", () => {
@@ -94,6 +103,8 @@ describe("Client Management Module (023) Tests", () => {
     let originalClientFindOne: any;
     let originalClientFindOneAndUpdate: any;
     let originalConflictFindOne: any;
+    let originalFirmSettingsFindOne: any;
+    let originalFirmSettingsFindOneAndUpdate: any;
 
     let originalClientFind: any;
     let originalNoteUpdateMany: any;
@@ -107,6 +118,11 @@ describe("Client Management Module (023) Tests", () => {
       originalClientFindOne = Client.findOne;
       originalClientFindOneAndUpdate = Client.findOneAndUpdate;
       originalConflictFindOne = ConflictCheck.findOne;
+      originalFirmSettingsFindOne = FirmSettings.findOne;
+      originalFirmSettingsFindOneAndUpdate = FirmSettings.findOneAndUpdate;
+
+      FirmSettings.findOne = () => ({ exec: () => Promise.resolve({ clientNumberPrefix: "CLI-", clientNextNumber: 10 }) }) as any;
+      FirmSettings.findOneAndUpdate = () => ({ exec: () => Promise.resolve({ clientNumberPrefix: "CLI-", clientNextNumber: 11 }) }) as any;
 
       originalClientFind = Client.find;
       originalNoteUpdateMany = ClientNote.updateMany;
@@ -121,6 +137,8 @@ describe("Client Management Module (023) Tests", () => {
       Client.findOne = originalClientFindOne;
       Client.findOneAndUpdate = originalClientFindOneAndUpdate;
       ConflictCheck.findOne = originalConflictFindOne;
+      FirmSettings.findOne = originalFirmSettingsFindOne;
+      FirmSettings.findOneAndUpdate = originalFirmSettingsFindOneAndUpdate;
 
       Client.find = originalClientFind;
       ClientNote.updateMany = originalNoteUpdateMany;

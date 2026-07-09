@@ -12,28 +12,12 @@ import { User } from "../users/schemas/user.schema.js";
 import { MatterResponseData } from "./matter.types.js";
 import { PracticeArea } from "../practice-areas/index.js";
 
+import { numberSequenceService } from "../firm-settings/index.js";
+
 // ─── Number Generation ────────────────────────────────────────
 
 export async function generateMatterNumber(firmId: string): Promise<string> {
-  const firm = await Firm.findById(firmId);
-  const prefix = firm?.matterPrefix || "MAT-";
-  const dateStr = new Date().toISOString().slice(0, 7).replace("-", ""); // YYYYMM
-
-  let matterNumber = "";
-  let isUnique = false;
-  let attempts = 0;
-
-  while (!isUnique && attempts < 10) {
-    const randomStr = Math.floor(1000 + Math.random() * 9000).toString(); // 4 digits
-    matterNumber = `${prefix}${dateStr}-${randomStr}`;
-    const existing = await matterRepository.findByMatterNumber(matterNumber, firmId);
-    if (!existing) {
-      isUnique = true;
-    }
-    attempts++;
-  }
-
-  return matterNumber;
+  return numberSequenceService.generateMatterNumber(firmId);
 }
 
 // ─── Mapper Utility ───────────────────────────────────────────
