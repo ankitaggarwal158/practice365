@@ -89,6 +89,13 @@ import {
   BillingReportPage,
   UserActivityReportPage,
 } from "@/modules/reports";
+import {
+  SystemAdminLayout,
+  SystemSettingsPage,
+  FeatureFlagsPage,
+  AnnouncementsPage,
+  MaintenancePage,
+} from "@/modules/system-administration";
 
 import {
   CalendarPage,
@@ -154,6 +161,10 @@ export const router = createBrowserRouter([
         <LoginPage />
       </GuestRoute>
     ),
+  },
+  {
+    path: "/maintenance",
+    element: <MaintenancePage />,
   },
   {
     path: "/forgot-password",
@@ -341,6 +352,24 @@ export const router = createBrowserRouter([
           {
             path: "user-activity",
             element: <UserActivityReportPage />,
+          },
+        ],
+      },
+      {
+        path: "system",
+        element: <SystemAdminLayout />,
+        children: [
+          {
+            path: "settings",
+            element: <SystemSettingsPage />,
+          },
+          {
+            path: "flags",
+            element: <FeatureFlagsPage />,
+          },
+          {
+            path: "announcements",
+            element: <AnnouncementsPage />,
           },
         ],
       },

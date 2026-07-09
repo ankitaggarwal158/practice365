@@ -15,6 +15,9 @@ import type {
   VerifyEmailRequest,
 } from "../types/auth.types.js";
 
+import { isMaintenanceModeActive, getMaintenanceMessage } from "../../system-administration/index.js";
+import { getUserEffectivePermissions } from "../../roles/service/permission.service.js";
+
 /**
  * POST /auth/login
  * Authenticate user with email and password.
@@ -30,6 +33,16 @@ export async function login(req: Request, res: Response): Promise<void> {
 
   const meta = extractRequestMeta(ipAddress, userAgent);
   const result = await authService.login(email, password, meta);
+
+  // Check if maintenance mode is active
+  const isMaint = await isMaintenanceModeActive();
+  if (isMaint) {
+    const permissions = await getUserEffectivePermissions(result.user.id);
+    if (!permissions.includes("SYSTEM_ADMIN")) {
+      const msg = await getMaintenanceMessage();
+      throw new AppError(msg, 503);
+    }
+  }
 
   sendSuccess(res, result);
 }

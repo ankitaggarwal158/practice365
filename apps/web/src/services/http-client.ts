@@ -93,6 +93,10 @@ async function executeRequest(url: string, options: RequestOptions) {
     }
   }
 
+  if (response.status === 503) {
+    window.location.href = "/maintenance";
+  }
+
   if (!response.ok || json.success === false) {
     throw new ApiClientError(
       json.message || "An unexpected error occurred.",

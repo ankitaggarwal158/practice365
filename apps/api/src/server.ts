@@ -30,7 +30,7 @@ import { notificationRouter } from "./modules/notifications/index.js";
 import { auditLogRouter } from "./modules/audit-log/index.js";
 import { firmSettingsRouter } from "./modules/firm-settings/index.js";
 import { reportsRouter } from "./modules/reports/index.js";
-
+import { systemSettingsRouter, checkMaintenanceMode } from "./modules/system-administration/index.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -42,6 +42,7 @@ app.use(cors({ origin: config.corsOrigin }));
 app.use(helmet());
 app.use(morgan(config.logLevel));
 app.use(express.json());
+app.use(checkMaintenanceMode);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // ─── Health Check ────────────────────────────────────────────
@@ -51,6 +52,7 @@ app.get("/health", (_req, res) => {
 
 // ─── API Routes ──────────────────────────────────────────────
 app.use("/api/auth", authRouter);
+app.use("/api", systemSettingsRouter);
 app.use("/api/users", userRouter);
 app.use("/api", rolesRouter);
 app.use("/api", firmRouter);

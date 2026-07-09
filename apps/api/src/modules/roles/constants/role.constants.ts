@@ -107,6 +107,9 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   // Audit Log & Activity Trail permissions
   { code: "AUDIT_VIEW", name: "View Audit Logs", module: "Audit Log", description: "View system audit logs and timelines." },
   { code: "AUDIT_EXPORT", name: "Export Audit Logs", module: "Audit Log", description: "Export audit logs to CSV." },
+
+  // System Administration permissions
+  { code: "SYSTEM_ADMIN", name: "System Administration", module: "System", description: "Access system-wide configuration, announcements, and feature flags." },
 ];
 
 export interface SystemRoleDef {
@@ -117,14 +120,19 @@ export interface SystemRoleDef {
 
 export const SYSTEM_ROLES: SystemRoleDef[] = [
   {
+    name: "System Administrator",
+    description: "Application-level system administrator with global operational access.",
+    permissions: ["SYSTEM_ADMIN"],
+  },
+  {
     name: "Firm Owner",
     description: "Full ownership and control of the firm, including billing and user roles.",
-    permissions: SYSTEM_PERMISSIONS.map((p) => p.code),
+    permissions: SYSTEM_PERMISSIONS.map((p) => p.code).filter((c) => c !== "SYSTEM_ADMIN"),
   },
   {
     name: "Firm Administrator",
     description: "Administrative management of the firm, users, settings, and billing.",
-    permissions: SYSTEM_PERMISSIONS.map((p) => p.code),
+    permissions: SYSTEM_PERMISSIONS.map((p) => p.code).filter((c) => c !== "SYSTEM_ADMIN"),
   },
   {
     name: "Attorney",
