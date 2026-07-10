@@ -113,6 +113,14 @@ const leadSchema = new Schema<LeadDocument>(
       trim: true,
       default: "",
     },
+    customFields: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
+    opposingPartyNames: {
+      type: [String],
+      default: [],
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

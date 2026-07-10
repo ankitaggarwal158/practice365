@@ -90,6 +90,7 @@ export function formatLead(
     convertedClientId: lead.convertedClientId?.toString() || undefined,
     convertedAt: lead.convertedAt?.toISOString() || undefined,
     lostReason: lead.lostReason || undefined,
+    customFields: lead.customFields || {},
     createdBy: lead.createdBy?._id ? lead.createdBy._id.toString() : lead.createdBy?.toString() || undefined,
     createdAt: lead.createdAt.toISOString(),
     updatedAt: lead.updatedAt.toISOString(),
@@ -164,6 +165,7 @@ export async function createLeadFromIntake(
     practiceArea: intakeDoc.practiceArea || "",
     subject: intakeDoc.subject,
     description: intakeDoc.description || "",
+    opposingPartyNames: intakeDoc.opposingPartyNames || [],
     createdBy: intakeDoc.createdBy ? new Types.ObjectId(intakeDoc.createdBy.toString()) : undefined,
   });
 

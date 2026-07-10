@@ -8,6 +8,7 @@ import {
   UpdateTimeEntrySchema,
   StartTimerSchema,
   SearchTimeEntriesSchema,
+  TimerActionSchema,
 } from "./validations/time-entry.validation.js";
 
 const router = Router();
@@ -66,18 +67,21 @@ router.post(
 router.post(
   "/timer/pause",
   requirePermission("TIME_ENTRIES_CREATE"),
+  validateRequest(TimerActionSchema),
   timeEntryController.pauseTimer
 );
 
 router.post(
   "/timer/resume",
   requirePermission("TIME_ENTRIES_CREATE"),
+  validateRequest(TimerActionSchema),
   timeEntryController.resumeTimer
 );
 
 router.post(
   "/timer/stop",
   requirePermission("TIME_ENTRIES_CREATE"),
+  validateRequest(TimerActionSchema),
   timeEntryController.stopTimer
 );
 

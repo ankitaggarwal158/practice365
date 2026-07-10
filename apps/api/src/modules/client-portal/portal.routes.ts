@@ -34,6 +34,7 @@ router.get("/documents/:id/download", portalAuthController.downloadDocument);
 
 router.get("/invoices", portalAuthController.getInvoices);
 router.get("/invoices/:id/download", portalAuthController.downloadInvoicePDF);
+router.post("/invoices/:id/checkout", portalAuthController.createCheckoutSession);
 
 export const portalRouter = router;
 export default router;

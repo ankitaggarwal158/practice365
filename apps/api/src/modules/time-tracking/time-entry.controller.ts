@@ -44,7 +44,7 @@ export const timeEntryController = {
   async deleteEntry(req: Request, res: Response, next: NextFunction) {
     try {
       const firmId = await getFirmId(req);
-      await timeEntryService.deleteEntry(req.params.id as string, firmId);
+      await timeEntryService.deleteEntry(req.params.id as string, firmId, req.user!.userId);
       res.json({ success: true, message: "Time entry deleted" });
     } catch (error) {
       next(error);
@@ -85,7 +85,7 @@ export const timeEntryController = {
   async pauseTimer(req: Request, res: Response, next: NextFunction) {
     try {
       const firmId = await getFirmId(req);
-      const result = await timerService.pauseTimer(firmId, req.user!.userId);
+      const result = await timerService.pauseTimer(firmId, req.user!.userId, req.body.timerId);
       res.json({ success: true, data: result });
     } catch (error) {
       next(error);
@@ -95,7 +95,7 @@ export const timeEntryController = {
   async resumeTimer(req: Request, res: Response, next: NextFunction) {
     try {
       const firmId = await getFirmId(req);
-      const result = await timerService.resumeTimer(firmId, req.user!.userId);
+      const result = await timerService.resumeTimer(firmId, req.user!.userId, req.body.timerId);
       res.json({ success: true, data: result });
     } catch (error) {
       next(error);
@@ -105,7 +105,7 @@ export const timeEntryController = {
   async stopTimer(req: Request, res: Response, next: NextFunction) {
     try {
       const firmId = await getFirmId(req);
-      const result = await timerService.stopTimer(firmId, req.user!.userId);
+      const result = await timerService.stopTimer(firmId, req.user!.userId, req.body.timerId);
       res.json({ success: true, data: result });
     } catch (error) {
       next(error);
@@ -115,7 +115,7 @@ export const timeEntryController = {
   async getActiveTimer(req: Request, res: Response, next: NextFunction) {
     try {
       const firmId = await getFirmId(req);
-      const result = await timerService.getActiveTimer(firmId, req.user!.userId);
+      const result = await timerService.getActiveTimers(firmId, req.user!.userId);
       res.json({ success: true, data: result });
     } catch (error) {
       next(error);

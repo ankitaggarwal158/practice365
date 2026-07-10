@@ -8,7 +8,8 @@ export const CreateTimeEntrySchema = z.object({
   body: z.object({
     matterId: objectIdSchema.optional(),
     clientId: objectIdSchema.optional(),
-    description: z.string().max(2000).optional(),
+    clientDescription: z.string().min(1, "Client description is required").max(2000),
+    internalNote: z.string().max(2000).optional(),
     date: z.string().datetime().or(z.date()).optional(),
     durationMinutes: z.number().min(0, "Duration cannot be negative"),
     billingType: z.nativeEnum(BillingType).optional(),
@@ -23,7 +24,8 @@ export const UpdateTimeEntrySchema = z.object({
   body: z.object({
     matterId: objectIdSchema.optional(),
     clientId: objectIdSchema.optional(),
-    description: z.string().max(2000).optional(),
+    clientDescription: z.string().max(2000).optional(),
+    internalNote: z.string().max(2000).optional(),
     date: z.string().datetime().or(z.date()).optional(),
     durationMinutes: z.number().min(0).optional(),
     billingType: z.nativeEnum(BillingType).optional(),
@@ -35,7 +37,8 @@ export const StartTimerSchema = z.object({
   body: z.object({
     matterId: objectIdSchema.optional(),
     clientId: objectIdSchema.optional(),
-    description: z.string().max(2000).optional(),
+    clientDescription: z.string().max(2000).optional(),
+    internalNote: z.string().max(2000).optional(),
     billingType: z.nativeEnum(BillingType).optional(),
   }).refine(data => data.matterId || data.clientId, {
     message: "Must specify either matterId or clientId to start a timer",
@@ -55,5 +58,11 @@ export const SearchTimeEntriesSchema = z.object({
     isBilled: z.string().or(z.boolean()).optional(),
     page: z.string().regex(/^\d+$/).transform(Number).optional(),
     limit: z.string().regex(/^\d+$/).transform(Number).optional(),
+  }),
+});
+
+export const TimerActionSchema = z.object({
+  body: z.object({
+    timerId: objectIdSchema,
   }),
 });

@@ -10,6 +10,7 @@ import { InvoiceModel } from "../billing/schemas/invoice.schema.js";
 import { invoicePdfService } from "../billing/invoice-pdf.service.js";
 import { invoiceRepository as billingRepository } from "../billing/invoice.repository.js";
 import { AppError } from "../../shared/app-error.js";
+import { stripeService } from "../billing/stripe.service.js";
 
 export const portalAuthController = {
   async login(req: Request, res: Response) {
@@ -143,6 +144,7 @@ export const portalAuthController = {
     const query: any = {
       firmId,
       deleted: false,
+      sharedWithPortal: true,
       $or: [
         { clientId },
         { matterId: { $in: clientMatterIds } },
@@ -166,7 +168,7 @@ export const portalAuthController = {
     const { id } = req.params;
 
     const doc = await documentRepository.findById(id as string, firmId);
-    if (!doc) {
+    if (!doc || !doc.sharedWithPortal) {
       throw AppError.notFound("Document not found.");
     }
 
@@ -241,5 +243,13 @@ export const portalAuthController = {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename="${invoice.invoiceNumber}.pdf"`);
     res.send(pdfBuffer);
+  },
+
+  async createCheckoutSession(req: Request, res: Response) {
+    const { firmId } = req.portalUser as any;
+    const { id } = req.params;
+
+    const session = await stripeService.createCheckoutSession(firmId, id as string);
+    res.status(200).json({ success: true, data: session });
   },
 };

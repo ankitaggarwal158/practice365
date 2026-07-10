@@ -97,6 +97,10 @@ const intakeSchema = new Schema<IntakeDocument>(
       trim: true,
       default: "",
     },
+    opposingPartyNames: {
+      type: [String],
+      default: [],
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

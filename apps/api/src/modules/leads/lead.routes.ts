@@ -10,6 +10,7 @@ import {
   assignLeadSchema,
   addNoteSchema,
   uploadAttachmentSchema,
+  convertLeadSchema,
 } from "./lead.validation.js";
 import * as leadController from "./lead.controller.js";
 
@@ -75,6 +76,7 @@ router.post(
 router.post(
   "/leads/:id/convert",
   requirePermission("LEADS_CONVERT"),
+  validate(convertLeadSchema),
   asyncHandler(leadController.convertLead)
 );
 

@@ -9,6 +9,7 @@ export enum InvoiceStatus {
 export enum InvoiceItemSourceType {
   TIME_ENTRY = "TIME_ENTRY",
   EXPENSE = "EXPENSE",
+  FIXED_CHARGE = "FIXED_CHARGE",
   MANUAL = "MANUAL",
 }
 

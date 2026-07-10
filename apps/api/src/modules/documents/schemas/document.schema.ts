@@ -80,6 +80,19 @@ const documentMetaSchema = new Schema<DocumentMetaDocument>(
       type: Boolean,
       default: false,
     },
+    sharedWithPortal: {
+      type: Boolean,
+      default: false,
+    },
+    sharedWithPortalAt: {
+      type: Date,
+      default: null,
+    },
+    sharedWithPortalBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     deleted: {
       type: Boolean,
       default: false,

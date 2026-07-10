@@ -7,11 +7,14 @@ import * as clientService from "../clients/client.service.js";
 import { formatLead } from "./lead.service.js";
 import { LeadResponseData } from "./lead.types.js";
 import { Types } from "mongoose";
+import { DocumentMeta } from "../documents/schemas/document.schema.js";
+import { SignatureRequest } from "../e-signatures/schemas/signature-request.schema.js";
 
 export async function convertLead(
   leadId: string,
   firmId: string,
-  userId: string
+  userId: string,
+  data: { manualSignatureAttestation?: boolean; attestationNote?: string } = {}
 ): Promise<LeadResponseData> {
   const lead = await leadRepository.findById(leadId, firmId);
   if (!lead) {
@@ -30,6 +33,23 @@ export async function convertLead(
   const clearedCheck = await conflictRepository.findLatestClearedCheckForLead(leadId, firmId);
   if (!clearedCheck) {
     throw AppError.badRequest("Cannot convert lead to client. A cleared conflict check is required.");
+  }
+
+  // 1. Get documents for lead
+  const leadDocIds = await DocumentMeta.find({ leadId: lead._id, firmId }).distinct("_id");
+
+  // 2. Check for completed signature request on any of those documents
+  const signedRequest = await SignatureRequest.findOne({
+    documentId: { $in: leadDocIds },
+    firmId,
+    status: "COMPLETED",
+  });
+
+  if (!signedRequest && !data.manualSignatureAttestation) {
+    throw AppError.badRequest(
+      "Cannot convert lead to client. An engagement letter must be signed, " +
+      "or manual signature attestation must be provided."
+    );
   }
 
   // Call the Client module to create a real client record

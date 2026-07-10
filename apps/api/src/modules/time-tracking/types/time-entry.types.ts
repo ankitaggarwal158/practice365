@@ -8,7 +8,8 @@ export interface TimeEntry {
   matterId?: Types.ObjectId;
   clientId?: Types.ObjectId;
   
-  description?: string;
+  clientDescription: string;
+  internalNote?: string;
   date: Date;
   
   durationMinutes: number; // Stored in minutes
@@ -25,16 +26,21 @@ export interface TimeEntry {
   lastResumedAt?: Date;
   
   isBilled: boolean;
+  invoiceId?: Types.ObjectId | null;
+  createdBy?: Types.ObjectId;
+  deleted: boolean;
+  deletedAt?: Date;
+  deletedBy?: Types.ObjectId;
   
   createdAt: Date;
   updatedAt: Date;
-  deletedAt?: Date;
 }
 
 export interface CreateTimeEntryDTO {
   matterId?: string;
   clientId?: string;
-  description?: string;
+  clientDescription: string;
+  internalNote?: string;
   date?: string | Date;
   durationMinutes: number;
   billingType?: BillingType;
@@ -44,7 +50,8 @@ export interface CreateTimeEntryDTO {
 export interface UpdateTimeEntryDTO {
   matterId?: string;
   clientId?: string;
-  description?: string;
+  clientDescription?: string;
+  internalNote?: string;
   date?: string | Date;
   durationMinutes?: number;
   billingType?: BillingType;

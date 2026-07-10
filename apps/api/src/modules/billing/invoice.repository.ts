@@ -43,6 +43,10 @@ export class InvoiceRepository {
     return result.modifiedCount > 0;
   }
 
+  async hardDelete(id: string | Types.ObjectId): Promise<void> {
+    await InvoiceModel.deleteOne({ _id: id }).exec();
+  }
+
   // Invoice Items
   async createItems(items: Partial<InvoiceItem>[]): Promise<InvoiceItem[]> {
     const docs = await InvoiceItemModel.insertMany(items);

@@ -122,33 +122,7 @@ export async function updateNote(
   userId: string,
   userPermissions: string[]
 ): Promise<NoteDocument> {
-  const note = await noteRepository.findById(id, firmId);
-  if (!note) {
-    throw AppError.notFound(NOTE_ERROR_MESSAGES.NOTE_NOT_FOUND);
-  }
-
-  // Authorization: Only the author OR users with NOTES_MANAGE permission (Admins/Owners)
-  const isAuthor = note.authorId.toString() === userId;
-  const isManager = userPermissions.includes("NOTES_MANAGE");
-
-  if (!isAuthor && !isManager) {
-    throw AppError.forbidden(NOTE_ERROR_MESSAGES.UNAUTHORIZED_EDIT);
-  }
-
-  const updatePayload: Partial<NoteDocument> = {};
-  if (data.title !== undefined) {
-    updatePayload.title = data.title;
-  }
-  if (data.content !== undefined) {
-    updatePayload.content = sanitizeHtmlContent(data.content);
-  }
-
-  const updated = await noteRepository.update(id, firmId, updatePayload);
-  if (!updated) {
-    throw AppError.notFound(NOTE_ERROR_MESSAGES.NOTE_NOT_FOUND);
-  }
-
-  return updated;
+  throw AppError.badRequest("Notes are immutable and cannot be edited.");
 }
 
 export async function pinNote(

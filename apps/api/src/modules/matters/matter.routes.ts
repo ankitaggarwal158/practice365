@@ -84,6 +84,18 @@ router.patch(
   asyncHandler(matterController.reopenMatter)
 );
 
+router.get(
+  "/matters/:id/timeline",
+  requirePermission("MATTERS_VIEW"),
+  asyncHandler(matterController.getMatterTimeline)
+);
+
+router.get(
+  "/matters/:id/summary",
+  requirePermission("MATTERS_VIEW"),
+  asyncHandler(matterController.getMatterSummary)
+);
+
 // ─── Matter Notes Endpoints ─────────────────────────────────
 
 router.post(

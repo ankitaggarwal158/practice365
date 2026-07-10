@@ -7,7 +7,7 @@ export class NotificationEmailService {
   ): Promise<void> {
     // Print mock email log to console for development verification
     console.log(
-      `[EMAIL NOTIFICATION SENT] To: ${userName} <${userEmail}>, Subject: "${title}", Body: "${message}"`
+      `[AUDIT] Email Notification Sent: To: ${userName} <${userEmail}>, Subject: "${title}", Body: "${message}"`
     );
   }
 }

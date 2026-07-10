@@ -77,7 +77,7 @@ export async function inviteUser(
   });
   
   // Log invitation link to console
-  console.log(`[INVITATION SENT] Email: ${normalizedEmail}, Link: http://localhost:5173/accept-invitation?token=${tokenRaw}`);
+  console.log(`[AUDIT] Invitation Sent: Email: ${normalizedEmail}, Link: http://localhost:5173/accept-invitation?token=${tokenRaw}`);
   
   return formatUser(user);
 }

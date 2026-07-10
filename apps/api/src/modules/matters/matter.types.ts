@@ -25,6 +25,12 @@ export interface MatterDocument extends Document {
   billingMethod: "HOURLY" | "FLAT_FEE" | "CONTINGENCY";
   customHourlyRate?: number;
   flatFeeAmount?: number;
+  retainerAmountAgreed?: number | null;
+  retainerCollected?: boolean;
+  retainerDateCollected?: Date | null;
+  retainerAmountCollected?: number;
+  customFields?: Record<string, any>;
+  opposingPartyNames?: string[];
   createdBy: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -99,6 +105,11 @@ export interface MatterResponseData {
   billingMethod: string;
   customHourlyRate?: number;
   flatFeeAmount?: number;
+  retainerAmountAgreed?: number | null;
+  retainerCollected?: boolean;
+  retainerDateCollected?: string | null;
+  retainerAmountCollected?: number;
+  customFields?: Record<string, any>;
   createdBy: string;
   createdAt: string;
   updatedAt: string;

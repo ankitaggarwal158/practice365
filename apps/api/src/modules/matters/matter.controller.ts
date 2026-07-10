@@ -5,6 +5,8 @@ import * as userService from "../users/service/user.service.js";
 import * as matterService from "./matter.service.js";
 import * as teamService from "./matter-team.service.js";
 import * as practiceAreaService from "../practice-areas/practice-area.service.js";
+import { getMatterTimeline as fetchTimeline } from "./matter-timeline.service.js";
+import { getMatterSummary as fetchSummary } from "./matter-summary.service.js";
 
 async function getRequestingUserFirmId(req: Request): Promise<string> {
   if (!req.user) {
@@ -161,5 +163,22 @@ export async function deleteAttachment(req: Request, res: Response): Promise<voi
 export async function listPracticeAreas(req: Request, res: Response): Promise<void> {
   const firmId = await getRequestingUserFirmId(req);
   const result = await practiceAreaService.listPracticeAreas(firmId);
+  sendSuccess(res, result);
+}
+
+export async function getMatterTimeline(req: Request, res: Response): Promise<void> {
+  const firmId = await getRequestingUserFirmId(req);
+  const id = req.params.id as string;
+  const page = parseInt(req.query.page as string, 10) || 1;
+  const limit = parseInt(req.query.limit as string, 10) || 20;
+
+  const result = await fetchTimeline(id, firmId, page, limit);
+  sendSuccess(res, result);
+}
+
+export async function getMatterSummary(req: Request, res: Response): Promise<void> {
+  const firmId = await getRequestingUserFirmId(req);
+  const id = req.params.id as string;
+  const result = await fetchSummary(id, firmId);
   sendSuccess(res, result);
 }

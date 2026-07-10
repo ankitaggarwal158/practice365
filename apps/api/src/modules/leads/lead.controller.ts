@@ -81,7 +81,7 @@ export async function convertLead(req: Request, res: Response): Promise<void> {
   const firmId = await getRequestingUserFirmId(req);
   const id = req.params.id as string;
   const userId = req.user!.userId;
-  const result = await leadConversionService.convertLead(id, firmId, userId);
+  const result = await leadConversionService.convertLead(id, firmId, userId, req.body);
   sendSuccess(res, result);
 }
 

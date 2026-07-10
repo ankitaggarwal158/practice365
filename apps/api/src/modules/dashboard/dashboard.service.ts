@@ -30,7 +30,7 @@ export async function getDashboardSummary(
     permissionHelper.hasPermission(userId, "TIME_ENTRIES_VIEW"),
   ]);
 
-  const [matters, calendar, billing, documents, timeTracking, rawActivity] = await Promise.all([
+  const [matters, calendar, billing, documents, timeTracking, rawActivity, uncollectedRetainers] = await Promise.all([
     // Matters count
     canViewMatters ? dashboardRepository.countMattersByStatus(firmId) : null,
     // Calendar events count
@@ -43,6 +43,8 @@ export async function getDashboardSummary(
     canViewTime ? aggregationService.calculateTimeSummary(firmId, userId) : null,
     // Recent activities (requires filtering by permission)
     aggregationService.getAggregatedActivity(firmId, 15),
+    // Uncollected retainers list
+    canViewMatters ? dashboardRepository.findMattersWithUncollectedRetainer(firmId) : null,
   ]);
 
   // Filter activities based on permissions
@@ -62,6 +64,7 @@ export async function getDashboardSummary(
     documents: documents !== null ? { totalCount: documents } : null,
     timeTracking,
     activity: filteredActivity,
+    uncollectedRetainers,
   };
 }
 
@@ -75,12 +78,14 @@ export async function getDashboardWidgets(
     canViewBilling,
     canViewDocs,
     canViewTime,
+    canViewLeads,
   ] = await Promise.all([
     permissionHelper.hasPermission(userId, "MATTERS_VIEW"),
     permissionHelper.hasPermission(userId, "CALENDAR_VIEW"),
     permissionHelper.hasPermission(userId, "INVOICES_VIEW"),
     permissionHelper.hasPermission(userId, "DOCUMENTS_VIEW"),
     permissionHelper.hasPermission(userId, "TIME_ENTRIES_VIEW"),
+    permissionHelper.hasPermission(userId, "LEADS_VIEW"),
   ]);
 
   const [
@@ -90,6 +95,9 @@ export async function getDashboardWidgets(
     recentDocuments,
     billingSummary,
     timeSummary,
+    uncollectedRetainerMatters,
+    staleMatters,
+    pendingLeads,
   ] = await Promise.all([
     canViewMatters ? dashboardRepository.findMyMatters(firmId, userId) : null,
     canViewCalendar ? dashboardRepository.findUpcomingEvents(firmId) : null,
@@ -97,6 +105,9 @@ export async function getDashboardWidgets(
     canViewDocs ? dashboardRepository.findRecentDocuments(firmId) : null,
     canViewBilling ? dashboardRepository.getInvoicesSummary(firmId) : null,
     canViewTime ? aggregationService.calculateTimeSummary(firmId, userId) : null,
+    canViewMatters ? dashboardRepository.findMattersWithUncollectedRetainer(firmId) : null,
+    canViewMatters ? dashboardRepository.findStaleMatters(firmId) : null,
+    canViewLeads ? dashboardRepository.findPendingLeads(firmId) : null,
   ]);
 
   return {
@@ -106,6 +117,9 @@ export async function getDashboardWidgets(
     recentDocuments,
     billingSummary,
     timeSummary,
+    uncollectedRetainerMatters,
+    staleMatters,
+    pendingLeads,
   };
 }
 

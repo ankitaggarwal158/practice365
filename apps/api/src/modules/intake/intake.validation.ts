@@ -23,6 +23,7 @@ export const createIntakeSchema = z.object({
   source: z.enum(INTAKE_SOURCES, {
     message: `Source must be one of: ${INTAKE_SOURCES.join(", ")}`,
   }),
+  opposingPartyNames: z.array(z.string()).optional(),
 });
 
 export const updateIntakeSchema = z.object({
@@ -36,6 +37,7 @@ export const updateIntakeSchema = z.object({
   subject: z.string().min(1, "Subject/summary is required.").max(200).optional(),
   description: z.string().max(2000).optional(),
   source: z.enum(INTAKE_SOURCES).optional(),
+  opposingPartyNames: z.array(z.string()).optional(),
 });
 
 export const updateStatusSchema = z.object({

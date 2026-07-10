@@ -8,6 +8,7 @@ import { Invoice, InvoiceItem } from "./invoice.types.js";
 import { Client } from "../clients/schemas/client.schema.js";
 import { Matter } from "../matters/schemas/matter.schema.js";
 import { TimeEntryModel } from "../time-tracking/schemas/time-entry.schema.js";
+import { FixedChargeModel, fixedChargeRepository } from "../fixed-charges/index.js";
 
 export const invoiceService = {
   async createDraftInvoice(
@@ -17,6 +18,7 @@ export const invoiceService = {
       clientId: string;
       matterId?: string;
       timeEntryIds?: string[];
+      fixedChargeIds?: string[];
       expenseIds?: string[];
       manualItems?: {
         description: string;
@@ -65,6 +67,30 @@ export const invoiceService = {
       }
     }
 
+    // 3b. Validate Fixed Charges
+    const fixedCharges: any[] = [];
+    if (data.fixedChargeIds && data.fixedChargeIds.length > 0) {
+      const charges = await FixedChargeModel.find({
+        _id: { $in: data.fixedChargeIds },
+        firmId,
+        deleted: false,
+      }).exec();
+
+      if (charges.length !== data.fixedChargeIds.length) {
+        throw AppError.badRequest("One or more fixed charges could not be found.");
+      }
+
+      for (const charge of charges) {
+        if (charge.isBilled) {
+          throw AppError.badRequest(`Fixed charge ${charge._id} has already been billed.`);
+        }
+        if (charge.billingType === "NON_BILLABLE") {
+          throw AppError.badRequest(`Fixed charge ${charge._id} is non-billable and cannot be invoiced.`);
+        }
+        fixedCharges.push(charge);
+      }
+    }
+
     // 4. Generate unique invoice number
     const invoiceNumber = await invoiceNumberService.generateInvoiceNumber(firmId);
 
@@ -82,6 +108,19 @@ export const invoiceService = {
         quantity,
         rate: entry.hourlyRate,
         amount: Math.round(quantity * entry.hourlyRate * 100) / 100,
+        displayOrder: displayOrder++,
+      });
+    });
+
+    // Fixed charges items
+    fixedCharges.forEach((charge) => {
+      itemsToCreate.push({
+        sourceType: InvoiceItemSourceType.FIXED_CHARGE,
+        sourceId: charge._id,
+        description: charge.clientDescription || "Fixed Charge",
+        quantity: 1,
+        rate: charge.amount,
+        amount: charge.amount,
         displayOrder: displayOrder++,
       });
     });
@@ -130,12 +169,40 @@ export const invoiceService = {
       }))
     );
 
-    // 9. Lock time entries
+    // 9. Lock time entries atomically
     if (data.timeEntryIds && data.timeEntryIds.length > 0) {
-      await TimeEntryModel.updateMany(
-        { _id: { $in: data.timeEntryIds } },
-        { $set: { isBilled: true } }
+      const result = await TimeEntryModel.updateMany(
+        { _id: { $in: data.timeEntryIds }, isBilled: false },
+        { $set: { isBilled: true, invoiceId: invoice._id } }
       ).exec();
+
+      if (result.modifiedCount !== data.timeEntryIds.length) {
+        // Rollback: delete items and invoice
+        await invoiceRepository.deleteItemsByInvoiceId(invoice._id.toString());
+        await invoiceRepository.hardDelete(invoice._id.toString());
+        throw AppError.conflict("One or more time entries were claimed by another invoice.");
+      }
+    }
+
+    // 10. Lock fixed charges atomically
+    if (data.fixedChargeIds && data.fixedChargeIds.length > 0) {
+      const result = await FixedChargeModel.updateMany(
+        { _id: { $in: data.fixedChargeIds }, isBilled: false },
+        { $set: { isBilled: true, invoiceId: invoice._id } }
+      ).exec();
+
+      if (result.modifiedCount !== data.fixedChargeIds.length) {
+        // Rollback time entries first if locked
+        if (data.timeEntryIds && data.timeEntryIds.length > 0) {
+          await TimeEntryModel.updateMany(
+            { _id: { $in: data.timeEntryIds } },
+            { $set: { isBilled: false, invoiceId: null } }
+          ).exec();
+        }
+        await invoiceRepository.deleteItemsByInvoiceId(invoice._id.toString());
+        await invoiceRepository.hardDelete(invoice._id.toString());
+        throw AppError.conflict("One or more fixed charges were claimed by another invoice.");
+      }
     }
 
     console.log(`[AUDIT] Invoice Created: ID=${invoice._id}, Number=${invoice.invoiceNumber}`);
@@ -155,6 +222,7 @@ export const invoiceService = {
       dueDate?: string | Date;
       notes?: string;
       timeEntryIds?: string[];
+      fixedChargeIds?: string[];
       manualItems?: {
         description: string;
         quantity: number;
@@ -190,9 +258,9 @@ export const invoiceService = {
     // Get current line items
     const currentItems = await invoiceRepository.findItemsByInvoiceId(invoiceId);
 
-    // If new timeEntryIds or manualItems are provided, rewrite line items entirely
+    // If new timeEntryIds or fixedChargeIds or manualItems are provided, rewrite line items entirely
     let finalItems = currentItems;
-    if (data.timeEntryIds !== undefined || data.manualItems !== undefined) {
+    if (data.timeEntryIds !== undefined || data.fixedChargeIds !== undefined || data.manualItems !== undefined) {
       // 1. Release currently locked time entries
       const currentLockedIds = currentItems
         .filter((item) => item.sourceType === InvoiceItemSourceType.TIME_ENTRY && item.sourceId)
@@ -201,7 +269,19 @@ export const invoiceService = {
       if (currentLockedIds.length > 0) {
         await TimeEntryModel.updateMany(
           { _id: { $in: currentLockedIds } },
-          { $set: { isBilled: false } }
+          { $set: { isBilled: false, invoiceId: null } }
+        ).exec();
+      }
+
+      // 1b. Release currently locked fixed charges
+      const currentLockedFixedIds = currentItems
+        .filter((item) => item.sourceType === InvoiceItemSourceType.FIXED_CHARGE && item.sourceId)
+        .map((item) => item.sourceId!);
+
+      if (currentLockedFixedIds.length > 0) {
+        await FixedChargeModel.updateMany(
+          { _id: { $in: currentLockedFixedIds } },
+          { $set: { isBilled: false, invoiceId: null } }
         ).exec();
       }
 
@@ -238,10 +318,44 @@ export const invoiceService = {
             invoiceId: invoice._id,
             sourceType: InvoiceItemSourceType.TIME_ENTRY,
             sourceId: entry._id,
-            description: entry.description || "Billable Time",
+            description: entry.clientDescription || "Billable Time",
             quantity,
             rate: entry.hourlyRate,
             amount: Math.round(quantity * entry.hourlyRate * 100) / 100,
+            displayOrder: displayOrder++,
+          });
+        }
+      }
+
+      // Handle new fixed charges
+      const targetFixedChargeIds = data.fixedChargeIds || [];
+      if (targetFixedChargeIds.length > 0) {
+        const charges = await FixedChargeModel.find({
+          _id: { $in: targetFixedChargeIds },
+          firmId,
+          deleted: false,
+        }).exec();
+
+        if (charges.length !== targetFixedChargeIds.length) {
+          throw AppError.badRequest("One or more fixed charges could not be found.");
+        }
+
+        for (const charge of charges) {
+          if (charge.isBilled) {
+            throw AppError.badRequest(`Fixed charge ${charge._id} has already been billed.`);
+          }
+          if (charge.billingType === "NON_BILLABLE") {
+            throw AppError.badRequest(`Fixed charge ${charge._id} is non-billable and cannot be invoiced.`);
+          }
+
+          itemsToCreate.push({
+            invoiceId: invoice._id,
+            sourceType: InvoiceItemSourceType.FIXED_CHARGE,
+            sourceId: charge._id,
+            description: charge.clientDescription || "Fixed Charge",
+            quantity: 1,
+            rate: charge.amount,
+            amount: charge.amount,
             displayOrder: displayOrder++,
           });
         }
@@ -261,12 +375,21 @@ export const invoiceService = {
         });
       });
 
-      // 4. Save new items & lock new time entries
+      // 4. Save new items & lock new time entries & fixed charges
       finalItems = await invoiceRepository.createItems(itemsToCreate);
       if (targetTimeEntryIds.length > 0) {
-        await TimeEntryModel.updateMany(
-          { _id: { $in: targetTimeEntryIds } },
-          { $set: { isBilled: true } }
+        const result = await TimeEntryModel.updateMany(
+          { _id: { $in: targetTimeEntryIds }, isBilled: false },
+          { $set: { isBilled: true, invoiceId: invoice._id } }
+        ).exec();
+        if (result.modifiedCount !== targetTimeEntryIds.length) {
+          throw AppError.conflict("One or more time entries were claimed by another invoice.");
+        }
+      }
+      if (targetFixedChargeIds.length > 0) {
+        await FixedChargeModel.updateMany(
+          { _id: { $in: targetFixedChargeIds } },
+          { $set: { isBilled: true, invoiceId: invoice._id } }
         ).exec();
       }
     }
@@ -337,7 +460,19 @@ export const invoiceService = {
     if (lockedIds.length > 0) {
       await TimeEntryModel.updateMany(
         { _id: { $in: lockedIds } },
-        { $set: { isBilled: false } }
+        { $set: { isBilled: false, invoiceId: null } }
+      ).exec();
+    }
+
+    // Unlock locked fixed charges
+    const lockedFixedIds = items
+      .filter((item) => item.sourceType === InvoiceItemSourceType.FIXED_CHARGE && item.sourceId)
+      .map((item) => item.sourceId!);
+
+    if (lockedFixedIds.length > 0) {
+      await FixedChargeModel.updateMany(
+        { _id: { $in: lockedFixedIds } },
+        { $set: { isBilled: false, invoiceId: null } }
       ).exec();
     }
 
@@ -369,7 +504,19 @@ export const invoiceService = {
     if (lockedIds.length > 0) {
       await TimeEntryModel.updateMany(
         { _id: { $in: lockedIds } },
-        { $set: { isBilled: false } }
+        { $set: { isBilled: false, invoiceId: null } }
+      ).exec();
+    }
+
+    // Unlock locked fixed charges
+    const lockedFixedIds = items
+      .filter((item) => item.sourceType === InvoiceItemSourceType.FIXED_CHARGE && item.sourceId)
+      .map((item) => item.sourceId!);
+
+    if (lockedFixedIds.length > 0) {
+      await FixedChargeModel.updateMany(
+        { _id: { $in: lockedFixedIds } },
+        { $set: { isBilled: false, invoiceId: null } }
       ).exec();
     }
 

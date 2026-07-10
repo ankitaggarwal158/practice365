@@ -26,7 +26,7 @@ describe("Time Tracking Module (036) Tests", () => {
         body: {
           matterId: "507f1f77bcf86cd799439011",
           billingType: "BILLABLE",
-          description: "Drafted plea agreement",
+          clientDescription: "Drafted plea agreement",
           durationMinutes: 45,
           date: new Date().toISOString(),
         },
@@ -129,13 +129,13 @@ describe("Time Tracking Module (036) Tests", () => {
 
       TimeEntryModel.findOneAndUpdate = () => {
         return {
-          exec: () => Promise.resolve({ ...mockEntry, description: "Updated notes" }),
+          exec: () => Promise.resolve({ ...mockEntry, clientDescription: "Updated notes" }),
         } as any;
       };
 
       try {
-        const result = await timeEntryService.updateEntry(entryId, firmId, { description: "Updated notes" });
-        assert.strictEqual(result?.description, "Updated notes");
+        const result = await timeEntryService.updateEntry(entryId, firmId, { clientDescription: "Updated notes" });
+        assert.strictEqual(result?.clientDescription, "Updated notes");
       } finally {
         TimeEntryModel.findOne = originalFindOne;
         TimeEntryModel.findOneAndUpdate = originalFindOneAndUpdate;

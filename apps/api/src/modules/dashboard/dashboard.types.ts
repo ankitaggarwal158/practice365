@@ -48,6 +48,7 @@ export interface DashboardSummary {
   documents: DocumentsSummary | null;
   timeTracking: TimeTrackingSummaryData | null;
   activity: ActivityItem[];
+  uncollectedRetainers?: any[] | null;
 }
 
 export interface QuickActionItem {
@@ -65,4 +66,7 @@ export interface DashboardWidgetsData {
   recentDocuments: any[] | null;
   billingSummary: BillingSummaryData | null;
   timeSummary: TimeTrackingSummaryData | null;
+  uncollectedRetainerMatters?: any[] | null;
+  staleMatters?: any[] | null;
+  pendingLeads?: any[] | null;
 }

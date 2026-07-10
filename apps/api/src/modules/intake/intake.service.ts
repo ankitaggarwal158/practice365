@@ -69,6 +69,7 @@ export function formatIntake(
     convertedLeadId: intake.convertedLeadId?.toString() || undefined,
     convertedAt: intake.convertedAt?.toISOString() || undefined,
     rejectedReason: intake.rejectedReason || undefined,
+    opposingPartyNames: intake.opposingPartyNames || [],
     createdBy: intake.createdBy?._id
       ? intake.createdBy._id.toString()
       : intake.createdBy?.toString() || undefined,

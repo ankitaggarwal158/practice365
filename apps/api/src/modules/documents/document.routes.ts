@@ -19,6 +19,7 @@ router.get("/:id", requireAuth, requirePermission("DOCUMENTS_VIEW"), documentCon
 router.post("/", requireAuth, requirePermission("DOCUMENTS_MANAGE"), upload.single("file"), documentController.uploadDocument);
 router.patch("/:id", requireAuth, requirePermission("DOCUMENTS_MANAGE"), documentController.updateMetadata);
 router.delete("/:id", requireAuth, requirePermission("DOCUMENTS_MANAGE"), documentController.softDelete);
+router.patch("/:id/portal-sharing", requireAuth, requirePermission("DOCUMENTS_MANAGE"), documentController.updatePortalSharing);
 router.get("/:id/download", requireAuth, requirePermission("DOCUMENTS_VIEW"), documentController.downloadDocument);
 
 // Versions

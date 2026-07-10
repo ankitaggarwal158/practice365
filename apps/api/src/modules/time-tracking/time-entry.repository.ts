@@ -9,7 +9,8 @@ export class TimeEntryRepository {
   }
 
   async findById(id: string | Types.ObjectId, firmId: string | Types.ObjectId): Promise<TimeEntry | null> {
-    return TimeEntryModel.findOne({ _id: id, firmId, deletedAt: { $exists: false } })
+    if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(firmId)) return null;
+    return TimeEntryModel.findOne({ _id: id, firmId, deleted: false })
       .populate("userId", "firstName lastName email")
       .populate("matterId", "title")
       .populate("clientId", "firstName lastName name")
@@ -17,17 +18,19 @@ export class TimeEntryRepository {
   }
 
   async update(id: string | Types.ObjectId, firmId: string | Types.ObjectId, data: Partial<TimeEntry>): Promise<TimeEntry | null> {
+    if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(firmId)) return null;
     return TimeEntryModel.findOneAndUpdate(
-      { _id: id, firmId, deletedAt: { $exists: false } },
+      { _id: id, firmId, deleted: false },
       { $set: data },
       { new: true }
     ).exec();
   }
 
-  async softDelete(id: string | Types.ObjectId, firmId: string | Types.ObjectId): Promise<boolean> {
+  async softDelete(id: string | Types.ObjectId, firmId: string | Types.ObjectId, userId: string | Types.ObjectId): Promise<boolean> {
+    if (!Types.ObjectId.isValid(id) || !Types.ObjectId.isValid(firmId)) return false;
     const result = await TimeEntryModel.updateOne(
-      { _id: id, firmId, deletedAt: { $exists: false } },
-      { $set: { deletedAt: new Date() } }
+      { _id: id, firmId, deleted: false },
+      { $set: { deleted: true, deletedAt: new Date(), deletedBy: new Types.ObjectId(userId) } }
     ).exec();
     return result.modifiedCount > 0;
   }
@@ -37,7 +40,7 @@ export class TimeEntryRepository {
       userId,
       firmId,
       timerStatus: { $in: ["RUNNING", "PAUSED"] },
-      deletedAt: { $exists: false },
+      deleted: false,
     }).exec();
   }
 
@@ -56,7 +59,7 @@ export class TimeEntryRepository {
   }): Promise<{ data: TimeEntry[]; total: number }> {
     const query: FilterQuery<TimeEntry> = {
       firmId: new Types.ObjectId(filters.firmId),
-      deletedAt: { $exists: false },
+      deleted: false,
     };
 
     if (filters.matterId) query.matterId = new Types.ObjectId(filters.matterId);

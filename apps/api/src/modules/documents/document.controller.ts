@@ -142,6 +142,17 @@ export class DocumentController {
     }
   }
 
+  async updatePortalSharing(req: Request, res: Response, next: NextFunction) {
+    try {
+      const firmId = await getRequestingUserFirmId(req);
+      const shared = !!req.body.shared;
+      const doc = await documentSearchService.updatePortalSharing(firmId, req.params.id as string, shared, req.user!.userId);
+      sendSuccess(res, doc);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   // Versions
   async getVersions(req: Request, res: Response, next: NextFunction) {
     try {

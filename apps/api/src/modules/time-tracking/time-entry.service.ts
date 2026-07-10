@@ -15,13 +15,15 @@ export class TimeEntryService {
       userId: new Types.ObjectId(userId),
       matterId: data.matterId ? new Types.ObjectId(data.matterId) : undefined,
       clientId: data.clientId ? new Types.ObjectId(data.clientId) : undefined,
-      description: data.description,
+      clientDescription: data.clientDescription,
+      internalNote: data.internalNote || "",
       date: data.date ? new Date(data.date) : new Date(),
       durationMinutes: data.durationMinutes,
       hourlyRate,
       billableAmount,
       billingType,
       timerStatus: TimerStatus.MANUAL,
+      createdBy: new Types.ObjectId(userId),
     });
     console.log(`[AUDIT] Time entry created manually: entryId=${entry._id}, userId=${userId}, firmId=${firmId}, durationMinutes=${entry.durationMinutes}`);
     return entry;
@@ -72,10 +74,10 @@ export class TimeEntryService {
     return updated;
   }
 
-  async deleteEntry(id: string, firmId: string) {
-    const success = await timeEntryRepository.softDelete(id, firmId);
+  async deleteEntry(id: string, firmId: string, userId: string) {
+    const success = await timeEntryRepository.softDelete(id, firmId, userId);
     if (!success) throw AppError.notFound("Time entry not found");
-    console.log(`[AUDIT] Time entry soft-deleted: entryId=${id}, firmId=${firmId}`);
+    console.log(`[AUDIT] Time entry soft-deleted: entryId=${id}, firmId=${firmId}, deletedBy=${userId}`);
     return true;
   }
 

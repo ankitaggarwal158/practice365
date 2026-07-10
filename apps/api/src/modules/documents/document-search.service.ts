@@ -2,6 +2,7 @@ import { documentRepository, DocumentSearchFilters } from "./document.repository
 import { DocumentMeta as IDocumentMeta } from "./document.types.js";
 import { AppError } from "../../shared/app-error.js";
 import { DOCUMENT_ERROR_MESSAGES } from "./document.constants.js";
+import { Types } from "mongoose";
 
 export class DocumentSearchService {
   async getDocument(firmId: string, documentId: string): Promise<IDocumentMeta> {
@@ -43,6 +44,24 @@ export class DocumentSearchService {
       throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
     }
     console.log(`[AUDIT] Document Deleted: ID=${documentId}, FirmID=${firmId}, DeletedBy=${userId}`);
+  }
+
+  async updatePortalSharing(
+    firmId: string,
+    documentId: string,
+    shared: boolean,
+    userId: string
+  ): Promise<IDocumentMeta> {
+    const updated = await documentRepository.update(documentId, firmId, {
+      sharedWithPortal: shared,
+      sharedWithPortalAt: shared ? new Date() : null,
+      sharedWithPortalBy: shared ? new Types.ObjectId(userId) : null,
+    } as any);
+    if (!updated) {
+      throw AppError.notFound(DOCUMENT_ERROR_MESSAGES.NOT_FOUND);
+    }
+    console.log(`[AUDIT] Document Portal Sharing Updated: ID=${documentId}, Shared=${shared}, ExecutorID=${userId}`);
+    return updated;
   }
 }
 

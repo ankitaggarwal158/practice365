@@ -32,6 +32,8 @@ import { firmSettingsRouter } from "./modules/firm-settings/index.js";
 import { reportsRouter } from "./modules/reports/index.js";
 import { systemSettingsRouter, checkMaintenanceMode } from "./modules/system-administration/index.js";
 import { messageThreadRouter } from "./modules/client-messaging/index.js";
+import { fixedChargeRouter } from "./modules/fixed-charges/index.js";
+import { stripeService } from "./modules/billing/stripe.service.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -42,7 +44,11 @@ const app = express();
 app.use(cors({ origin: config.corsOrigin }));
 app.use(helmet());
 app.use(morgan(config.logLevel));
-app.use(express.json());
+app.use(express.json({
+  verify: (req: any, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.use(checkMaintenanceMode);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
@@ -70,6 +76,7 @@ app.use("/api", calendarRouter);
 app.use("/api/documents", documentRouter);
 app.use("/api/time-entries", timeEntryRouter);
 app.use("/api/invoices", invoiceRouter);
+app.use("/api/fixed-charges", fixedChargeRouter);
 app.use("/api", portalRouter);
 app.use("/api", signatureRequestRouter);
 app.use("/api", dashboardRouter);
@@ -79,6 +86,16 @@ app.use("/api", firmSettingsRouter);
 app.use("/api", reportsRouter);
 app.use("/api", messageThreadRouter);
 
+app.post("/api/payments/webhook", async (req: any, res, next) => {
+  try {
+    const signature = req.headers["stripe-signature"] as string;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "mock_secret";
+    await stripeService.handleWebhook(req.rawBody, signature, webhookSecret);
+    res.json({ received: true });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // ─── Global Error Handler (must be last) ─────────────────────
 app.use(globalErrorHandler);

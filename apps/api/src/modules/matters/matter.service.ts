@@ -62,6 +62,11 @@ export function formatMatter(
     courtFileNumber: matter.courtFileNumber || undefined,
     statuteOfLimitations: matter.statuteOfLimitations?.toISOString() || undefined,
     estimatedValue: matter.estimatedValue ? parseFloat(matter.estimatedValue.toString()) : undefined,
+    retainerAmountAgreed: matter.retainerAmountAgreed,
+    retainerCollected: matter.retainerCollected,
+    retainerDateCollected: matter.retainerDateCollected?.toISOString() || null,
+    retainerAmountCollected: matter.retainerAmountCollected,
+    customFields: matter.customFields || {},
     createdBy: matter.createdBy?.toString() || "",
     createdAt: matter.createdAt.toISOString(),
     updatedAt: matter.updatedAt.toISOString(),
@@ -138,10 +143,14 @@ export async function createMatter(
   }
 
   // Optional Lead validation
+  let opposingPartyNames = data.opposingPartyNames || [];
   if (data.leadId) {
     const lead = await Lead.findOne({ _id: new Types.ObjectId(data.leadId), firmId: new Types.ObjectId(firmId) });
     if (!lead) {
       throw AppError.badRequest("Lead not found.");
+    }
+    if (opposingPartyNames.length === 0 && lead.opposingPartyNames) {
+      opposingPartyNames = lead.opposingPartyNames;
     }
   }
 
@@ -149,6 +158,7 @@ export async function createMatter(
 
   const created = await matterRepository.create({
     ...data,
+    opposingPartyNames,
     firmId: new Types.ObjectId(firmId),
     matterNumber,
     status: MATTER_STATUSES.OPEN,
@@ -384,27 +394,7 @@ export async function updateMatterNote(
   userId: string,
   noteText: string
 ): Promise<MatterResponseData> {
-  const matter = await matterRepository.findById(matterId, firmId);
-  if (!matter) {
-    throw AppError.notFound(MATTER_ERROR_MESSAGES.MATTER_NOT_FOUND);
-  }
-
-  if (matter.status === MATTER_STATUSES.ARCHIVED) {
-    throw AppError.badRequest("Cannot edit notes on archived matters.");
-  }
-
-  const note = await matterRepository.findNoteById(noteId);
-  if (!note || note.matterId.toString() !== matterId) {
-    throw AppError.notFound("Note not found.");
-  }
-
-  if (note.userId.toString() !== userId) {
-    throw AppError.forbidden("You are not permitted to edit this note.");
-  }
-
-  await matterRepository.updateNote(noteId, noteText);
-
-  return getMatter(matterId, firmId);
+  throw AppError.badRequest("Notes are immutable and cannot be edited.");
 }
 
 export async function deleteMatterNote(
@@ -497,5 +487,34 @@ export async function deleteMatterAttachment(
   // Note: we can keep document in documents or delete it. Deleting it is clean.
   // Wait, let's just delete the attachment link.
   
+  return getMatter(matterId, firmId);
+}
+
+export async function markRetainerCollected(
+  matterId: string,
+  firmId: string,
+  amount: number,
+  dateCollected: Date = new Date()
+): Promise<MatterResponseData> {
+  const matter = await matterRepository.findById(matterId, firmId);
+  if (!matter) {
+    throw AppError.notFound(MATTER_ERROR_MESSAGES.MATTER_NOT_FOUND);
+  }
+
+  const newCollectedAmount = (matter.retainerAmountCollected || 0) + amount;
+  const isFullyCollected = matter.retainerAmountAgreed !== undefined && matter.retainerAmountAgreed !== null && newCollectedAmount >= matter.retainerAmountAgreed;
+
+  const updated = await matterRepository.update(matterId, firmId, {
+    retainerAmountCollected: newCollectedAmount,
+    retainerCollected: isFullyCollected,
+    retainerDateCollected: dateCollected,
+  });
+
+  if (!updated) {
+    throw AppError.notFound(MATTER_ERROR_MESSAGES.MATTER_NOT_FOUND);
+  }
+
+  console.log(`[AUDIT] Retainer Collected: MatterID=${matterId}, Amount=${amount}, TotalCollected=${newCollectedAmount}`);
+
   return getMatter(matterId, firmId);
 }

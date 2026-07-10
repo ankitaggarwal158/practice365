@@ -46,6 +46,9 @@ export interface DocumentMeta {
   fileExtension: string;
   fileSize: number;
   isLocked: boolean;
+  sharedWithPortal: boolean;
+  sharedWithPortalAt: Date | null;
+  sharedWithPortalBy: Types.ObjectId | null;
   deleted: boolean;
   deletedAt: Date | null;
   deletedBy: Types.ObjectId | null;

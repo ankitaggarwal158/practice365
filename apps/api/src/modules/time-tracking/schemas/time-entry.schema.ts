@@ -9,7 +9,8 @@ const TimeEntrySchema = new Schema<TimeEntry>(
     matterId: { type: Schema.Types.ObjectId, ref: "Matter", index: true },
     clientId: { type: Schema.Types.ObjectId, ref: "Client", index: true },
     
-    description: { type: String },
+    clientDescription: { type: String, default: "" },
+    internalNote: { type: String, default: "" },
     date: { type: Date, required: true },
     
     durationMinutes: { type: Number, default: 0 },
@@ -34,12 +35,22 @@ const TimeEntrySchema = new Schema<TimeEntry>(
     accumulatedSeconds: { type: Number, default: 0 },
     lastResumedAt: { type: Date },
     
-    isBilled: { type: Boolean, default: false },
+    isBilled: { type: Boolean, default: false, index: true },
+    invoiceId: { type: Schema.Types.ObjectId, ref: "Invoice", default: null, index: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    deleted: { type: Boolean, default: false, required: true, index: true },
     deletedAt: { type: Date },
+    deletedBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
     timestamps: true,
   }
 );
+
+// Compound indexes per spec
+TimeEntrySchema.index({ firmId: 1, matterId: 1 });
+TimeEntrySchema.index({ firmId: 1, userId: 1 });
+TimeEntrySchema.index({ firmId: 1, date: 1 });
+TimeEntrySchema.index({ firmId: 1, isBilled: 1 });
 
 export const TimeEntryModel = mongoose.model<TimeEntry>("TimeEntry", TimeEntrySchema, "time_entries");

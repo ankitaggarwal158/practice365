@@ -28,6 +28,13 @@ export const createMatterSchema = z.object({
   billingMethod: z.enum(["HOURLY", "FLAT_FEE", "CONTINGENCY"]).optional().default("HOURLY"),
   customHourlyRate: z.number().min(0, "Rate cannot be negative").optional(),
   flatFeeAmount: z.number().min(0, "Amount cannot be negative").optional(),
+  retainerAmountAgreed: z.number().min(0).optional().nullable(),
+  retainerCollected: z.boolean().optional(),
+  retainerDateCollected: z.string().optional().nullable().refine(val => !val || !isNaN(Date.parse(val)), {
+    message: "Invalid date format for retainerDateCollected.",
+  }),
+  retainerAmountCollected: z.number().min(0).optional(),
+  customFields: z.record(z.string(), z.any()).optional(),
 });
 
 export const updateMatterSchema = z.object({
@@ -45,6 +52,13 @@ export const updateMatterSchema = z.object({
   billingMethod: z.enum(["HOURLY", "FLAT_FEE", "CONTINGENCY"]).optional(),
   customHourlyRate: z.number().min(0, "Rate cannot be negative").optional(),
   flatFeeAmount: z.number().min(0, "Amount cannot be negative").optional(),
+  retainerAmountAgreed: z.number().min(0).optional().nullable(),
+  retainerCollected: z.boolean().optional(),
+  retainerDateCollected: z.string().optional().nullable().refine(val => !val || !isNaN(Date.parse(val)), {
+    message: "Invalid date format.",
+  }),
+  retainerAmountCollected: z.number().min(0).optional(),
+  customFields: z.record(z.string(), z.any()).optional(),
 });
 
 export const updateStatusSchema = z.object({

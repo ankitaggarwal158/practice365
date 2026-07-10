@@ -68,6 +68,12 @@ const matterSchema = new Schema<MatterDocument>(
     },
     customHourlyRate: { type: Number, min: 0 },
     flatFeeAmount: { type: Number, min: 0 },
+    retainerAmountAgreed: { type: Number, min: 0, default: null },
+    retainerCollected: { type: Boolean, default: false },
+    retainerDateCollected: { type: Date, default: null },
+    retainerAmountCollected: { type: Number, min: 0, default: 0 },
+    customFields: { type: Schema.Types.Mixed, default: {} },
+    opposingPartyNames: { type: [String], default: [] },
     createdBy: { type: Schema.Types.ObjectId, required: true, ref: "User" },
   },
   {

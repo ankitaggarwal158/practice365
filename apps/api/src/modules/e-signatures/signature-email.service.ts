@@ -4,14 +4,14 @@ export class SignatureEmailService {
   async sendSigningInvitation(signer: SignatureRequestSignerDocument, requestTitle: string): Promise<void> {
     const link = `http://localhost:5173/sign/${signer.token}`;
     console.log(
-      `[SIGNING INVITATION SENT] To: ${signer.fullName} <${signer.email}>, Request: "${requestTitle}", Link: ${link}`
+      `[AUDIT] Signing Invitation Sent: To: ${signer.fullName} <${signer.email}>, Request: "${requestTitle}", Link: ${link}`
     );
   }
 
   async sendSigningReminder(signer: SignatureRequestSignerDocument, requestTitle: string): Promise<void> {
     const link = `http://localhost:5173/sign/${signer.token}`;
     console.log(
-      `[SIGNING REMINDER SENT] To: ${signer.fullName} <${signer.email}>, Request: "${requestTitle}", Link: ${link}`
+      `[AUDIT] Signing Reminder Sent: To: ${signer.fullName} <${signer.email}>, Request: "${requestTitle}", Link: ${link}`
     );
   }
 }

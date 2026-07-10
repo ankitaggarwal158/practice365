@@ -22,6 +22,7 @@ export const createLeadSchema = z.object({
   subject: z.string().min(1, "Subject/summary is required.").max(200),
   description: z.string().max(2000).optional(),
   ownerId: objectIdSchema.optional(), // Defaults to creator on backend
+  customFields: z.record(z.string(), z.any()).optional(),
 });
 
 export const updateLeadSchema = z.object({
@@ -34,6 +35,7 @@ export const updateLeadSchema = z.object({
   practiceArea: z.string().max(100).optional(),
   subject: z.string().min(1, "Subject/summary is required.").max(200).optional(),
   description: z.string().max(2000).optional(),
+  customFields: z.record(z.string(), z.any()).optional(),
 });
 
 export const changeStatusSchema = z.object({
@@ -54,6 +56,11 @@ export const addNoteSchema = z.object({
 
 export const uploadAttachmentSchema = z.object({
   documentId: objectIdSchema,
+});
+
+export const convertLeadSchema = z.object({
+  manualSignatureAttestation: z.boolean().optional(),
+  attestationNote: z.string().max(2000).optional(),
 });
 
 // ─── Middleware Factory ───────────────────────────────────────

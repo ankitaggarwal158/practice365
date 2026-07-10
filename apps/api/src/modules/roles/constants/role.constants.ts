@@ -51,6 +51,12 @@ export const SYSTEM_PERMISSIONS: SystemPermissionDef[] = [
   { code: "INVOICES_MANAGE", name: "Manage Invoices", module: "Billing", description: "Edit, cancel or delete draft invoices." },
   { code: "INVOICES_PAY", name: "Record Payments", module: "Billing", description: "Record payments against invoices." },
 
+  // Fixed Charges permissions
+  { code: "FIXED_CHARGES_VIEW", name: "View Fixed Charges", module: "Billing", description: "View fixed charges." },
+  { code: "FIXED_CHARGES_CREATE", name: "Create Fixed Charges", module: "Billing", description: "Create fixed charges." },
+  { code: "FIXED_CHARGES_UPDATE", name: "Update Fixed Charges", module: "Billing", description: "Update fixed charges." },
+  { code: "FIXED_CHARGES_DELETE", name: "Delete Fixed Charges", module: "Billing", description: "Delete fixed charges." },
+
   // Roles & Permissions module permissions
   { code: "ROLES_VIEW", name: "View Roles", module: "Roles", description: "View system and custom roles/permissions." },
   { code: "ROLES_CREATE", name: "Create Roles", module: "Roles", description: "Create custom roles." },

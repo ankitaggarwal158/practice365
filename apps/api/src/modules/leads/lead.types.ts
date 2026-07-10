@@ -30,6 +30,8 @@ export interface LeadDocument extends Document {
   convertedClientId?: Types.ObjectId;
   convertedAt?: Date;
   lostReason?: string;
+  customFields?: Record<string, any>;
+  opposingPartyNames?: string[];
   createdBy?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -127,6 +129,7 @@ export interface LeadResponseData {
   convertedClientId?: string;
   convertedAt?: string;
   lostReason?: string;
+  customFields?: Record<string, any>;
   createdBy?: string;
   createdAt: string;
   updatedAt: string;

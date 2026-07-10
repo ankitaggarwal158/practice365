@@ -15,6 +15,7 @@ export const CreateInvoiceSchema = z.object({
     clientId: objectIdSchema,
     matterId: objectIdSchema.optional(),
     timeEntryIds: z.array(objectIdSchema).optional(),
+    fixedChargeIds: z.array(objectIdSchema).optional(),
     expenseIds: z.array(objectIdSchema).optional(),
     manualItems: z.array(manualItemSchema).optional(),
     dueDate: z.string().datetime().or(z.string()).or(z.date()).optional(),
@@ -29,6 +30,7 @@ export const UpdateInvoiceSchema = z.object({
     dueDate: z.string().datetime().or(z.string()).or(z.date()).optional(),
     notes: z.string().max(3000).optional(),
     timeEntryIds: z.array(objectIdSchema).optional(),
+    fixedChargeIds: z.array(objectIdSchema).optional(),
     manualItems: z.array(manualItemSchema).optional(),
   }),
 });

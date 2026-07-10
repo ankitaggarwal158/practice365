@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
-import { Matter, MatterTeamMember } from "../matters/index.js";
+import { Matter, MatterTeamMember, MatterNote } from "../matters/index.js";
+import { Lead, LeadNote } from "../leads/index.js";
 import { CalendarEvent } from "../calendar/index.js";
 import { DocumentMeta } from "../documents/index.js";
 import { InvoiceModel, InvoiceStatus } from "../billing/index.js";
@@ -120,45 +121,104 @@ export async function getInvoicesSummary(firmId: string): Promise<{
   const fId = new Types.ObjectId(firmId);
   const now = new Date();
 
-  // Fetch all active invoices for the firm
-  const invoices = await InvoiceModel.find({
-    firmId: fId,
-    deleted: { $ne: true },
-    status: { $ne: InvoiceStatus.CANCELLED },
-  });
-
-  let draftCount = 0;
-  let draftTotal = 0;
-  let outstandingCount = 0;
-  let outstandingTotal = 0;
-  let overdueCount = 0;
-  let overdueTotal = 0;
-
-  for (const inv of invoices) {
-    if (inv.status === InvoiceStatus.DRAFT) {
-      draftCount++;
-      draftTotal += inv.totalAmount;
-    } else if (inv.status === InvoiceStatus.ISSUED || inv.status === InvoiceStatus.PARTIALLY_PAID) {
-      if (inv.balanceDue > 0) {
-        outstandingCount++;
-        outstandingTotal += inv.balanceDue;
-
-        // Check if overdue
-        if (inv.dueDate && new Date(inv.dueDate) < now) {
-          overdueCount++;
-          overdueTotal += inv.balanceDue;
+  const results = await InvoiceModel.aggregate([
+    {
+      $match: {
+        firmId: fId,
+        deleted: { $ne: true },
+        status: { $ne: InvoiceStatus.CANCELLED },
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        draftCount: {
+          $sum: { $cond: [{ $eq: ["$status", InvoiceStatus.DRAFT] }, 1, 0] }
+        },
+        draftTotal: {
+          $sum: { $cond: [{ $eq: ["$status", InvoiceStatus.DRAFT] }, "$totalAmount", 0] }
+        },
+        outstandingCount: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $in: ["$status", [InvoiceStatus.ISSUED, InvoiceStatus.PARTIALLY_PAID]] },
+                  { $gt: ["$balanceDue", 0] }
+                ]
+              },
+              1,
+              0
+            ]
+          }
+        },
+        outstandingTotal: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $in: ["$status", [InvoiceStatus.ISSUED, InvoiceStatus.PARTIALLY_PAID]] },
+                  { $gt: ["$balanceDue", 0] }
+                ]
+              },
+              "$balanceDue",
+              0
+            ]
+          }
+        },
+        overdueCount: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $in: ["$status", [InvoiceStatus.ISSUED, InvoiceStatus.PARTIALLY_PAID]] },
+                  { $gt: ["$balanceDue", 0] },
+                  { $lt: ["$dueDate", now] }
+                ]
+              },
+              1,
+              0
+            ]
+          }
+        },
+        overdueTotal: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $in: ["$status", [InvoiceStatus.ISSUED, InvoiceStatus.PARTIALLY_PAID]] },
+                  { $gt: ["$balanceDue", 0] },
+                  { $lt: ["$dueDate", now] }
+                ]
+              },
+              "$balanceDue",
+              0
+            ]
+          }
         }
       }
     }
+  ]).exec();
+
+  if (results.length === 0) {
+    return {
+      draftCount: 0,
+      draftTotal: 0,
+      outstandingCount: 0,
+      outstandingTotal: 0,
+      overdueCount: 0,
+      overdueTotal: 0,
+    };
   }
 
+  const res = results[0];
   return {
-    draftCount,
-    draftTotal: Math.round(draftTotal * 100) / 100,
-    outstandingCount,
-    outstandingTotal: Math.round(outstandingTotal * 100) / 100,
-    overdueCount,
-    overdueTotal: Math.round(overdueTotal * 100) / 100,
+    draftCount: res.draftCount,
+    draftTotal: Math.round((res.draftTotal || 0) * 100) / 100,
+    outstandingCount: res.outstandingCount,
+    outstandingTotal: Math.round((res.outstandingTotal || 0) * 100) / 100,
+    overdueCount: res.overdueCount,
+    overdueTotal: Math.round((res.overdueTotal || 0) * 100) / 100,
   };
 }
 
@@ -258,6 +318,108 @@ export async function findRawActivityData(firmId: string, limit = 10): Promise<{
   };
 }
 
+export async function findMattersWithUncollectedRetainer(firmId: string, limit = 5): Promise<any[]> {
+  const fId = new Types.ObjectId(firmId);
+  const matters = await Matter.find({
+    firmId: fId,
+    retainerAmountAgreed: { $gt: 0 },
+    retainerCollected: false,
+  }).populate("clientId", "firstName lastName companyName");
+
+  const matterIds = matters.map((m) => m._id);
+  const timeEntries = await TimeEntryModel.find({
+    firmId: fId,
+    matterId: { $in: matterIds },
+    deletedAt: null,
+  });
+
+  const mattersWithWorkIds = new Set(
+    timeEntries.map((te) => te.matterId?.toString())
+  );
+
+  return matters
+    .filter((m) => mattersWithWorkIds.has(m._id.toString()))
+    .slice(0, limit);
+}
+
+export async function findStaleMatters(firmId: string, limit = 5): Promise<any[]> {
+  const fId = new Types.ObjectId(firmId);
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const matters = await Matter.find({
+    firmId: fId,
+    status: { $in: ["OPEN", "ON_HOLD"] }
+  }).populate("clientId", "firstName lastName companyName");
+
+  const staleMatters: any[] = [];
+
+  for (const matter of matters) {
+    const recentTime = await TimeEntryModel.findOne({
+      firmId: fId,
+      matterId: matter._id,
+      date: { $gte: thirtyDaysAgo },
+      deleted: false
+    });
+    if (recentTime) continue;
+
+    const recentEvent = await CalendarEvent.findOne({
+      firmId: fId,
+      matterId: matter._id,
+      createdAt: { $gte: thirtyDaysAgo },
+      deleted: { $ne: true }
+    });
+    if (recentEvent) continue;
+
+    const recentDoc = await DocumentMeta.findOne({
+      firmId: fId,
+      matterId: matter._id,
+      createdAt: { $gte: thirtyDaysAgo },
+      deleted: false
+    });
+    if (recentDoc) continue;
+
+    const recentNote = await MatterNote.findOne({
+      matterId: matter._id,
+      createdAt: { $gte: thirtyDaysAgo }
+    });
+    if (recentNote) continue;
+
+    staleMatters.push(matter);
+    if (staleMatters.length >= limit) break;
+  }
+
+  return staleMatters;
+}
+
+export async function findPendingLeads(firmId: string, limit = 5): Promise<any[]> {
+  const fId = new Types.ObjectId(firmId);
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const leads = await Lead.find({
+    firmId: fId,
+    status: { $in: ["NEW", "CONTACTED"] }
+  }).populate("ownerId", "firstName lastName");
+
+  const pendingLeads: any[] = [];
+
+  for (const lead of leads) {
+    const recentNote = await LeadNote.findOne({
+      leadId: lead._id,
+      createdAt: { $gte: sevenDaysAgo }
+    });
+    if (recentNote) continue;
+
+    if (lead.updatedAt >= sevenDaysAgo) continue;
+
+    pendingLeads.push(lead);
+    if (pendingLeads.length >= limit) break;
+  }
+
+  return pendingLeads;
+}
+
 export const dashboardRepository = {
   countMattersByStatus,
   findMyMatters,
@@ -271,4 +433,7 @@ export const dashboardRepository = {
   findRecentDocuments,
   findTimeEntries,
   findRawActivityData,
+  findMattersWithUncollectedRetainer,
+  findStaleMatters,
+  findPendingLeads,
 };

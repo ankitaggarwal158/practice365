@@ -19,6 +19,7 @@ export interface IntakeDocument extends Document {
   convertedLeadId?: Types.ObjectId;
   convertedAt?: Date;
   rejectedReason?: string;
+  opposingPartyNames?: string[];
   createdBy?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -82,6 +83,7 @@ export interface IntakeResponseData {
   convertedLeadId?: string;
   convertedAt?: string;
   rejectedReason?: string;
+  opposingPartyNames?: string[];
   createdBy?: string;
   createdAt: string;
   updatedAt: string;
