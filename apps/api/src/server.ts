@@ -34,6 +34,8 @@ import { systemSettingsRouter, checkMaintenanceMode } from "./modules/system-adm
 import { messageThreadRouter } from "./modules/client-messaging/index.js";
 import { fixedChargeRouter } from "./modules/fixed-charges/index.js";
 import { stripeService } from "./modules/billing/stripe.service.js";
+import { jobsRouter } from "./modules/jobs/jobs.routes.js";
+import { processJobs } from "./modules/jobs/worker.js";
 
 // Validate required configuration before starting
 validateConfig();
@@ -85,6 +87,7 @@ app.use("/api", auditLogRouter);
 app.use("/api", firmSettingsRouter);
 app.use("/api", reportsRouter);
 app.use("/api", messageThreadRouter);
+app.use("/api", jobsRouter);
 
 app.post("/api/payments/webhook", async (req: any, res, next) => {
   try {
@@ -109,6 +112,14 @@ async function start(): Promise<void> {
     app.listen(config.port, () => {
       console.log(`API server listening on port ${config.port}`);
     });
+
+    // Start local background job processor
+    setInterval(() => {
+      processJobs().catch((err) => {
+        console.error("[WORKER LOOP] Error processing jobs:", err);
+      });
+    }, config.workerPollInterval);
+    console.log(`[WORKER] Started local background loop (interval: ${config.workerPollInterval}ms)`);
   } else {
     console.log("Database initialized for serverless environment.");
   }

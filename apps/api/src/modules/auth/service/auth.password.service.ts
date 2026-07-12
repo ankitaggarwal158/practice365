@@ -7,6 +7,8 @@ import {
   PASSWORD_RESET_EXPIRY,
   AUTH_ERROR_MESSAGES,
 } from "../constants/auth.constants.js";
+import { config } from "../../../config/index.js";
+import { enqueue } from "../../jobs/service/queue.service.js";
 
 const BCRYPT_SALT_ROUNDS = 12;
 
@@ -39,9 +41,14 @@ export async function forgotPassword(email: string): Promise<void> {
     expiresAt
   );
 
-  // In development, log the token since email infrastructure is not yet available.
-  // This will be replaced with actual email sending when the Worker module is built.
-  console.log(`[AUTH] Password reset token for ${email}: ${tokenRaw}`);
+  // Enqueue email sending job
+  const resetLink = `${config.corsOrigin}/reset-password?token=${tokenRaw}`;
+  await enqueue("send-email", {
+    to: email,
+    subject: "Reset your Practice365 Password",
+    text: `Hello,\n\nYou requested a password reset for your Practice365 account. Click the link below to set a new password:\n\n${resetLink}\n\nThis link will expire in 1 hour. If you did not request this reset, you can safely ignore this email.`,
+    html: `<p>Hello,</p><p>You requested a password reset for your Practice365 account. Click the link below to set a new password:</p><p><a href="${resetLink}">${resetLink}</a></p><p>This link will expire in 1 hour. If you did not request this reset, you can safely ignore this email.</p>`,
+  });
 }
 
 /**

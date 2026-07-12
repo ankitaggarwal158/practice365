@@ -29,6 +29,15 @@ export const config = {
   // ─── Account Lockout ─────────────────────────────────────
   maxLoginAttempts: parseInt(process.env.MAX_LOGIN_ATTEMPTS || "5", 10),
   loginLockoutDuration: parseInt(process.env.LOGIN_LOCKOUT_DURATION || "900", 10),
+
+  // ─── SMTP Email ──────────────────────────────────────────
+  smtpHost: process.env.SMTP_HOST || "",
+  smtpPort: parseInt(process.env.SMTP_PORT || "587", 10),
+  smtpUser: process.env.SMTP_USER || "",
+  smtpPass: process.env.SMTP_PASS || "",
+  smtpFrom: process.env.SMTP_FROM || "Practice365 <no-reply@practice365.com>",
+  workerPollInterval: parseInt(process.env.WORKER_POLL_INTERVAL || "5000", 10),
+  jobsToken: process.env.JOBS_TOKEN || "local-jobs-token-secret-change-me",
 } as const;
 
 /**

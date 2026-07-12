@@ -4,6 +4,8 @@ import { portalSessionService } from "./portal-session.service.js";
 import { PortalStatus } from "./portal.constants.js";
 import { AppError } from "../../shared/app-error.js";
 import { hashToken } from "../auth/auth.tokens.js";
+import { config } from "../../config/index.js";
+import { enqueue } from "../jobs/service/queue.service.js";
 
 export const portalAuthService = {
   async login(
@@ -82,8 +84,14 @@ export const portalAuthService = {
 
     const rawToken = await portalPasswordService.generateResetToken(user);
     
-    // Log link for development/manual testing (simulating email delivery)
-    console.log(`[AUDIT] Portal Password Reset Link: http://localhost:5173/portal/reset-password?token=${rawToken}`);
+    // Enqueue email sending job
+    const resetLink = `${config.corsOrigin}/portal/reset-password?token=${rawToken}`;
+    await enqueue("send-email", {
+      to: email,
+      subject: "Reset your Practice365 Client Portal Password",
+      text: `Hello,\n\nYou requested a password reset for your Practice365 Client Portal account. Click the link below to set a new password:\n\n${resetLink}\n\nThis link will expire in 1 hour. If you did not request this reset, you can safely ignore this email.`,
+      html: `<p>Hello,</p><p>You requested a password reset for your Practice365 Client Portal account. Click the link below to set a new password:</p><p><a href="${resetLink}">${resetLink}</a></p><p>This link will expire in 1 hour. If you did not request this reset, you can safely ignore this email.</p>`,
+    });
   },
 
   async resetPassword(rawToken: string, newPassword: string) {

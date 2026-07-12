@@ -8,6 +8,8 @@ import { UserStatus, UserResponseData } from "../types/user.types.js";
 import { USER_ERROR_MESSAGES, INVITATION_TOKEN_EXPIRY } from "../constants/user.constants.js";
 import { formatUser } from "./user.service.js";
 import { Role, UserRole } from "../../roles/index.js";
+import { config } from "../../../config/index.js";
+import { enqueue } from "../../jobs/service/queue.service.js";
 
 export async function inviteUser(
   email: string,
@@ -76,9 +78,15 @@ export async function inviteUser(
     expiresAt,
   });
   
-  // Log invitation link to console
-  console.log(`[AUDIT] Invitation Sent: Email: ${normalizedEmail}, Link: http://localhost:5173/accept-invitation?token=${tokenRaw}`);
-  
+  // Enqueue email sending job
+  const inviteLink = `${config.corsOrigin}/accept-invitation?token=${tokenRaw}`;
+  await enqueue("send-email", {
+    to: normalizedEmail,
+    subject: "Invitation to join Practice365",
+    text: `Hello ${firstName},\n\nYou have been invited to join Practice365. Click the link below to accept the invitation and set up your account:\n\n${inviteLink}\n\nThis link will expire in 24 hours.`,
+    html: `<p>Hello ${firstName},</p><p>You have been invited to join Practice365. Click the link below to accept the invitation and set up your account:</p><p><a href="${inviteLink}">${inviteLink}</a></p><p>This link will expire in 24 hours.</p>`,
+  });
+
   return formatUser(user);
 }
 
