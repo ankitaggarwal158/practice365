@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useMatterReport } from "../hooks/useMatterReport";
 import { SummaryCards } from "../components/SummaryCards";
 import { ReportFilters } from "../components/ReportFilters";
@@ -54,7 +54,7 @@ export function MatterReportPage() {
       ) : (
         <>
           <SummaryCards type="matters" summary={data?.summary} />
-          
+
           <ReportFilters
             type="matters"
             filters={filters}

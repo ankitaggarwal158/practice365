@@ -1,4 +1,4 @@
-import React from "react";
+
 import { ReportType } from "../types";
 import { useUsers } from "@/modules/users";
 import { useClients } from "@/modules/clients/hooks/useClients";
@@ -16,7 +16,7 @@ export function ReportFilters({ type, filters, onChange }: ReportFiltersProps) {
   const loadUsers = type === "matters" || type === "time" || type === "user-activity";
   const loadClients = type === "matters" || type === "invoices";
   const loadMatters = type === "time" || type === "invoices";
-  const loadPracticeAreas = type === "matters";
+  
 
   const { users = [] } = useUsers(loadUsers ? { limit: 100 } : {});
   const { clients = [] } = useClients(loadClients ? { limit: 100 } : {});

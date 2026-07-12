@@ -8,6 +8,15 @@ import {
   PaginatedResult,
 } from "../types/opposing-party.types";
 
+function buildQueryString(params?: Record<string, any>): string {
+  if (!params) return "";
+  const entries = Object.entries(params).filter(
+    ([_, val]) => val !== undefined && val !== null && val !== ""
+  );
+  if (entries.length === 0) return "";
+  return "?" + entries.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`).join("&");
+}
+
 export async function listOpposingParties(params: {
   page?: number;
   limit?: number;
@@ -15,7 +24,7 @@ export async function listOpposingParties(params: {
   isActive?: boolean;
   search?: string;
 }): Promise<PaginatedResult<OpposingParty>> {
-  return httpClient.get<PaginatedResult<OpposingParty>>("/opposing-parties", { params });
+  return httpClient.get<PaginatedResult<OpposingParty>>(`/opposing-parties${buildQueryString(params)}`);
 }
 
 export async function getOpposingParty(id: string): Promise<OpposingParty> {
@@ -52,8 +61,8 @@ export async function checkDuplicates(
   },
   excludeId?: string
 ): Promise<DuplicateCheckResult> {
-  const params = excludeId ? { excludeId } : undefined;
-  return httpClient.post<DuplicateCheckResult>("/opposing-parties/duplicates", data, { params });
+  const queryStr = excludeId ? buildQueryString({ excludeId }) : "";
+  return httpClient.post<DuplicateCheckResult>(`/opposing-parties/duplicates${queryStr}`, data);
 }
 
 export async function getMatterAssociations(matterId: string): Promise<MatterAssociation[]> {

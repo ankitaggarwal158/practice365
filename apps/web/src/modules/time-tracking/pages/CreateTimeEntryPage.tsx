@@ -13,7 +13,7 @@ export const CreateTimeEntryPage: React.FC = () => {
   const navigate = useNavigate();
   const createMutation = useCreateTimeEntry();
 
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0] || "");
   const [clientId, setClientId] = useState("");
   const [matterId, setMatterId] = useState("");
   const [billingType, setBillingType] = useState<BillingType>(BillingType.BILLABLE);

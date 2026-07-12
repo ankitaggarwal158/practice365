@@ -1,7 +1,6 @@
 import { httpClient } from "@/services/http-client";
 import type {
   Intake,
-  PaginatedIntakes,
   CreateIntakeRequest,
   UpdateIntakeRequest,
   IntakeNote,

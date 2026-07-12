@@ -7,8 +7,7 @@ import {
 } from "../hooks/useMatterContacts";
 import { useMatters } from "../../matters/hooks/useMatters";
 import { useCurrentUserPermissions } from "@/modules/roles/hooks/useCurrentUserPermissions";
-import { CONTACT_ROLES, CONTACT_NOT_FOUND } from "../matter-contact.constants"; // Wait, matter-contact.constants has CONTACT_ROLES!
-// Yes: export const CONTACT_ROLES = [ "WITNESS", ... ]
+import { CONTACT_ROLES } from "../matter-contact.constants";
 
 export default function MatterContactDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -63,7 +62,7 @@ export default function MatterContactDetailsPage() {
     if (id) {
       setIsMattersLoading(true);
       import("../api/matter-contact.api")
-        .then(async (api: any) => {
+        .then(async () => {
           // We will fetch from `GET /matter-contacts/:id/matters`
           // Let's declare the fetch using httpClient directly since it's a new route
           const httpClientModule = await import("../../../services/http-client");
@@ -76,7 +75,7 @@ export default function MatterContactDetailsPage() {
   }, [id]);
 
   const { matters = [], isLoading: isSearchMattersLoading } = useMatters({
-    q: searchMatterQuery || undefined,
+    query: searchMatterQuery || undefined,
     status: "OPEN",
     limit: 50,
   });

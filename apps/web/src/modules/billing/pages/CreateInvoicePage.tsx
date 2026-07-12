@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Calendar, FileText, DollarSign, Clock, Clipboard } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Calendar, FileText, Clock, Clipboard } from "lucide-react";
 import { clientApi } from "../../clients/api/client.api";
 import { matterApi } from "../../matters/api/matter.api";
 import { Client } from "../../clients/types/client.types";

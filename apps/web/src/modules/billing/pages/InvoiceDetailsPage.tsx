@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, Edit, Trash2, CheckCircle, Ban, CreditCard, Download, Clock, DollarSign, Calendar, Clipboard, History, X } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, CheckCircle, Ban, CreditCard, Download, Calendar, Clipboard, History, X } from "lucide-react";
 import { useInvoice, useIssueInvoice, useCancelInvoice, useDeleteInvoice, useRecordPayment, useInvoicePayments } from "../hooks/useInvoices";
 import { invoiceApi } from "../api/invoice.api";
 import { InvoiceStatus, PaymentMethod } from "../types/invoice.types";

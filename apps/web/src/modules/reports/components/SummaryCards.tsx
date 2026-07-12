@@ -1,4 +1,4 @@
-import React from "react";
+
 import { ReportType } from "../types";
 
 interface SummaryCardsProps {
@@ -88,7 +88,7 @@ export function SummaryCards({ type, summary }: SummaryCardsProps) {
     case "revenue":
       const revTotal = summary.totalRevenue || 0;
       const stripeTotal = summary.paymentMethodBreakdown?.STRIPE || 0;
-      const checkTotal = summary.paymentMethodBreakdown?.CHECK || 0;
+      
       const bankTotal = summary.paymentMethodBreakdown?.BANK_TRANSFER || 0;
       return (
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">

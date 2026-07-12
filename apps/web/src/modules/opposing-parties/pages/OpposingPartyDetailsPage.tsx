@@ -5,8 +5,6 @@ import {
   useDeleteOpposingParty,
   useArchiveOpposingParty,
   useMatterOpposingParties,
-  useLinkOpposingParties,
-  useUnlinkOpposingParty,
 } from "../hooks/useOpposingParties";
 import { useMatters } from "../../matters/hooks/useMatters";
 import { useCurrentUserPermissions } from "@/modules/roles/hooks/useCurrentUserPermissions";
@@ -21,7 +19,6 @@ export default function OpposingPartyDetailsPage() {
 
   const deleteMutation = useDeleteOpposingParty();
   const archiveMutation = useArchiveOpposingParty();
-  const linkMutation = useLinkOpposingParties(id!); // Wait, useLinkOpposingParties hooks take matterId!
   // Ah! Let's check how useLinkOpposingParties and useUnlinkOpposingParty are defined:
   // export function useLinkOpposingParties(matterId: string) { ... }
   // export function useUnlinkOpposingParty(matterId: string) { ... }
@@ -33,7 +30,7 @@ export default function OpposingPartyDetailsPage() {
 
   // Search matters for linking
   const { matters = [], isLoading: isSearchMattersLoading } = useMatters({
-    q: searchMatterQuery || undefined,
+    query: searchMatterQuery || undefined,
     status: "OPEN",
     limit: 50,
   });
@@ -64,9 +61,6 @@ export default function OpposingPartyDetailsPage() {
     if (!selectedMatterId || !op) return;
 
     // Call API link directly or use custom hook.
-    // Wait, the hook is useLinkOpposingParties(matterId). It returns a mutation.
-    // Let's call mutation:
-    const linkMutationObj = linkMutation; // Wait, linkMutation requires matterId!
     // Since selectedMatterId changes, we can link manually or define a local trigger.
     // Let's call the api directly for linkage to make it simple and clean, or we can use custom mutation.
     // Actually, calling the api directly is simple, or we can trigger refetches.

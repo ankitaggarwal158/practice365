@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useInvoiceReport, useRevenueReport } from "../hooks/useBillingReport";
 import { SummaryCards } from "../components/SummaryCards";
 import { ReportFilters } from "../components/ReportFilters";
@@ -67,11 +67,10 @@ export function BillingReportPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveSubTab(tab.id as BillingSubTab)}
-                className={`py-3 px-1 border-b-2 font-semibold text-sm transition-all duration-200 cursor-pointer select-none ${
-                  isActive
+                className={`py-3 px-1 border-b-2 font-semibold text-sm transition-all duration-200 cursor-pointer select-none ${isActive
                     ? "border-brand-400 text-brand-300"
                     : "border-transparent text-surface-200/55 hover:text-white hover:border-white/10"
-                }`}
+                  }`}
               >
                 {tab.name}
               </button>
@@ -91,7 +90,7 @@ export function BillingReportPage() {
       ) : (
         <>
           <SummaryCards type={activeSubTab} summary={query.data?.summary} />
-          
+
           <ReportFilters
             type={activeSubTab}
             filters={currentFilters}

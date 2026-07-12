@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useUserActivityReport } from "../hooks/useUserActivityReport";
 import { SummaryCards } from "../components/SummaryCards";
 import { ReportFilters } from "../components/ReportFilters";
@@ -54,7 +54,7 @@ export function UserActivityReportPage() {
       ) : (
         <>
           <SummaryCards type="user-activity" summary={data?.summary} />
-          
+
           <ReportFilters
             type="user-activity"
             filters={filters}

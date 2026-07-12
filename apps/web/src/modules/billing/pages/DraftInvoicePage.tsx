@@ -45,7 +45,7 @@ export const DraftInvoicePage: React.FC = () => {
     if (invoiceData) {
       setSelectedClientId(invoiceData.clientId._id);
       setSelectedMatterId(invoiceData.matterId?._id || "");
-      setDueDate(invoiceData.dueDate ? invoiceData.dueDate.split("T")[0] : "");
+      setDueDate(invoiceData.dueDate ? (invoiceData.dueDate.split("T")[0] || "") : "");
       setNotes(invoiceData.notes || "");
 
       // Extract existing time entries in the draft

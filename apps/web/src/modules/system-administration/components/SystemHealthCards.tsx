@@ -1,4 +1,4 @@
-import React from "react";
+
 import { SystemHealth } from "../types";
 
 interface SystemHealthCardsProps {

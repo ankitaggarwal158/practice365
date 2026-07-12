@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuditLogs } from "../hooks/useAuditLogs";
 import { useCurrentUserPermissions } from "@/modules/roles/hooks/useCurrentUserPermissions";
 import AuditFilters from "../components/AuditFilters";

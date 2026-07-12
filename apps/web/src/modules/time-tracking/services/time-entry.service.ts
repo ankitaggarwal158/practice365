@@ -10,6 +10,7 @@ export interface TimeEntryFilters {
   endDate?: string;
   status?: string;
   billingType?: string;
+  isBilled?: string | boolean;
 }
 
 export interface TimeEntrySearchResponse {

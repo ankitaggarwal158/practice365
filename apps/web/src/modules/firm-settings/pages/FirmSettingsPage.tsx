@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useCurrentUserPermissions } from "@/modules/roles";
 import { FirmProfileSection } from "../components/FirmProfileSection";
 import { BrandingSection } from "../components/BrandingSection";

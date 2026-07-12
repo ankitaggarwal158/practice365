@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useClientReport } from "../hooks/useClientReport";
 import { SummaryCards } from "../components/SummaryCards";
 import { ReportFilters } from "../components/ReportFilters";
@@ -54,7 +54,7 @@ export function ClientReportPage() {
       ) : (
         <>
           <SummaryCards type="clients" summary={data?.summary} />
-          
+
           <ReportFilters
             type="clients"
             filters={filters}

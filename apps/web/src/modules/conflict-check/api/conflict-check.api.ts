@@ -1,7 +1,6 @@
 import { httpClient } from "@/services/http-client";
 import type {
   ConflictCheck,
-  PaginatedConflictChecks,
   ManualSearchRequest,
   ConflictEngineResult,
 } from "../types/conflict-check.types";

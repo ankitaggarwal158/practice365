@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+
+import { useNavigate, useParams } from "react-router-dom";
 import { useNote, useDeleteNote, usePinNote } from "../hooks/useNotes";
 import { useCurrentUserPermissions } from "@/modules/roles/hooks/useCurrentUserPermissions";
 

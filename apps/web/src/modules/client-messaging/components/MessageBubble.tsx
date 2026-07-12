@@ -17,11 +17,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   // Determine if the message was sent by the currently logged-in context user
   const isMe = msg.senderId === currentUserIdOrClientId;
 
-  // Formatting timestamp
-  const displayTime = new Date(msg.createdAt).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+
 
   return (
     <div className={`flex w-full ${isMe ? "justify-end" : "justify-start"} mb-4 animate-fade-in`}>

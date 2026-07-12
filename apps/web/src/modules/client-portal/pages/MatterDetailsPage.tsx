@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Briefcase, Calendar, FileText, Download, User, Info } from "lucide-react";
+import { ArrowLeft, FileText, Download, Info } from "lucide-react";
 import { usePortalMatterDetails, usePortalDocuments } from "../hooks/usePortal";
 import { PortalApiClient } from "../api/portal.api";
 import { formatBytes } from "../../../modules/time-tracking/utils/format.utils";

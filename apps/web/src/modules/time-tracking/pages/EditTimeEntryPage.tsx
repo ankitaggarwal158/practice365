@@ -33,9 +33,11 @@ export const EditTimeEntryPage: React.FC = () => {
 
   useEffect(() => {
     if (entry) {
-      setDate(new Date(entry.date).toISOString().split("T")[0]);
-      setClientId(entry.clientId?._id || entry.clientId || "");
-      setMatterId(entry.matterId?._id || entry.matterId || "");
+      setDate(new Date(entry.date).toISOString().split("T")[0] || "");
+      const cId = typeof entry.clientId === "object" ? entry.clientId?._id : entry.clientId;
+      setClientId(cId || "");
+      const mId = typeof entry.matterId === "object" ? entry.matterId?._id : entry.matterId;
+      setMatterId(mId || "");
       setBillingType(entry.billingType);
       
       const duration = entry.durationMinutes || 0;

@@ -1,7 +1,6 @@
 import { httpClient } from "@/services/http-client";
 import type {
   Matter,
-  PaginatedMatters,
   CreateMatterRequest,
   UpdateMatterRequest,
   MatterTeamMember,

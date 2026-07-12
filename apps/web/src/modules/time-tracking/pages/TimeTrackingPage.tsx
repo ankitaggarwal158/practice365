@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, Play, Filter, Trash2, Edit, CheckCircle } from "lucide-react";
+import { Plus, Search, Play, Filter, Trash2, Edit } from "lucide-react";
 import { useTimeEntries, useTimerActions, useDeleteTimeEntry } from "../hooks/useTimeEntries.js";
 import { TimerStatus, BillingType, TimeEntry } from "../types/time-entry.types.js";
 import { formatDuration, formatCurrency } from "../utils/format.utils.js";

@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useRouteError, useNavigate } from "react-router-dom";
 
 export function ErrorFallback() {

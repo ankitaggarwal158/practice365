@@ -6,6 +6,15 @@ import {
   PaginatedResult,
 } from "../types/note.types";
 
+function buildQueryString(params?: Record<string, any>): string {
+  if (!params) return "";
+  const entries = Object.entries(params).filter(
+    ([_, val]) => val !== undefined && val !== null && val !== ""
+  );
+  if (entries.length === 0) return "";
+  return "?" + entries.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`).join("&");
+}
+
 export async function listNotes(params: {
   entityType?: string;
   entityId?: string;
@@ -15,7 +24,7 @@ export async function listNotes(params: {
   page?: number;
   limit?: number;
 }): Promise<PaginatedResult<Note>> {
-  return httpClient.get<PaginatedResult<Note>>("/notes", { params });
+  return httpClient.get<PaginatedResult<Note>>(`/notes${buildQueryString(params)}`);
 }
 
 export async function getNote(id: string): Promise<Note> {

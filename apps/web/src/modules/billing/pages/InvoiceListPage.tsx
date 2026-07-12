@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, FileText, Download, CheckCircle, Trash2, Edit, CircleAlert } from "lucide-react";
+import { Plus, Search, FileText, Download, Trash2, Edit, CircleAlert } from "lucide-react";
 import { useInvoices, useDeleteInvoice } from "../hooks/useInvoices";
 import { invoiceApi } from "../api/invoice.api";
 import { InvoiceStatus } from "../types/invoice.types";

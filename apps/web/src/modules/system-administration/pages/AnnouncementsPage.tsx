@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAnnouncements } from "../hooks/useAnnouncements";
 import { SystemAnnouncement, AnnouncementSeverity } from "../types";
 import { AnnouncementForm } from "../components/AnnouncementForm";

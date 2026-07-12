@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Briefcase, Calendar, ChevronRight, AlertCircle } from "lucide-react";
+import { Search, Calendar, ChevronRight, AlertCircle } from "lucide-react";
 import { usePortalMatters } from "../hooks/usePortal";
 
 export const MatterListPage: React.FC = () => {

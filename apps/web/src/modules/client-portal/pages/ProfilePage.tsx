@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { User, Phone, MapPin, CheckCircle, Mail, Globe, ShieldAlert } from "lucide-react";
+import { User, Phone, MapPin, Mail, ShieldAlert } from "lucide-react";
 import { usePortalProfile, usePortalUpdateProfile } from "../hooks/usePortal";
 
 export const ProfilePage: React.FC = () => {
@@ -17,10 +17,10 @@ export const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (profile) {
       setPhone(profile.phone || "");
-      setStreet(profile.address?.street || "");
+      setStreet(profile.address?.street1 || "");
       setCity(profile.address?.city || "");
       setState(profile.address?.state || "");
-      setZipCode(profile.address?.postalCode || "");
+      setZipCode(profile.address?.zip || "");
       setCountry(profile.address?.country || "");
     }
   }, [profile]);

@@ -9,6 +9,15 @@ import {
   ContactRole,
 } from "../types/matter-contact.types";
 
+function buildQueryString(params?: Record<string, any>): string {
+  if (!params) return "";
+  const entries = Object.entries(params).filter(
+    ([_, val]) => val !== undefined && val !== null && val !== ""
+  );
+  if (entries.length === 0) return "";
+  return "?" + entries.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`).join("&");
+}
+
 export async function listMatterContacts(params: {
   page?: number;
   limit?: number;
@@ -16,7 +25,7 @@ export async function listMatterContacts(params: {
   isActive?: boolean;
   search?: string;
 }): Promise<PaginatedResult<MatterContact>> {
-  return httpClient.get<PaginatedResult<MatterContact>>("/matter-contacts", { params });
+  return httpClient.get<PaginatedResult<MatterContact>>(`/matter-contacts${buildQueryString(params)}`);
 }
 
 export async function getMatterContact(id: string): Promise<MatterContact> {
@@ -53,8 +62,8 @@ export async function checkDuplicates(
   },
   excludeId?: string
 ): Promise<DuplicateCheckResult> {
-  const params = excludeId ? { excludeId } : undefined;
-  return httpClient.post<DuplicateCheckResult>("/matter-contacts/duplicates", data, { params });
+  const queryStr = excludeId ? buildQueryString({ excludeId }) : "";
+  return httpClient.post<DuplicateCheckResult>(`/matter-contacts/duplicates${queryStr}`, data);
 }
 
 export async function getMatterContactLinks(matterId: string): Promise<MatterContactLink[]> {

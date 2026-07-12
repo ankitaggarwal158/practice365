@@ -1,4 +1,4 @@
-import React from "react";
+
 import { AuditLogFilters } from "../types";
 
 interface AuditFiltersProps {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotes, useDeleteNote, usePinNote } from "../hooks/useNotes";
 import { useCurrentUserPermissions } from "@/modules/roles/hooks/useCurrentUserPermissions";

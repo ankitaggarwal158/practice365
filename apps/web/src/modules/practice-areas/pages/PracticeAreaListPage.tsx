@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   usePracticeAreas,
   useUpdatePracticeAreaStatus,
   useDeletePracticeArea,
-  useReorderPracticeAreas,
-} from "../hooks/usePracticeAreas";
+  } from "../hooks/usePracticeAreas";
 import { useCurrentUserPermissions } from "@/modules/roles/hooks/useCurrentUserPermissions";
 
 export default function PracticeAreaListPage() {

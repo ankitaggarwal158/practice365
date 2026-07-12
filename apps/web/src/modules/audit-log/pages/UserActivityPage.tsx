@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useUserActivity } from "../hooks/useAuditLogs";
 import ActivityTimeline from "../components/ActivityTimeline";
@@ -55,4 +55,3 @@ export default function UserActivityPage() {
     </div>
   );
 }
-export default UserActivityPage;

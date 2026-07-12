@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCreateMatterContact } from "../hooks/useOpposingParties"; // Wait! We should import from "../hooks/useMatterContacts"!
-// Yes! In useMatterContacts hook file we declared useCreateMatterContact!
 import { useCreateMatterContact as useCreateContact } from "../hooks/useMatterContacts";
 import { checkDuplicates } from "../api/matter-contact.api";
 import { CreateMatterContactRequest, Duplicate } from "../types/matter-contact.types";

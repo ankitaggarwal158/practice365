@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { Shield, Lock, CheckCircle2, ArrowLeft } from "lucide-react";
+import { useSearchParams, Link } from "react-router-dom";
+import { Shield, Lock, CheckCircle2 } from "lucide-react";
 import { PortalApiClient } from "../api/portal.api";
 import { toast } from "sonner";
 
 export const ResetPasswordPage: React.FC = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "";
 

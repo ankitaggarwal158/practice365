@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useCurrentUserPermissions } from "@/modules/roles";
 
@@ -26,8 +26,9 @@ export function ReportsLayout() {
   // If client lands exactly on "/reports", redirect them to their first permitted tab
   useEffect(() => {
     if (location.pathname === "/reports" || location.pathname === "/reports/") {
-      if (allowedTabs.length > 0) {
-        navigate(allowedTabs[0].path, { replace: true });
+      const firstTab = allowedTabs[0];
+      if (firstTab) {
+        navigate(firstTab.path, { replace: true });
       }
     }
   }, [location.pathname, allowedTabs, navigate]);
@@ -67,11 +68,10 @@ export function ReportsLayout() {
               <Link
                 key={tab.id}
                 to={tab.path}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 cursor-pointer select-none ${
-                  isActive
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-all duration-200 cursor-pointer select-none ${isActive
                     ? "border-brand-400 text-brand-300"
                     : "border-transparent text-surface-200/55 hover:text-white hover:border-white/10"
-                }`}
+                  }`}
               >
                 {tab.name}
               </Link>
