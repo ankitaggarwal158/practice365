@@ -5,6 +5,10 @@ export async function connectDatabase(): Promise<void> {
   if (mongoose.connection.readyState >= 1) {
     return;
   }
+  
+  const maskedUri = config.mongoUri ? config.mongoUri.replace(/:([^@]+)@/, ":****@") : "undefined";
+  console.log("Connecting to MongoDB at:", maskedUri);
+
   try {
     mongoose.connection.on("connected", () => {
       console.log("MongoDB connected");
