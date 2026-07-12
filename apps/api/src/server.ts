@@ -121,4 +121,4 @@ start().catch((error) => {
   }
 });
 
-export { app };
+export default app;
