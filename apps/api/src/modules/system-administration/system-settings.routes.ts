@@ -20,8 +20,14 @@ router.get(
 );
 
 // All other routes require authentication and the SYSTEM_ADMIN permission
-router.use(authenticate);
-router.use(requirePermission("SYSTEM_ADMIN"));
+router.use((req, res, next) => {
+  if (!req.path.startsWith("/api/system")) {
+    return next();
+  }
+  authenticate(req, res, () => {
+    requirePermission("SYSTEM_ADMIN")(req, res, next);
+  });
+});
 
 router.get(
   "/system/settings",
