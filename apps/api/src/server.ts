@@ -105,14 +105,20 @@ async function start(): Promise<void> {
   await connectDatabase();
   await seedSystemPermissionsAndRoles();
 
-  app.listen(config.port, () => {
-    console.log(`API server listening on port ${config.port}`);
-  });
+  if (!process.env.VERCEL) {
+    app.listen(config.port, () => {
+      console.log(`API server listening on port ${config.port}`);
+    });
+  } else {
+    console.log("Database initialized for serverless environment.");
+  }
 }
 
 start().catch((error) => {
   console.error("Failed to start server:", error);
-  process.exit(1);
+  if (!process.env.VERCEL) {
+    process.exit(1);
+  }
 });
 
 export { app };

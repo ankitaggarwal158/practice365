@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 import { config } from "../config/index.js";
 
 export async function connectDatabase(): Promise<void> {
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
   try {
     mongoose.connection.on("connected", () => {
       console.log("MongoDB connected");
@@ -18,7 +21,10 @@ export async function connectDatabase(): Promise<void> {
     await mongoose.connect(config.mongoUri);
   } catch (error) {
     console.error("Failed to connect to MongoDB:", error);
-    process.exit(1);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
+    throw error;
   }
 }
 
